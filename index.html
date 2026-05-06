@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Ocena</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e12;
+    --surface: #16161e;
+    --surface2: #1e1e2a;
+    --border: #2a2a3a;
+    --accent: #7c6af7;
+    --accent2: #f7a26a;
+    --accent3: #6af7b8;
+    --text: #e8e8f0;
+    --muted: #6a6a8a;
+    --danger: #f76a6a;
+    --grade5: #6af7b8;
+    --grade4: #7c6af7;
+    --grade3: #f7a26a;
+    --grade2: #f76a6a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 20px 80px;
+  }
+
+  header {
+    margin-bottom: 48px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent3) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Add subject form */
+  .add-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .add-form .field {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .add-form label {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .add-form input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.95rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .add-form input:focus {
+    border-color: var(--accent);
+  }
+
+  .add-form input::placeholder {
+    color: var(--muted);
+  }
+
+  .btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: opacity 0.15s, transform 0.1s;
+    white-space: nowrap;
+  }
+
+  .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+
+  .btn.danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+
+  /* Subjects grid */
+  .subjects-grid {
+    display: grid;
+    gap: 20px;
+  }
+
+  .subject-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .subject-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .card-actions { display: flex; gap: 8px; align-items: center; }
+
+  .avg-badge {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    min-width: 48px;
+    text-align: center;
+  }
+
+  .card-body { padding: 20px 22px; }
+
+  /* Grade input */
+  .grades-section { margin-bottom: 20px; }
+
+  .grades-section h3 {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .grade-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .grade-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 5px 10px 5px 14px;
+    font-size: 0.9rem;
+  }
+
+  .grade-chip span { font-weight: 700; }
+
+  .grade-chip button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.15s;
+  }
+
+  .grade-chip button:hover { color: var(--danger); }
+
+  .add-grade-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .grade-select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    padding: 7px 12px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .grade-select:focus { border-color: var(--accent); }
+
+  .btn-small {
+    background: var(--surface2);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .btn-small:hover { background: var(--accent); color: #fff; }
+
+  /* Needed grades section */
+  .needed-section h3 {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .needed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+
+  .needed-card {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .needed-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .needed-card.g5::before { background: var(--grade5); }
+  .needed-card.g4::before { background: var(--grade4); }
+  .needed-card.g3::before { background: var(--grade3); }
+  .needed-card.g2::before { background: var(--grade2); }
+
+  .needed-card .target-grade {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .needed-card.g5 .target-grade { color: var(--grade5); }
+  .needed-card.g4 .target-grade { color: var(--grade4); }
+  .needed-card.g3 .target-grade { color: var(--grade3); }
+  .needed-card.g2 .target-grade { color: var(--grade2); }
+
+  .needed-card .needed-count {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .needed-card .already {
+    font-size: 0.75rem;
+    color: var(--grade5);
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  .needed-card .impossible {
+    color: var(--danger);
+    font-size: 0.75rem;
+    margin-top: 2px;
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 48px 0;
+    letter-spacing: 0.05em;
+  }
+
+  .empty-state .big { font-size: 2.5rem; margin-bottom: 12px; }
+
+  /* color by avg */
+  .avg-5 { color: var(--grade5); }
+  .avg-4 { color: var(--grade4); }
+  .avg-3 { color: var(--grade3); }
+  .avg-2 { color: var(--grade2); }
+  .avg-0 { color: var(--muted); }
+
+  /* Grade chip coloring */
+  .chip-5 { border-color: var(--grade5); color: var(--grade5); }
+  .chip-4 { border-color: var(--grade4); color: var(--grade4); }
+  .chip-3 { border-color: var(--grade3); color: var(--grade3); }
+  .chip-2 { border-color: var(--grade2); color: var(--grade2); }
+  .chip-1 { border-color: var(--danger); color: var(--danger); }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 18px 0;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 500px) {
+    .needed-grid { grid-template-columns: repeat(2, 1fr); }
+    .add-form { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>KALKULATOR OCENA</h1>
+    <p>Prati napredak · Planiraj ocene</p>
+  </header>
+
+  <div class="add-form">
+    <div class="field">
+      <label>Naziv predmeta</label>
+      <input type="text" id="newSubjectName" placeholder="npr. Matematika" maxlength="60" />
+    </div>
+    <button class="btn" onclick="addSubject()">+ Dodaj predmet</button>
+  </div>
+
+  <div class="subjects-grid" id="subjectsGrid">
+    <div class="empty-state" id="emptyState">
+      <div class="big">📚</div>
+      Još nema predmeta. Dodaj prvi!
+    </div>
+  </div>
+</div>
+
+<script>
+  let subjects = JSON.parse(localStorage.getItem('oceneSubjects') || '[]');
+
+  function save() {
+    localStorage.setItem('oceneSubjects', JSON.stringify(subjects));
+  }
+
+  function avgColor(avg) {
+    if (avg === 0) return 'avg-0';
+    if (avg >= 4.50) return 'avg-5';
+    if (avg >= 3.50) return 'avg-4';
+    if (avg >= 2.50) return 'avg-3';
+    if (avg >= 1.50) return 'avg-2';
+    return 'avg-0';
+  }
+
+  function calcAvg(grades) {
+    if (!grades.length) return 0;
+    return grades.reduce((a, b) => a + b, 0) / grades.length;
+  }
+
+  // Thresholds: koji minimalni prosek je potreban za zaključenu ocenu
+  const THRESHOLDS = { 5: 4.50, 4: 3.50, 3: 2.50, 2: 1.50 };
+
+  // Koliko petki (5) treba da prosek dostigne prag za zaključenu ocenu targetGrade
+  // (sum + 5*x) / (n + x) >= threshold  =>  x >= (threshold*n - sum) / (5 - threshold)
+  function howManyNeeded(grades, targetGrade) {
+    const threshold = THRESHOLDS[targetGrade];
+    const n = grades.length;
+    const sum = grades.reduce((a, b) => a + b, 0);
+    const avg = n ? sum / n : 0;
+    if (avg >= threshold) return { count: 0, impossible: false };
+    const needed = Math.ceil((threshold * n - sum) / (5 - threshold));
+    if (needed > 9999) return { count: 0, impossible: true };
+    return { count: Math.max(needed, 0), impossible: false };
+  }
+
+  function renderAll() {
+    const grid = document.getElementById('subjectsGrid');
+    const empty = document.getElementById('emptyState');
+
+    // Clear all cards (keep emptyState)
+    [...grid.querySelectorAll('.subject-card')].forEach(c => c.remove());
+
+    if (!subjects.length) {
+      empty.style.display = '';
+      return;
+    }
+    empty.style.display = 'none';
+
+    subjects.forEach((subj, idx) => {
+      const card = buildCard(subj, idx);
+      grid.appendChild(card);
+    });
+  }
+
+  function buildCard(subj, idx) {
+    const avg = calcAvg(subj.grades);
+    const avgDisplay = avg ? avg.toFixed(2) : '—';
+    const color = avgColor(avg);
+
+    // Needed section data
+    const targets = [5, 4, 3, 2];
+    const neededCards = targets.map(t => {
+      const result = howManyNeeded(subj.grades, t);
+      const already = avg >= t;
+      let cls = 'g' + t;
+      let label;
+      if (already) {
+        label = `<span class="already">✓ Već postignuto</span>`;
+      } else if (result.impossible) {
+        label = `<span class="needed-count impossible">✗ Nemoguće postići</span>`;
+      } else {
+        const word = result.count === 1 ? 'petica' : result.count < 5 ? 'petice' : 'petica';
+        label = `<span class="needed-count">još <strong>${result.count}</strong> ${word}</span>`;
+      }
+      return `
+        <div class="needed-card ${cls}">
+          <div class="target-grade">${t}</div>
+          ${label}
+        </div>`;
+    }).join('');
+
+    // Grade chips
+    const chips = subj.grades.map((g, gi) => `
+      <div class="grade-chip chip-${g}">
+        <span>${g}</span>
+        <button onclick="removeGrade(${idx}, ${gi})" title="Ukloni ocenu">×</button>
+      </div>`).join('');
+
+    const card = document.createElement('div');
+    card.className = 'subject-card';
+    card.id = 'card-' + idx;
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="subject-name">${escHtml(subj.name)}</span>
+        <div class="card-actions">
+          <span class="avg-badge ${color}">${avgDisplay}</span>
+          <button class="btn danger" onclick="removeSubject(${idx})">Ukloni</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="grades-section">
+          <h3>Moje ocene</h3>
+          <div class="grade-inputs" id="chips-${idx}">
+            ${chips || '<span style="color:var(--muted);font-size:0.8rem">Još nema ocena</span>'}
+          </div>
+          <div class="add-grade-row">
+            <select class="grade-select" id="gradeSelect-${idx}">
+              <option value="5">5</option>
+              <option value="4">4</option>
+              <option value="3">3</option>
+              <option value="2">2</option>
+              <option value="1">1</option>
+            </select>
+            <button class="btn-small" onclick="addGrade(${idx})">+ Dodaj ocenu</button>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="needed-section">
+          <h3>Koliko petki treba za prosek...</h3>
+          <div class="needed-grid">${neededCards}</div>
+        </div>
+      </div>`;
+    return card;
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function addSubject() {
+    const input = document.getElementById('newSubjectName');
+    const name = input.value.trim();
+    if (!name) { input.focus(); return; }
+    subjects.push({ name, grades: [] });
+    save();
+    input.value = '';
+    renderAll();
+  }
+
+  function removeSubject(idx) {
+    if (!confirm(`Ukloniti predmet "${subjects[idx].name}"?`)) return;
+    subjects.splice(idx, 1);
+    save();
+    renderAll();
+  }
+
+  function addGrade(idx) {
+    const sel = document.getElementById('gradeSelect-' + idx);
+    subjects[idx].grades.push(parseInt(sel.value));
+    save();
+    renderAll();
+  }
+
+  function removeGrade(idx, gi) {
+    subjects[idx].grades.splice(gi, 1);
+    save();
+    renderAll();
+  }
+
+  // Enter key on subject input
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('newSubjectName').addEventListener('keydown', e => {
+      if (e.key === 'Enter') addSubject();
+    });
+    renderAll();
+  });
+
+  renderAll();
+</script>
+</body>
+</html>
