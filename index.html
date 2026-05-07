@@ -599,12 +599,19 @@ let selectedDay=null,editLessonId=null;
 
 // ===== UTILS =====
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function getMonday(d){const dt=new Date(d);const day=dt.getDay();const diff=dt.getDate()-day+(day===0?-6:1);dt.setDate(diff);return new Date(dt.getFullYear(),dt.getMonth(),dt.getDate());}
-function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function getMonday(d){
+  const dt=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  const day=dt.getDay();
+  const diff=day===0?-6:1-day;
+  dt.setDate(dt.getDate()+diff);
+  return dt;
+}
+function addDays(d,n){const r=new Date(d.getFullYear(),d.getMonth(),d.getDate());r.setDate(r.getDate()+n);return r;}
 function fmt(d){if(!d)return'';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('sr-Latn',{day:'2-digit',month:'2-digit',year:'numeric'});}
 function fmtShort(d){if(!d)return'';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('sr-Latn',{day:'2-digit',month:'2-digit'});}
-function toISO(d){return d.toISOString().split('T')[0];}
+function toISO(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day;}
 function weekLabel(mon){const sun=addDays(mon,6);return fmtShort(toISO(mon))+' — '+fmtShort(toISO(sun));}
+function jsDayToIdx(jsDay){return jsDay===0?6:jsDay-1;}
 function avgClass(a){if(!a)return'a0';if(a>=4.5)return'a5';if(a>=3.5)return'a4';if(a>=2.5)return'a3';if(a>=1.5)return'a2';return'a0';}
 const DAYS=['Pon','Uto','Sre','Čet','Pet','Sub','Ned'];
 const DAYS_FULL=['Ponedeljak','Utorak','Sreda','Četvrtak','Petak','Subota','Nedelja'];
@@ -938,7 +945,7 @@ function selectDay(ds){
 function renderDayDetail(ds){
   const el=document.getElementById('cdd');
   const d=new Date(ds+'T00:00:00');
-  const dayName=DAYS_FULL[d.getDay()===0?6:d.getDay()-1];
+  const dayName=DAYS_FULL[jsDayToIdx(d.getDay())];
   const sd=schoolDays.find(x=>x.date===ds);
   const dtype=sd?.type||'nastavni';
   const dtypeBadges={nastavni:'b-nastavni',neradni:'b-neradni',nenastavni:'b-nenastavni'};
@@ -1002,7 +1009,7 @@ function openLessonModal(ds){
   document.querySelectorAll('#ltypes input[type=checkbox]').forEach(cb=>cb.checked=false);
   // default subject from schedule
   const d=new Date(ds+'T00:00:00');
-  const dow=d.getDay()===0?6:d.getDay()-1;
+  const dow=jsDayToIdx(d.getDay());
   const sel=document.getElementById('lss');
   sel.innerHTML='<option value="">— Izaberi —</option>'+subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
   document.getElementById('ldb').style.display='none';
@@ -1049,7 +1056,7 @@ let currentDayDate=null;
 function openDayModal(ds){
   currentDayDate=ds;
   const d=new Date(ds+'T00:00:00');
-  document.getElementById('dayMoT').textContent=DAYS_FULL[d.getDay()===0?6:d.getDay()-1]+', '+fmt(ds);
+  document.getElementById('dayMoT').textContent=DAYS_FULL[jsDayToIdx(d.getDay())]+', '+fmt(ds);
   const sd=schoolDays.find(x=>x.date===ds);
   document.getElementById('dts').value=sd?.type||'nastavni';
   document.getElementById('dns').value=sd?.note||'';
