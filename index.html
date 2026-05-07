@@ -1,603 +1,818 @@
 <!DOCTYPE html>
 <html lang="sr">
 <head>
-  <!-- Google tag (gtag.js) -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Školski Dnevnik</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-J6KHR971ST"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-J6KHR971ST');
 </script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kalkulator Ocena</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0e0e12;
-    --surface: #16161e;
-    --surface2: #1e1e2a;
-    --border: #2a2a3a;
-    --accent: #7c6af7;
-    --accent2: #f7a26a;
-    --accent3: #6af7b8;
-    --text: #e8e8f0;
-    --muted: #6a6a8a;
-    --danger: #f76a6a;
-    --grade5: #6af7b8;
-    --grade4: #7c6af7;
-    --grade3: #f7a26a;
-    --grade2: #f76a6a;
-  }
+:root {
+  --bg: #0e0e12;
+  --surface: #16161e;
+  --surface2: #1e1e2a;
+  --border: #2a2a3a;
+  --accent: #7c6af7;
+  --accent2: #f7a26a;
+  --accent3: #6af7b8;
+  --text: #e8e8f0;
+  --muted: #6a6a8a;
+  --danger: #f76a6a;
+  --grade5: #6af7b8;
+  --grade4: #7c6af7;
+  --grade3: #f7a26a;
+  --grade2: #f76a6a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ===== AUTH ===== */
+#authScreen {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg);
+}
+.auth-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%; max-width: 400px;
+  position: relative; z-index: 1;
+}
+.auth-box h1 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 2rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent3));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 6px;
+}
+.auth-box p { color: var(--muted); font-size: 0.8rem; margin-bottom: 28px; letter-spacing: 0.05em; }
+.auth-tabs { display: flex; gap: 0; margin-bottom: 24px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.auth-tab {
+  flex: 1; padding: 10px; background: transparent; border: none; color: var(--muted);
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
+}
+.auth-tab.active { background: var(--accent); color: #fff; }
+.field-group { margin-bottom: 16px; }
+.field-group label { display: block; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.field-group input {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.9rem; padding: 10px 14px; outline: none; transition: border-color 0.2s;
+}
+.field-group input:focus { border-color: var(--accent); }
+.btn-primary {
+  width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 8px;
+  padding: 12px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
+  cursor: pointer; transition: opacity 0.15s; margin-top: 8px;
+}
+.btn-primary:hover { opacity: 0.85; }
+.auth-msg { margin-top: 12px; font-size: 0.8rem; text-align: center; min-height: 20px; }
+.auth-msg.error { color: var(--danger); }
+.auth-msg.success { color: var(--accent3); }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    min-height: 100vh;
-    padding: 0;
-    overflow-x: hidden;
-  }
+/* ===== APP ===== */
+#app { display: none; position: relative; z-index: 1; }
 
-  /* Background grid */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size: 40px 40px;
-    opacity: 0.3;
-    pointer-events: none;
-    z-index: 0;
-  }
+/* Topbar */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(14,14,18,0.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 24px; gap: 12px;
+}
+.topbar-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; background: linear-gradient(135deg, var(--accent), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.topbar-user { color: var(--muted); font-size: 0.75rem; }
+.btn-logout { background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 6px 12px; font-family: 'Space Mono', monospace; font-size: 0.75rem; cursor: pointer; transition: all 0.15s; }
+.btn-logout:hover { border-color: var(--danger); color: var(--danger); }
 
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 48px 20px 80px;
-  }
+/* Nav tabs */
+.nav-tabs {
+  display: flex; gap: 0; border-bottom: 1px solid var(--border);
+  background: var(--surface); overflow-x: auto;
+}
+.nav-tab {
+  padding: 14px 22px; background: transparent; border: none; color: var(--muted);
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.2s; white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.nav-tab:hover:not(.active) { color: var(--text); }
 
-  header {
-    margin-bottom: 48px;
-    text-align: center;
-  }
+/* Container */
+.container { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
 
-  header h1 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    letter-spacing: -0.03em;
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent3) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
-    margin-bottom: 10px;
-  }
+/* Sections */
+.section { display: none; }
+.section.active { display: block; }
 
-  header p {
-    color: var(--muted);
-    font-size: 0.8rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
+/* Cards */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; margin-bottom: 20px; overflow: hidden;
+}
+.card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
+}
+.card-head h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; }
+.card-body { padding: 20px; }
 
-  /* Add subject form */
-  .add-form {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 32px;
-    display: flex;
-    gap: 12px;
-    align-items: flex-end;
-    flex-wrap: wrap;
-  }
+/* Forms */
+.form-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+.form-field { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 120px; }
+.form-field label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.form-field input, .form-field select, .form-field textarea {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.85rem;
+  padding: 9px 12px; outline: none; transition: border-color 0.2s;
+}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--accent); }
+.form-field textarea { resize: vertical; min-height: 70px; }
+.btn-add {
+  background: var(--surface2); color: var(--accent); border: 1px solid var(--accent);
+  border-radius: 8px; padding: 9px 16px; font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 0.8rem; cursor: pointer; transition: background 0.15s; white-space: nowrap;
+}
+.btn-add:hover { background: var(--accent); color: #fff; }
+.btn-del {
+  background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem;
+  padding: 2px 6px; transition: color 0.15s; line-height: 1;
+}
+.btn-del:hover { color: var(--danger); }
 
-  .add-form .field {
-    flex: 1;
-    min-width: 180px;
-  }
+/* Chips */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.chip {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 100px; padding: 5px 10px 5px 14px; font-size: 0.85rem;
+}
+.chip-5 { border-color: var(--grade5); color: var(--grade5); }
+.chip-4 { border-color: var(--grade4); color: var(--grade4); }
+.chip-3 { border-color: var(--grade3); color: var(--grade3); }
+.chip-2 { border-color: var(--grade2); color: var(--grade2); }
+.chip-1 { border-color: var(--danger); color: var(--danger); }
 
-  .add-form label {
-    display: block;
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
+/* Subject cards */
+.subject-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; margin-bottom: 16px; overflow: hidden;
+  animation: slideIn 0.3s ease;
+}
+@keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.subject-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 8px;
+}
+.subject-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; }
+.avg-badge { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; min-width: 44px; text-align: center; }
+.avg-5 { color: var(--grade5); } .avg-4 { color: var(--grade4); } .avg-3 { color: var(--grade3); } .avg-2 { color: var(--grade2); } .avg-0 { color: var(--muted); }
+.subject-body { padding: 16px 18px; }
 
-  .add-form input {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.95rem;
-    padding: 10px 14px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
+/* Needed grid */
+.needed-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 16px; }
+.needed-card {
+  background: var(--surface2); border-radius: 10px; padding: 10px 12px;
+  border: 1px solid var(--border); position: relative; overflow: hidden;
+}
+.needed-card::before { content: ''; position: absolute; top:0; left:0; right:0; height:3px; }
+.needed-card.g5::before { background: var(--grade5); }
+.needed-card.g4::before { background: var(--grade4); }
+.needed-card.g3::before { background: var(--grade3); }
+.needed-card.g2::before { background: var(--grade2); }
+.needed-card .tg { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; line-height: 1; margin-bottom: 3px; }
+.needed-card.g5 .tg { color: var(--grade5); } .needed-card.g4 .tg { color: var(--grade4); }
+.needed-card.g3 .tg { color: var(--grade3); } .needed-card.g2 .tg { color: var(--grade2); }
+.needed-card .nc { font-size: 0.72rem; color: var(--muted); line-height: 1.3; }
+.nc.already { color: var(--grade5); font-weight: 700; }
+.nc.impossible { color: var(--danger); }
 
-  .add-form input:focus {
-    border-color: var(--accent);
-  }
+/* Absences */
+.abs-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
+.abs-stat { background: var(--surface2); border-radius: 10px; padding: 14px; border: 1px solid var(--border); text-align: center; }
+.abs-stat .num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.8rem; }
+.abs-stat .lbl { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
+.abs-stat .num.justified { color: var(--accent3); }
+.abs-stat .num.unjustified { color: var(--danger); }
+.abs-stat .num.total { color: var(--accent); }
 
-  .add-form input::placeholder {
-    color: var(--muted);
-  }
+/* Table */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+th { text-align: left; padding: 8px 12px; color: var(--muted); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.72rem; font-weight: 700; }
+.badge.opr { background: rgba(106,247,184,0.15); color: var(--grade5); }
+.badge.neopr { background: rgba(247,106,106,0.15); color: var(--danger); }
 
-  .btn {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 22px;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    cursor: pointer;
-    letter-spacing: 0.05em;
-    transition: opacity 0.15s, transform 0.1s;
-    white-space: nowrap;
-  }
+/* Behavior */
+.beh-grade-display { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 3rem; text-align: center; padding: 20px 0; }
+.measures-list { list-style: none; }
+.measures-list li {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; gap: 10px;
+}
+.measures-list li:last-child { border-bottom: none; }
+.measure-badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.72rem; font-weight: 700; }
+.measure-badge.mere { background: rgba(247,106,106,0.15); color: var(--danger); }
+.measure-badge.pohvale { background: rgba(106,247,184,0.15); color: var(--grade5); }
+.notes-list { list-style: none; }
+.notes-list li { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.notes-list li:last-child { border-bottom: none; }
+.note-meta { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; }
+.note-text { font-size: 0.88rem; }
 
-  .btn:hover { opacity: 0.85; transform: translateY(-1px); }
-  .btn:active { transform: translateY(0); }
+/* Empty */
+.empty { text-align: center; color: var(--muted); font-size: 0.82rem; padding: 32px 0; }
+.empty .big { font-size: 2rem; margin-bottom: 8px; }
 
-  .btn.danger {
-    background: transparent;
-    color: var(--danger);
-    border: 1px solid var(--danger);
-    padding: 6px 12px;
-    font-size: 0.75rem;
-  }
+/* Loading */
+.loading { text-align: center; color: var(--muted); padding: 40px; font-size: 0.85rem; }
 
-  /* Subjects grid */
-  .subjects-grid {
-    display: grid;
-    gap: 20px;
-  }
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
 
-  .subject-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    animation: slideIn 0.3s ease;
-  }
+/* Section title */
+.sec-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; margin-bottom: 20px; }
 
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+footer { text-align: center; padding: 40px 0 20px; color: var(--muted); font-size: 0.75rem; letter-spacing: 0.1em; position: relative; z-index: 1; }
+footer span { color: var(--accent); font-family: 'Syne', sans-serif; font-weight: 700; }
 
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 22px;
-    border-bottom: 1px solid var(--border);
-    gap: 12px;
-    flex-wrap: wrap;
-  }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-  .subject-name {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1.1rem;
-    letter-spacing: -0.01em;
-  }
-
-  .card-actions { display: flex; gap: 8px; align-items: center; }
-
-  .avg-badge {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.4rem;
-    min-width: 48px;
-    text-align: center;
-  }
-
-  .card-body { padding: 20px 22px; }
-
-  /* Grade input */
-  .grades-section { margin-bottom: 20px; }
-
-  .grades-section h3 {
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-
-  .grade-inputs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .grade-chip {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    padding: 5px 10px 5px 14px;
-    font-size: 0.9rem;
-  }
-
-  .grade-chip span { font-weight: 700; }
-
-  .grade-chip button {
-    background: none;
-    border: none;
-    color: var(--muted);
-    cursor: pointer;
-    font-size: 1rem;
-    line-height: 1;
-    padding: 0;
-    transition: color 0.15s;
-  }
-
-  .grade-chip button:hover { color: var(--danger); }
-
-  .add-grade-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .grade-select {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.9rem;
-    padding: 7px 12px;
-    outline: none;
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-
-  .grade-select:focus { border-color: var(--accent); }
-
-  .btn-small {
-    background: var(--surface2);
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    border-radius: 8px;
-    padding: 7px 14px;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-
-  .btn-small:hover { background: var(--accent); color: #fff; }
-
-  /* Needed grades section */
-  .needed-section h3 {
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-
-  .needed-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 10px;
-  }
-
-  .needed-card {
-    background: var(--surface2);
-    border-radius: 10px;
-    padding: 12px 14px;
-    border: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .needed-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-  }
-
-  .needed-card.g5::before { background: var(--grade5); }
-  .needed-card.g4::before { background: var(--grade4); }
-  .needed-card.g3::before { background: var(--grade3); }
-  .needed-card.g2::before { background: var(--grade2); }
-
-  .needed-card .target-grade {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.6rem;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .needed-card.g5 .target-grade { color: var(--grade5); }
-  .needed-card.g4 .target-grade { color: var(--grade4); }
-  .needed-card.g3 .target-grade { color: var(--grade3); }
-  .needed-card.g2 .target-grade { color: var(--grade2); }
-
-  .needed-card .needed-count {
-    font-size: 0.8rem;
-    color: var(--muted);
-    line-height: 1.4;
-  }
-
-  .needed-card .already {
-    font-size: 0.75rem;
-    color: var(--grade5);
-    font-weight: 700;
-    margin-top: 2px;
-  }
-
-  .needed-card .impossible {
-    color: var(--danger);
-    font-size: 0.75rem;
-    margin-top: 2px;
-  }
-
-  .empty-state {
-    text-align: center;
-    color: var(--muted);
-    font-size: 0.85rem;
-    padding: 48px 0;
-    letter-spacing: 0.05em;
-  }
-
-  .empty-state .big { font-size: 2.5rem; margin-bottom: 12px; }
-
-  /* color by avg */
-  .avg-5 { color: var(--grade5); }
-  .avg-4 { color: var(--grade4); }
-  .avg-3 { color: var(--grade3); }
-  .avg-2 { color: var(--grade2); }
-  .avg-0 { color: var(--muted); }
-
-  /* Grade chip coloring */
-  .chip-5 { border-color: var(--grade5); color: var(--grade5); }
-  .chip-4 { border-color: var(--grade4); color: var(--grade4); }
-  .chip-3 { border-color: var(--grade3); color: var(--grade3); }
-  .chip-2 { border-color: var(--grade2); color: var(--grade2); }
-  .chip-1 { border-color: var(--danger); color: var(--danger); }
-
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 18px 0;
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-  @media (max-width: 500px) {
-    .needed-grid { grid-template-columns: repeat(2, 1fr); }
-    .add-form { flex-direction: column; }
-  }
+@media (max-width: 600px) {
+  .needed-grid { grid-template-columns: repeat(2,1fr); }
+  .abs-stats { grid-template-columns: repeat(3,1fr); }
+  .topbar { padding: 10px 14px; }
+  .nav-tab { padding: 12px 14px; font-size: 0.78rem; }
+}
 </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <h1>KALKULATOR OCENA</h1>
-    <p>Prati napredak · Planiraj ocene</p>
-  </header>
 
-  <div class="add-form">
-    <div class="field">
-      <label>Naziv predmeta</label>
-      <input type="text" id="newSubjectName" placeholder="npr. Matematika" maxlength="60" />
+<!-- AUTH SCREEN -->
+<div id="authScreen">
+  <div class="auth-box">
+    <h1>ŠKOLSKI DNEVNIK</h1>
+    <p>Prati ocene, izostanke i vladanje</p>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Prijava</button>
+      <button class="auth-tab" onclick="switchTab('register')">Registracija</button>
     </div>
-    <button class="btn" onclick="addSubject()">+ Dodaj predmet</button>
-  </div>
-
-  <div class="subjects-grid" id="subjectsGrid">
-    <div class="empty-state" id="emptyState">
-      <div class="big">📚</div>
-      Još nema predmeta. Dodaj prvi!
+    <div id="loginForm">
+      <div class="field-group"><label>Email</label><input type="email" id="loginEmail" placeholder="tvoj@email.com" /></div>
+      <div class="field-group"><label>Lozinka</label><input type="password" id="loginPass" placeholder="••••••••" /></div>
+      <button class="btn-primary" onclick="login()">Prijavi se</button>
     </div>
+    <div id="registerForm" style="display:none">
+      <div class="field-group"><label>Email</label><input type="email" id="regEmail" placeholder="tvoj@email.com" /></div>
+      <div class="field-group"><label>Lozinka</label><input type="password" id="regPass" placeholder="min. 6 karaktera" /></div>
+      <button class="btn-primary" onclick="register()">Napravi nalog</button>
+    </div>
+    <div class="auth-msg" id="authMsg"></div>
   </div>
 </div>
 
-  <footer style="text-align:center; margin-top: 60px; padding-bottom: 40px; color: var(--muted); font-size: 0.75rem; letter-spacing: 0.1em; position: relative; z-index:1;">
-    Made by <span style="color: var(--accent); font-family: 'Syne', sans-serif; font-weight: 700;">Dušan Ranđelović</span>
-  </footer>
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <span class="topbar-logo">📚 ŠKOLSKI DNEVNIK</span>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="topbar-user" id="topbarUser"></span>
+      <button class="btn-logout" onclick="logout()">Odjavi se</button>
+    </div>
+  </div>
 
-<script>
-  let subjects = JSON.parse(localStorage.getItem('oceneSubjects') || '[]');
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSection('ocene')">📊 Ocene</button>
+    <button class="nav-tab" onclick="showSection('izostanci')">📅 Izostanci</button>
+    <button class="nav-tab" onclick="showSection('vladanje')">⭐ Vladanje</button>
+  </div>
 
-  function save() {
-    localStorage.setItem('oceneSubjects', JSON.stringify(subjects));
-  }
+  <div class="container">
 
-  function avgColor(avg) {
-    if (avg === 0) return 'avg-0';
-    if (avg >= 4.50) return 'avg-5';
-    if (avg >= 3.50) return 'avg-4';
-    if (avg >= 2.50) return 'avg-3';
-    if (avg >= 1.50) return 'avg-2';
-    return 'avg-0';
-  }
+    <!-- OCENE -->
+    <div class="section active" id="sec-ocene">
+      <div class="sec-title">Ocene po predmetima</div>
 
-  function calcAvg(grades) {
-    if (!grades.length) return 0;
-    return grades.reduce((a, b) => a + b, 0) / grades.length;
-  }
-
-  // Thresholds: koji minimalni prosek je potreban za zaključenu ocenu
-  const THRESHOLDS = { 5: 4.50, 4: 3.50, 3: 2.50, 2: 1.50 };
-
-  // Koliko petki (5) treba da prosek dostigne prag za zaključenu ocenu targetGrade
-  // (sum + 5*x) / (n + x) >= threshold  =>  x >= (threshold*n - sum) / (5 - threshold)
-  function howManyNeeded(grades, targetGrade) {
-    const threshold = THRESHOLDS[targetGrade];
-    const n = grades.length;
-    const sum = grades.reduce((a, b) => a + b, 0);
-    const avg = n ? sum / n : 0;
-    if (avg >= threshold) return { count: 0, impossible: false };
-    const needed = Math.ceil((threshold * n - sum) / (5 - threshold));
-    if (needed > 9999) return { count: 0, impossible: true };
-    return { count: Math.max(needed, 0), impossible: false };
-  }
-
-  function renderAll() {
-    const grid = document.getElementById('subjectsGrid');
-    const empty = document.getElementById('emptyState');
-
-    // Clear all cards (keep emptyState)
-    [...grid.querySelectorAll('.subject-card')].forEach(c => c.remove());
-
-    if (!subjects.length) {
-      empty.style.display = '';
-      return;
-    }
-    empty.style.display = 'none';
-
-    subjects.forEach((subj, idx) => {
-      const card = buildCard(subj, idx);
-      grid.appendChild(card);
-    });
-  }
-
-  function buildCard(subj, idx) {
-    const avg = calcAvg(subj.grades);
-    const avgDisplay = avg ? avg.toFixed(2) : '—';
-    const color = avgColor(avg);
-
-    // Needed section data
-    const targets = [5, 4, 3, 2];
-    const neededCards = targets.map(t => {
-      const result = howManyNeeded(subj.grades, t);
-      const already = avg >= t;
-      let cls = 'g' + t;
-      let label;
-      if (already) {
-        label = `<span class="already">✓ Već postignuto</span>`;
-      } else if (result.impossible) {
-        label = `<span class="needed-count impossible">✗ Nemoguće postići</span>`;
-      } else {
-        const word = result.count === 1 ? 'petica' : result.count < 5 ? 'petice' : 'petica';
-        label = `<span class="needed-count">još <strong>${result.count}</strong> ${word}</span>`;
-      }
-      return `
-        <div class="needed-card ${cls}">
-          <div class="target-grade">${t}</div>
-          ${label}
-        </div>`;
-    }).join('');
-
-    // Grade chips
-    const chips = subj.grades.map((g, gi) => `
-      <div class="grade-chip chip-${g}">
-        <span>${g}</span>
-        <button onclick="removeGrade(${idx}, ${gi})" title="Ukloni ocenu">×</button>
-      </div>`).join('');
-
-    const card = document.createElement('div');
-    card.className = 'subject-card';
-    card.id = 'card-' + idx;
-    card.innerHTML = `
-      <div class="card-header">
-        <span class="subject-name">${escHtml(subj.name)}</span>
-        <div class="card-actions">
-          <span class="avg-badge ${color}">${avgDisplay}</span>
-          <button class="btn danger" onclick="removeSubject(${idx})">Ukloni</button>
+      <div class="card">
+        <div class="card-head"><h2>Dodaj predmet</h2></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-field" style="flex:2">
+              <label>Naziv predmeta</label>
+              <input type="text" id="newSubjectName" placeholder="npr. Matematika" maxlength="60" />
+            </div>
+            <button class="btn-add" onclick="addSubject()">+ Dodaj</button>
+          </div>
         </div>
       </div>
-      <div class="card-body">
-        <div class="grades-section">
-          <h3>Moje ocene</h3>
-          <div class="grade-inputs" id="chips-${idx}">
-            ${chips || '<span style="color:var(--muted);font-size:0.8rem">Još nema ocena</span>'}
-          </div>
-          <div class="add-grade-row">
-            <select class="grade-select" id="gradeSelect-${idx}">
-              <option value="5">5</option>
-              <option value="4">4</option>
-              <option value="3">3</option>
-              <option value="2">2</option>
-              <option value="1">1</option>
-            </select>
-            <button class="btn-small" onclick="addGrade(${idx})">+ Dodaj ocenu</button>
+
+      <div id="subjectsList"><div class="loading">Učitavam predmete...</div></div>
+    </div>
+
+    <!-- IZOSTANCI -->
+    <div class="section" id="sec-izostanci">
+      <div class="sec-title">Izostanci</div>
+
+      <div class="abs-stats">
+        <div class="abs-stat"><div class="num total" id="absTotal">0</div><div class="lbl">Ukupno časova</div></div>
+        <div class="abs-stat"><div class="num justified" id="absJust">0</div><div class="lbl">Opravdanih</div></div>
+        <div class="abs-stat"><div class="num unjustified" id="absUnjust">0</div><div class="lbl">Neopravdanih</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Dodaj izostanke</h2></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-field">
+              <label>Datum</label>
+              <input type="date" id="absDate" />
+            </div>
+            <div class="form-field" style="max-width:100px">
+              <label>Časova</label>
+              <input type="number" id="absHours" value="1" min="1" max="10" />
+            </div>
+            <div class="form-field" style="max-width:160px">
+              <label>Tip</label>
+              <select id="absType">
+                <option value="true">Opravdan</option>
+                <option value="false">Neopravdan</option>
+              </select>
+            </div>
+            <button class="btn-add" onclick="addAbsence()">+ Dodaj</button>
           </div>
         </div>
-        <div class="divider"></div>
-        <div class="needed-section">
-          <h3>Koliko petki treba za prosek...</h3>
-          <div class="needed-grid">${neededCards}</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Lista izostanaka</h2></div>
+        <div class="card-body" id="absencesList"><div class="loading">Učitavam...</div></div>
+      </div>
+    </div>
+
+    <!-- VLADANJE -->
+    <div class="section" id="sec-vladanje">
+      <div class="sec-title">Vladanje</div>
+
+      <!-- Ocena vladanja -->
+      <div class="card">
+        <div class="card-head"><h2>Ocena vladanja</h2></div>
+        <div class="card-body">
+          <div class="beh-grade-display avg-0" id="behGradeDisplay">—</div>
+          <div class="form-row" style="justify-content:center">
+            <div class="form-field" style="max-width:120px">
+              <label>Postavi ocenu</label>
+              <select id="behGradeSelect">
+                <option value="">—</option>
+                <option value="5">5 — Primerno</option>
+                <option value="4">4 — Dobro</option>
+                <option value="3">3 — Zadovoljava</option>
+                <option value="2">2 — Ne zadovoljava</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:flex-end">
+              <button class="btn-add" onclick="saveBehGrade()">Sačuvaj</button>
+            </div>
+          </div>
         </div>
-      </div>`;
-    return card;
+      </div>
+
+      <!-- Vaspitne mere i pohvale -->
+      <div class="card">
+        <div class="card-head"><h2>Vaspitne mere i pohvale</h2></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-field">
+              <label>Tip</label>
+              <select id="measureType">
+                <optgroup label="— MERE —">
+                  <option value="mere|Pojačan vaspitni rad">Pojačan vaspitni rad</option>
+                  <option value="mere|Opomena odeljenjskog starešine">Opomena odeljenjskog starešine</option>
+                  <option value="mere|Ukor odeljenjskog starešine">Ukor odeljenjskog starešine</option>
+                  <option value="mere|Ukor odeljenjskog veća">Ukor odeljenjskog veća</option>
+                  <option value="mere|Ukor nastavničkog veća">Ukor nastavničkog veća</option>
+                  <option value="mere|Ukor direktora">Ukor direktora</option>
+                </optgroup>
+                <optgroup label="— POHVALE —">
+                  <option value="pohvale|Pohvala predmetnog nastavnika">Pohvala predmetnog nastavnika</option>
+                  <option value="pohvale|Pohvala odeljenjskog starešine">Pohvala odeljenjskog starešine</option>
+                  <option value="pohvale|Pohvala psihologa-pedagoga">Pohvala psihologa-pedagoga</option>
+                  <option value="pohvale|Pohvala odeljenjskog veća">Pohvala odeljenjskog veća</option>
+                  <option value="pohvale|Pohvala nastavničkog veća">Pohvala nastavničkog veća</option>
+                </optgroup>
+              </select>
+            </div>
+            <div style="display:flex;align-items:flex-end">
+              <button class="btn-add" onclick="addMeasure()">+ Dodaj</button>
+            </div>
+          </div>
+          <ul class="measures-list" id="measuresList" style="margin-top:16px">
+            <div class="loading">Učitavam...</div>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Upisi -->
+      <div class="card">
+        <div class="card-head"><h2>Upisi u vladanje</h2></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-field">
+              <label>Predmet</label>
+              <select id="noteSubject"><option value="">— Izaberi predmet —</option></select>
+            </div>
+            <div class="form-field">
+              <label>Datum</label>
+              <input type="date" id="noteDate" />
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:10px">
+            <div class="form-field" style="flex:1">
+              <label>Razlog upisa</label>
+              <textarea id="noteText" placeholder="Upiši razlog..."></textarea>
+            </div>
+          </div>
+          <div style="margin-top:10px">
+            <button class="btn-add" onclick="addNote()">+ Dodaj upis</button>
+          </div>
+          <ul class="notes-list" id="notesList" style="margin-top:16px">
+            <div class="loading">Učitavam...</div>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+  <footer>Made by <span>Dušan Ranđelović</span></footer>
+</div><!-- /app -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://uygjcopyohzslvrzvrmv.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_obcXHm5fjOYYpjVZt44u2w_aBT01gEC';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let subjects = [];
+
+// ===== AUTH =====
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0) === (tab==='login')));
+  document.getElementById('loginForm').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('registerForm').style.display = tab === 'register' ? '' : 'none';
+  document.getElementById('authMsg').textContent = '';
+}
+
+function setAuthMsg(msg, type) {
+  const el = document.getElementById('authMsg');
+  el.textContent = msg;
+  el.className = 'auth-msg ' + type;
+}
+
+async function login() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  if (!email || !pass) return setAuthMsg('Unesite email i lozinku.', 'error');
+  setAuthMsg('Prijavljujem...', '');
+  const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (error) return setAuthMsg(error.message, 'error');
+}
+
+async function register() {
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPass').value;
+  if (!email || !pass) return setAuthMsg('Unesite email i lozinku.', 'error');
+  if (pass.length < 6) return setAuthMsg('Lozinka mora imati min. 6 karaktera.', 'error');
+  setAuthMsg('Registrujem...', '');
+  const { error } = await sb.auth.signUp({ email, password: pass });
+  if (error) return setAuthMsg(error.message, 'error');
+  setAuthMsg('Nalog napravljen! Možeš se prijaviti.', 'success');
+}
+
+async function logout() {
+  await sb.auth.signOut();
+}
+
+sb.auth.onAuthStateChange((event, session) => {
+  if (session?.user) {
+    currentUser = session.user;
+    document.getElementById('authScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('topbarUser').textContent = currentUser.email;
+    loadAll();
+  } else {
+    currentUser = null;
+    document.getElementById('authScreen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
   }
+});
 
-  function escHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// ===== NAV =====
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===== LOAD ALL =====
+async function loadAll() {
+  await loadSubjects();
+  await loadAbsences();
+  await loadBehavior();
+  await loadMeasures();
+  await loadNotes();
+}
+
+// ===== SUBJECTS & GRADES =====
+async function loadSubjects() {
+  const { data: subs } = await sb.from('subjects').select('*, grades(*)').eq('user_id', currentUser.id).order('created_at');
+  subjects = subs || [];
+  renderSubjects();
+  populateNoteSubjects();
+}
+
+function renderSubjects() {
+  const el = document.getElementById('subjectsList');
+  if (!subjects.length) { el.innerHTML = '<div class="empty"><div class="big">📚</div>Nema predmeta. Dodaj prvi!</div>'; return; }
+  el.innerHTML = subjects.map((s, idx) => renderSubjectCard(s, idx)).join('');
+}
+
+const THRESHOLDS = { 5: 4.50, 4: 3.50, 3: 2.50, 2: 1.50 };
+
+function calcAvg(grades) {
+  if (!grades || !grades.length) return 0;
+  return grades.reduce((a, b) => a + b.value, 0) / grades.length;
+}
+
+function avgColorClass(avg) {
+  if (!avg) return 'avg-0';
+  if (avg >= 4.5) return 'avg-5';
+  if (avg >= 3.5) return 'avg-4';
+  if (avg >= 2.5) return 'avg-3';
+  if (avg >= 1.5) return 'avg-2';
+  return 'avg-0';
+}
+
+function howMany(grades, targetGrade) {
+  const threshold = THRESHOLDS[targetGrade];
+  const vals = (grades || []).map(g => g.value);
+  const n = vals.length, sum = vals.reduce((a,b)=>a+b,0);
+  const avg = n ? sum/n : 0;
+  if (avg >= threshold) return { count: 0, impossible: false };
+  const needed = Math.ceil((threshold * n - sum) / (5 - threshold));
+  if (needed > 9999) return { count: 0, impossible: true };
+  return { count: Math.max(needed, 0), impossible: false };
+}
+
+function renderSubjectCard(s, idx) {
+  const avg = calcAvg(s.grades);
+  const avgDisplay = avg ? avg.toFixed(2) : '—';
+  const color = avgColorClass(avg);
+  const chips = (s.grades || []).map(g =>
+    `<span class="chip chip-${g.value}"><span>${g.value}</span><button class="btn-del" onclick="removeGrade('${g.id}','${s.id}')">×</button></span>`
+  ).join('');
+
+  const neededCards = [5,4,3,2].map(t => {
+    const r = howMany(s.grades, t);
+    const already = avg >= THRESHOLDS[t];
+    let label = already
+      ? `<div class="nc already">✓ Postignuto</div>`
+      : r.impossible
+        ? `<div class="nc impossible">✗ Nemoguće</div>`
+        : `<div class="nc">još <strong>${r.count}</strong> ${r.count===1?'petica':r.count<5?'petice':'petica'}</div>`;
+    return `<div class="needed-card g${t}"><div class="tg">${t}</div>${label}</div>`;
+  }).join('');
+
+  return `<div class="subject-card">
+    <div class="subject-head">
+      <span class="subject-name">${esc(s.name)}</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="avg-badge ${color}">${avgDisplay}</span>
+        <button class="btn-del" style="font-size:1.1rem" onclick="removeSubject('${s.id}')">🗑</button>
+      </div>
+    </div>
+    <div class="subject-body">
+      <div style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Ocene</div>
+      <div class="chips">${chips || '<span style="color:var(--muted);font-size:0.8rem">Nema ocena</span>'}</div>
+      <div class="form-row" style="margin-top:12px">
+        <select class="form-field" style="max-width:80px;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:Space Mono,monospace" id="gs-${s.id}">
+          <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
+        </select>
+        <button class="btn-add" onclick="addGrade('${s.id}')">+ Ocena</button>
+      </div>
+      <div class="divider"></div>
+      <div style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Potrebno za zaključenu...</div>
+      <div class="needed-grid">${neededCards}</div>
+    </div>
+  </div>`;
+}
+
+async function addSubject() {
+  const input = document.getElementById('newSubjectName');
+  const name = input.value.trim();
+  if (!name) return input.focus();
+  const { error } = await sb.from('subjects').insert({ name, user_id: currentUser.id });
+  if (!error) { input.value = ''; await loadSubjects(); }
+}
+
+async function removeSubject(id) {
+  if (!confirm('Obrisati predmet i sve ocene?')) return;
+  await sb.from('subjects').delete().eq('id', id);
+  await loadSubjects();
+}
+
+async function addGrade(subjectId) {
+  const val = parseInt(document.getElementById('gs-' + subjectId).value);
+  const { error } = await sb.from('grades').insert({ subject_id: subjectId, user_id: currentUser.id, value: val });
+  if (!error) await loadSubjects();
+}
+
+async function removeGrade(gradeId, subjectId) {
+  await sb.from('grades').delete().eq('id', gradeId);
+  await loadSubjects();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('newSubjectName').addEventListener('keydown', e => { if (e.key === 'Enter') addSubject(); });
+  // Set today's date as default
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('absDate').value = today;
+  document.getElementById('noteDate').value = today;
+});
+
+// ===== ABSENCES =====
+let absences = [];
+
+async function loadAbsences() {
+  const { data } = await sb.from('absences').select('*').eq('user_id', currentUser.id).order('date', { ascending: false });
+  absences = data || [];
+  renderAbsences();
+}
+
+function renderAbsences() {
+  const total = absences.reduce((a,b)=>a+b.hours,0);
+  const just = absences.filter(a=>a.justified).reduce((a,b)=>a+b.hours,0);
+  const unjust = total - just;
+  document.getElementById('absTotal').textContent = total;
+  document.getElementById('absJust').textContent = just;
+  document.getElementById('absUnjust').textContent = unjust;
+
+  const el = document.getElementById('absencesList');
+  if (!absences.length) { el.innerHTML = '<div class="empty">Nema izostanaka 🎉</div>'; return; }
+  el.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>Datum</th><th>Časova</th><th>Tip</th><th></th></tr></thead>
+    <tbody>${absences.map(a => `
+      <tr>
+        <td>${a.date}</td>
+        <td>${a.hours}</td>
+        <td><span class="badge ${a.justified?'opr':'neopr'}">${a.justified?'Opravdan':'Neopravdan'}</span></td>
+        <td><button class="btn-del" onclick="removeAbsence('${a.id}')">×</button></td>
+      </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+}
+
+async function addAbsence() {
+  const date = document.getElementById('absDate').value;
+  const hours = parseInt(document.getElementById('absHours').value) || 1;
+  const justified = document.getElementById('absType').value === 'true';
+  if (!date) return;
+  await sb.from('absences').insert({ user_id: currentUser.id, date, hours, justified });
+  await loadAbsences();
+}
+
+async function removeAbsence(id) {
+  await sb.from('absences').delete().eq('id', id);
+  await loadAbsences();
+}
+
+// ===== BEHAVIOR =====
+async function loadBehavior() {
+  const { data } = await sb.from('behavior').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(1);
+  const grade = data?.[0]?.grade || null;
+  const el = document.getElementById('behGradeDisplay');
+  if (grade) {
+    el.textContent = grade;
+    el.className = 'beh-grade-display ' + avgColorClass(grade + (grade >= 4 ? 0.5 : 0));
+    document.getElementById('behGradeSelect').value = grade;
+  } else {
+    el.textContent = '—'; el.className = 'beh-grade-display avg-0';
   }
+}
 
-  function addSubject() {
-    const input = document.getElementById('newSubjectName');
-    const name = input.value.trim();
-    if (!name) { input.focus(); return; }
-    subjects.push({ name, grades: [] });
-    save();
-    input.value = '';
-    renderAll();
-  }
+async function saveBehGrade() {
+  const val = document.getElementById('behGradeSelect').value;
+  if (!val) return;
+  // Delete old, insert new
+  await sb.from('behavior').delete().eq('user_id', currentUser.id);
+  await sb.from('behavior').insert({ user_id: currentUser.id, grade: parseInt(val) });
+  await loadBehavior();
+}
 
-  function removeSubject(idx) {
-    if (!confirm(`Ukloniti predmet "${subjects[idx].name}"?`)) return;
-    subjects.splice(idx, 1);
-    save();
-    renderAll();
-  }
+// ===== MEASURES =====
+async function loadMeasures() {
+  const { data } = await sb.from('measures').select('*').eq('user_id', currentUser.id).order('created_at');
+  renderMeasures(data || []);
+}
 
-  function addGrade(idx) {
-    const sel = document.getElementById('gradeSelect-' + idx);
-    subjects[idx].grades.push(parseInt(sel.value));
-    save();
-    renderAll();
-  }
+function renderMeasures(list) {
+  const el = document.getElementById('measuresList');
+  if (!list.length) { el.innerHTML = '<div class="empty">Nema mera ni pohvala</div>'; return; }
+  el.innerHTML = list.map(m => `
+    <li>
+      <div>
+        <span class="measure-badge ${m.type}">${m.type === 'mere' ? 'Mera' : 'Pohvala'}</span>
+        <span style="margin-left:8px">${esc(m.name)}</span>
+      </div>
+      <button class="btn-del" onclick="removeMeasure('${m.id}')">×</button>
+    </li>`).join('');
+}
 
-  function removeGrade(idx, gi) {
-    subjects[idx].grades.splice(gi, 1);
-    save();
-    renderAll();
-  }
+async function addMeasure() {
+  const raw = document.getElementById('measureType').value;
+  const [type, name] = raw.split('|');
+  await sb.from('measures').insert({ user_id: currentUser.id, type, name });
+  await loadMeasures();
+}
 
-  // Enter key on subject input
-  document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('newSubjectName').addEventListener('keydown', e => {
-      if (e.key === 'Enter') addSubject();
-    });
-    renderAll();
-  });
+async function removeMeasure(id) {
+  await sb.from('measures').delete().eq('id', id);
+  await loadMeasures();
+}
 
-  renderAll();
+// ===== NOTES =====
+async function loadNotes() {
+  const { data } = await sb.from('behavior_notes').select('*, subjects(name)').eq('user_id', currentUser.id).order('date', { ascending: false });
+  renderNotes(data || []);
+}
+
+function renderNotes(list) {
+  const el = document.getElementById('notesList');
+  if (!list.length) { el.innerHTML = '<div class="empty">Nema upisa</div>'; return; }
+  el.innerHTML = list.map(n => `
+    <li>
+      <div class="note-meta">${n.date}${n.subjects ? ' · ' + esc(n.subjects.name) : ''} <button class="btn-del" onclick="removeNote('${n.id}')">×</button></div>
+      <div class="note-text">${esc(n.note)}</div>
+    </li>`).join('');
+}
+
+function populateNoteSubjects() {
+  const sel = document.getElementById('noteSubject');
+  sel.innerHTML = '<option value="">— Izaberi predmet —</option>' +
+    subjects.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+}
+
+async function addNote() {
+  const subject_id = document.getElementById('noteSubject').value || null;
+  const date = document.getElementById('noteDate').value;
+  const note = document.getElementById('noteText').value.trim();
+  if (!date || !note) return;
+  await sb.from('behavior_notes').insert({ user_id: currentUser.id, subject_id, date, note });
+  document.getElementById('noteText').value = '';
+  await loadNotes();
+}
+
+async function removeNote(id) {
+  await sb.from('behavior_notes').delete().eq('id', id);
+  await loadNotes();
+}
+
+// ===== UTILS =====
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 </script>
 </body>
 </html>
