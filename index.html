@@ -5,416 +5,406 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Školski Dnevnik</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-J6KHR971ST"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-J6KHR971ST');
-</script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-J6KHR971ST');</script>
 <style>
-:root {
-  --bg: #0e0e12;
-  --surface: #16161e;
-  --surface2: #1e1e2a;
-  --border: #2a2a3a;
-  --accent: #7c6af7;
-  --accent2: #f7a26a;
-  --accent3: #6af7b8;
-  --text: #e8e8f0;
-  --muted: #6a6a8a;
-  --danger: #f76a6a;
-  --grade5: #6af7b8;
-  --grade4: #7c6af7;
-  --grade3: #f7a26a;
-  --grade2: #f76a6a;
+:root{
+  --bg:#09090f;--surface:#111118;--surface2:#181824;--surface3:#20202e;
+  --border:#26263a;--border2:#32324a;
+  --accent:#7c6af7;--accent2:#f7a26a;--accent3:#6af7b8;--accent4:#f76ab0;
+  --text:#e8e8f4;--muted:#5a5a7a;
+  --danger:#f76a6a;--warn:#f7c96a;
+  --g5:#6af7b8;--g4:#7c6af7;--g3:#f7a26a;--g2:#f76a6a;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Space Mono', monospace;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 40px 40px;
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: 0;
-}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Space Mono',monospace;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 15% 0%,rgba(124,106,247,.09) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 85% 100%,rgba(106,247,184,.06) 0%,transparent 60%);pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(38,38,58,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(38,38,58,.35) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
 
-/* ===== AUTH ===== */
-#authScreen {
-  position: fixed; inset: 0; z-index: 100;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--bg);
-}
-.auth-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 40px;
-  width: 100%; max-width: 400px;
-  position: relative; z-index: 1;
-}
-.auth-box h1 {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: 2rem;
-  background: linear-gradient(135deg, var(--accent), var(--accent3));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  margin-bottom: 6px;
-}
-.auth-box p { color: var(--muted); font-size: 0.8rem; margin-bottom: 28px; letter-spacing: 0.05em; }
-.auth-tabs { display: flex; gap: 0; margin-bottom: 24px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-.auth-tab {
-  flex: 1; padding: 10px; background: transparent; border: none; color: var(--muted);
-  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
-}
-.auth-tab.active { background: var(--accent); color: #fff; }
-.field-group { margin-bottom: 16px; }
-.field-group label { display: block; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-.field-group input {
-  width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
-  color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.9rem; padding: 10px 14px; outline: none; transition: border-color 0.2s;
-}
-.field-group input:focus { border-color: var(--accent); }
-.btn-primary {
-  width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 8px;
-  padding: 12px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
-  cursor: pointer; transition: opacity 0.15s; margin-top: 8px;
-}
-.btn-primary:hover { opacity: 0.85; }
-.auth-msg { margin-top: 12px; font-size: 0.8rem; text-align: center; min-height: 20px; }
-.auth-msg.error { color: var(--danger); }
-.auth-msg.success { color: var(--accent3); }
+/* AUTH */
+#authScreen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px;}
+.auth-box{background:var(--surface);border:1px solid var(--border2);border-radius:22px;padding:40px;width:100%;max-width:410px;position:relative;z-index:1;box-shadow:0 0 80px rgba(124,106,247,.15);}
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:5px;}
+.auth-icon{width:42px;height:42px;background:linear-gradient(135deg,var(--accent),var(--accent3));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.auth-logo h1{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.auth-sub{color:var(--muted);font-size:.74rem;margin-bottom:28px;padding-left:54px;letter-spacing:.04em;}
+.auth-tabs{display:flex;margin-bottom:22px;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.auth-tab{flex:1;padding:10px;background:transparent;border:none;color:var(--muted);font-family:'Syne',sans-serif;font-weight:700;font-size:.83rem;cursor:pointer;transition:all .2s;}
+.auth-tab.active{background:var(--accent);color:#fff;}
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.fg input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Space Mono',monospace;font-size:.88rem;padding:10px 13px;outline:none;transition:border-color .2s;}
+.fg input:focus{border-color:var(--accent);}
+.btn-primary{width:100%;background:linear-gradient(135deg,var(--accent),#5d52d0);color:#fff;border:none;border-radius:8px;padding:12px;font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:6px;}
+.btn-primary:hover{opacity:.87;transform:translateY(-1px);}
+.auth-msg{margin-top:11px;font-size:.76rem;text-align:center;min-height:18px;}
+.auth-msg.err{color:var(--danger);}.auth-msg.ok{color:var(--accent3);}
 
-/* ===== APP ===== */
-#app { display: none; position: relative; z-index: 1; }
+/* APP */
+#app{display:none;position:relative;z-index:1;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(9,9,15,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 22px;height:56px;gap:10px;}
+.tl{display:flex;align-items:center;gap:9px;}
+.t-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),var(--accent3));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
+.t-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.t-user{color:var(--muted);font-size:.7rem;}
+.btn-logout{background:transparent;border:1px solid var(--border2);color:var(--muted);border-radius:6px;padding:5px 11px;font-family:'Space Mono',monospace;font-size:.7rem;cursor:pointer;transition:all .15s;}
+.btn-logout:hover{border-color:var(--danger);color:var(--danger);}
+.nav-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto;scrollbar-width:none;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{padding:12px 16px;background:transparent;border:none;color:var(--muted);font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;transition:all .2s;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px;letter-spacing:.02em;}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.nav-tab:hover:not(.active){color:var(--text);}
+.container{max-width:940px;margin:0 auto;padding:26px 18px 80px;}
+.section{display:none;animation:fu .22s ease;}
+.section.active{display:block;}
+@keyframes fu{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:translateY(0);}}
+.sec-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:20px;display:flex;align-items:center;gap:9px;}
 
-/* Topbar */
-.topbar {
-  position: sticky; top: 0; z-index: 50;
-  background: rgba(14,14,18,0.92); backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 24px; gap: 12px;
-}
-.topbar-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; background: linear-gradient(135deg, var(--accent), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.topbar-user { color: var(--muted); font-size: 0.75rem; }
-.btn-logout { background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 6px 12px; font-family: 'Space Mono', monospace; font-size: 0.75rem; cursor: pointer; transition: all 0.15s; }
-.btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+/* HERO */
+.hero{background:linear-gradient(135deg,rgba(124,106,247,.14) 0%,rgba(106,247,184,.07) 100%);border:1px solid rgba(124,106,247,.22);border-radius:18px;padding:26px 28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-50px;right:-50px;width:220px;height:220px;background:radial-gradient(circle,rgba(124,106,247,.18) 0%,transparent 70%);pointer-events:none;}
+.hero::after{content:'';position:absolute;bottom:-30px;left:30%;width:180px;height:180px;background:radial-gradient(circle,rgba(106,247,184,.1) 0%,transparent 70%);pointer-events:none;}
+.hero-left{position:relative;z-index:1;}
+.hero-greet{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;margin-bottom:4px;}
+.hero-date{color:var(--muted);font-size:.73rem;letter-spacing:.04em;}
+.hero-stats{display:flex;gap:18px;flex-wrap:wrap;position:relative;z-index:1;}
+.hstat{text-align:center;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:10px;padding:10px 16px;}
+.hstat .hv{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;line-height:1;}
+.hstat .hl{font-size:.62rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:3px;}
 
-/* Nav tabs */
-.nav-tabs {
-  display: flex; gap: 0; border-bottom: 1px solid var(--border);
-  background: var(--surface); overflow-x: auto;
-}
-.nav-tab {
-  padding: 14px 22px; background: transparent; border: none; color: var(--muted);
-  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer;
-  transition: all 0.2s; white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -1px;
-}
-.nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-.nav-tab:hover:not(.active) { color: var(--text); }
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:15px;margin-bottom:16px;overflow:hidden;}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:13px 17px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:7px;}
+.ch h2{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;display:flex;align-items:center;gap:6px;}
+.cb{padding:17px;}
+.form-row{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end;}
+.ff{display:flex;flex-direction:column;gap:5px;flex:1;min-width:95px;}
+.ff label{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+.ff input,.ff select,.ff textarea{background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Space Mono',monospace;font-size:.78rem;padding:7px 10px;outline:none;transition:border-color .2s;}
+.ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--accent);}
+.ff textarea{resize:vertical;min-height:58px;}
+.btn-add{background:var(--surface2);color:var(--accent);border:1px solid var(--accent);border-radius:7px;padding:7px 13px;font-family:'Syne',sans-serif;font-weight:700;font-size:.74rem;cursor:pointer;transition:all .15s;white-space:nowrap;align-self:flex-end;}
+.btn-add:hover{background:var(--accent);color:#fff;}
+.btn-sm{background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;cursor:pointer;transition:all .15s;}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent);}
+.btn-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:2px 5px;transition:color .15s;line-height:1;}
+.btn-del:hover{color:var(--danger);}
 
-/* Container */
-.container { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
+.chip{display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 8px 3px 11px;font-size:.78rem;}
+.c5{border-color:var(--g5);color:var(--g5);}.c4{border-color:var(--g4);color:var(--g4);}
+.c3{border-color:var(--g3);color:var(--g3);}.c2{border-color:var(--g2);color:var(--g2);}
+.c1{border-color:var(--danger);color:var(--danger);}
 
-/* Sections */
-.section { display: none; }
-.section.active { display: block; }
+/* SUBJECT CARD */
+.subj-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;margin-bottom:13px;overflow:hidden;animation:fu .25s ease;}
+.shead{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:7px;}
+.sname{font-family:'Syne',sans-serif;font-weight:700;font-size:.92rem;}
+.sbody{padding:13px 15px;}
+.avg-b{font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;min-width:42px;text-align:center;}
+.a5{color:var(--g5);}.a4{color:var(--g4);}.a3{color:var(--g3);}.a2{color:var(--g2);}.a0{color:var(--muted);}
 
-/* Cards */
-.card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 16px; margin-bottom: 20px; overflow: hidden;
-}
-.card-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
-}
-.card-head h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; }
-.card-body { padding: 20px; }
+/* NEEDED */
+.ng{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px;}
+.nc-card{background:var(--surface2);border-radius:9px;padding:8px 10px;border:1px solid var(--border);position:relative;overflow:hidden;}
+.nc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.nc-card.g5::before{background:var(--g5);}.nc-card.g4::before{background:var(--g4);}
+.nc-card.g3::before{background:var(--g3);}.nc-card.g2::before{background:var(--g2);}
+.nc-card .tg{font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;line-height:1;margin-bottom:2px;}
+.nc-card.g5 .tg{color:var(--g5);}.nc-card.g4 .tg{color:var(--g4);}
+.nc-card.g3 .tg{color:var(--g3);}.nc-card.g2 .tg{color:var(--g2);}
+.nc{font-size:.66rem;color:var(--muted);line-height:1.3;}
+.nc.ok{color:var(--g5);font-weight:700;}.nc.imp{color:var(--danger);}
 
-/* Forms */
-.form-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
-.form-field { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 120px; }
-.form-field label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-.form-field input, .form-field select, .form-field textarea {
-  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
-  color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.85rem;
-  padding: 9px 12px; outline: none; transition: border-color 0.2s;
-}
-.form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--accent); }
-.form-field textarea { resize: vertical; min-height: 70px; }
-.btn-add {
-  background: var(--surface2); color: var(--accent); border: 1px solid var(--accent);
-  border-radius: 8px; padding: 9px 16px; font-family: 'Syne', sans-serif; font-weight: 700;
-  font-size: 0.8rem; cursor: pointer; transition: background 0.15s; white-space: nowrap;
-}
-.btn-add:hover { background: var(--accent); color: #fff; }
-.btn-del {
-  background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem;
-  padding: 2px 6px; transition: color 0.15s; line-height: 1;
-}
-.btn-del:hover { color: var(--danger); }
+/* FINALS */
+.finals-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px;}
+.fbox{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px;}
+.fbox .fl{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.fbox .fv{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:6px;}
+.fbox select{background:var(--surface);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'Space Mono',monospace;font-size:.74rem;padding:4px 7px;outline:none;width:100%;margin-bottom:5px;}
+.fbox button{background:var(--surface);border:1px solid var(--accent);color:var(--accent);border-radius:5px;padding:4px 9px;font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;cursor:pointer;transition:all .15s;width:100%;}
+.fbox button:hover{background:var(--accent);color:#fff;}
 
-/* Chips */
-.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.chip {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 100px; padding: 5px 10px 5px 14px; font-size: 0.85rem;
-}
-.chip-5 { border-color: var(--grade5); color: var(--grade5); }
-.chip-4 { border-color: var(--grade4); color: var(--grade4); }
-.chip-3 { border-color: var(--grade3); color: var(--grade3); }
-.chip-2 { border-color: var(--grade2); color: var(--grade2); }
-.chip-1 { border-color: var(--danger); color: var(--danger); }
+/* PROSEK */
+.gp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.gp-box{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:16px;text-align:center;position:relative;overflow:hidden;}
+.gp-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent3));}
+.gp-lbl{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.gp-val{font-family:'Syne',sans-serif;font-weight:800;font-size:2.2rem;}
 
-/* Subject cards */
-.subject-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 14px; margin-bottom: 16px; overflow: hidden;
-  animation: slideIn 0.3s ease;
-}
-@keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-.subject-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 18px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 8px;
-}
-.subject-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; }
-.avg-badge { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; min-width: 44px; text-align: center; }
-.avg-5 { color: var(--grade5); } .avg-4 { color: var(--grade4); } .avg-3 { color: var(--grade3); } .avg-2 { color: var(--grade2); } .avg-0 { color: var(--muted); }
-.subject-body { padding: 16px 18px; }
+/* ABSENCES */
+.abs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:16px;}
+.abs-box{background:var(--surface);border-radius:11px;padding:13px;border:1px solid var(--border);text-align:center;position:relative;overflow:hidden;}
+.abs-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.abs-box.tot::before{background:var(--accent);}
+.abs-box.jus::before{background:var(--accent3);}
+.abs-box.unj::before{background:var(--danger);}
+.abs-num{font-family:'Syne',sans-serif;font-weight:800;font-size:1.7rem;}
+.abs-lbl{font-size:.63rem;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-top:3px;}
+.ca{color:var(--accent);}.cg{color:var(--accent3);}.cr{color:var(--danger);}
 
-/* Needed grid */
-.needed-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 16px; }
-.needed-card {
-  background: var(--surface2); border-radius: 10px; padding: 10px 12px;
-  border: 1px solid var(--border); position: relative; overflow: hidden;
-}
-.needed-card::before { content: ''; position: absolute; top:0; left:0; right:0; height:3px; }
-.needed-card.g5::before { background: var(--grade5); }
-.needed-card.g4::before { background: var(--grade4); }
-.needed-card.g3::before { background: var(--grade3); }
-.needed-card.g2::before { background: var(--grade2); }
-.needed-card .tg { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; line-height: 1; margin-bottom: 3px; }
-.needed-card.g5 .tg { color: var(--grade5); } .needed-card.g4 .tg { color: var(--grade4); }
-.needed-card.g3 .tg { color: var(--grade3); } .needed-card.g2 .tg { color: var(--grade2); }
-.needed-card .nc { font-size: 0.72rem; color: var(--muted); line-height: 1.3; }
-.nc.already { color: var(--grade5); font-weight: 700; }
-.nc.impossible { color: var(--danger); }
+/* TABLE */
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.76rem;}
+th{text-align:left;padding:7px 9px;color:var(--muted);font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;border-bottom:1px solid var(--border);}
+td{padding:8px 9px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.018);}
+.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.66rem;font-weight:700;}
+.b-opr{background:rgba(106,247,184,.1);color:var(--accent3);}
+.b-neopr{background:rgba(247,106,106,.1);color:var(--danger);}
+.b-mere{background:rgba(247,106,106,.1);color:var(--danger);}
+.b-pohvale{background:rgba(106,247,184,.1);color:var(--accent3);}
+.b-nastavni{background:rgba(106,247,184,.1);color:var(--accent3);}
+.b-neradni{background:rgba(247,106,106,.1);color:var(--danger);}
+.b-nenastavni{background:rgba(247,162,106,.1);color:var(--accent2);}
 
-/* Absences */
-.abs-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
-.abs-stat { background: var(--surface2); border-radius: 10px; padding: 14px; border: 1px solid var(--border); text-align: center; }
-.abs-stat .num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.8rem; }
-.abs-stat .lbl { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
-.abs-stat .num.justified { color: var(--accent3); }
-.abs-stat .num.unjustified { color: var(--danger); }
-.abs-stat .num.total { color: var(--accent); }
+/* BEHAVIOR */
+.bgl{list-style:none;}
+.bgl li{display:flex;align-items:flex-start;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);gap:9px;}
+.bgl li:last-child{border-bottom:none;}
+.bgn{font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;min-width:24px;}
+.bg-meta{font-size:.68rem;color:var(--muted);margin-top:2px;}
+.bg-note{font-size:.78rem;margin-top:3px;}
+.bfrow{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.nl{list-style:none;}
+.nl li{padding:9px 0;border-bottom:1px solid var(--border);}
+.nl li:last-child{border-bottom:none;}
+.nmeta{font-size:.66rem;color:var(--muted);margin-bottom:3px;}
+.ntext{font-size:.8rem;}
 
-/* Table */
-.table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-th { text-align: left; padding: 8px 12px; color: var(--muted); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
-td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
-tr:last-child td { border-bottom: none; }
-.badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.72rem; font-weight: 700; }
-.badge.opr { background: rgba(106,247,184,0.15); color: var(--grade5); }
-.badge.neopr { background: rgba(247,106,106,0.15); color: var(--danger); }
+/* SCHEDULE */
+.sg{display:grid;gap:1px;background:var(--border);border-radius:11px;overflow:hidden;font-size:.72rem;}
+.sg-head{background:var(--surface2);padding:7px 5px;text-align:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;color:var(--muted);}
+.sg-per{background:var(--surface2);padding:7px 5px;text-align:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.66rem;color:var(--muted);}
+.sg-cell{background:var(--surface);padding:5px;min-height:42px;cursor:pointer;transition:background .13s;display:flex;align-items:center;justify-content:center;text-align:center;}
+.sg-cell:hover{background:var(--surface3);}
+.sg-cell.filled{background:rgba(124,106,247,.09);}
+.sg-cell .cn{font-size:.68rem;color:var(--accent);font-weight:700;line-height:1.3;}
 
-/* Behavior */
-.beh-grade-display { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 3rem; text-align: center; padding: 20px 0; }
-.measures-list { list-style: none; }
-.measures-list li {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; gap: 10px;
-}
-.measures-list li:last-child { border-bottom: none; }
-.measure-badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.72rem; font-weight: 700; }
-.measure-badge.mere { background: rgba(247,106,106,0.15); color: var(--danger); }
-.measure-badge.pohvale { background: rgba(106,247,184,0.15); color: var(--grade5); }
-.notes-list { list-style: none; }
-.notes-list li { padding: 12px 0; border-bottom: 1px solid var(--border); }
-.notes-list li:last-child { border-bottom: none; }
-.note-meta { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; }
-.note-text { font-size: 0.88rem; }
+/* WEEK */
+.wnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:9px;}
+.wlbl{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;}
+.wdays{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-bottom:14px;}
+.wday{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 6px;text-align:center;cursor:pointer;transition:all .18s;position:relative;}
+.wday:hover{border-color:var(--accent);transform:translateY(-2px);}
+.wday.sel{border-color:var(--accent);background:rgba(124,106,247,.09);}
+.wday.neradni{border-color:var(--danger);background:rgba(247,106,106,.05);}
+.wday.nenastavni{border-color:var(--accent2);background:rgba(247,162,106,.05);}
+.wday .wdn{font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;color:var(--muted);margin-bottom:3px;}
+.wday .wdd{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;}
+.wday .wdb{font-size:.58rem;margin-top:3px;padding:1px 5px;border-radius:100px;}
+.wday .wdot{width:5px;height:5px;border-radius:50%;background:var(--accent4);margin:3px auto 0;}
+.wtbar{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:9px 13px;margin-bottom:12px;gap:10px;flex-wrap:wrap;}
+.wtlbl{font-size:.7rem;color:var(--muted);}
 
-/* Empty */
-.empty { text-align: center; color: var(--muted); font-size: 0.82rem; padding: 32px 0; }
-.empty .big { font-size: 2rem; margin-bottom: 8px; }
+/* DAY DETAIL */
+.ddetail{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:16px;animation:fu .18s ease;}
+.dhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:7px;}
+.dtitle{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;}
+.lesson{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:7px;display:flex;align-items:flex-start;justify-content:space-between;gap:9px;}
+.lper{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;color:var(--accent);min-width:22px;}
+.linfo{flex:1;}
+.ltitle{font-size:.82rem;font-weight:700;margin-bottom:2px;}
+.lmeta{font-size:.68rem;color:var(--muted);}
+.ltypes{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;}
+.ltype{background:rgba(124,106,247,.1);color:var(--accent);border-radius:100px;padding:1px 7px;font-size:.63rem;}
+.lcal{background:rgba(247,106,176,.1);color:var(--accent4);border-radius:100px;padding:1px 7px;font-size:.63rem;margin-top:3px;}
 
-/* Loading */
-.loading { text-align: center; color: var(--muted); padding: 40px; font-size: 0.85rem; }
+/* CALENDAR */
+.cev{display:flex;align-items:center;gap:9px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 13px;margin-bottom:5px;animation:fu .18s ease;}
+.ced{font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;color:var(--accent);min-width:34px;text-align:center;}
+.cei{flex:1;}
+.cet{font-size:.8rem;font-weight:700;}
+.ces{font-size:.67rem;color:var(--muted);margin-top:2px;}
+.ct{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:100px;}
+.ct-usmeno{background:rgba(124,106,247,.13);color:var(--accent);}
+.ct-kontrolni,.ct-pismeni{background:rgba(247,106,106,.13);color:var(--danger);}
+.ct-petnaestominutna{background:rgba(247,162,106,.13);color:var(--accent2);}
+.ct-nema_karta{background:rgba(247,201,106,.13);color:var(--warn);}
+.ct-prakticni{background:rgba(106,247,184,.13);color:var(--accent3);}
+.ct-ostalo{background:rgba(90,90,122,.13);color:var(--muted);}
 
-/* Divider */
-.divider { height: 1px; background: var(--border); margin: 16px 0; }
+/* MULTISELECT */
+.msel{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:7px;max-height:150px;overflow-y:auto;}
+.mopt{display:flex;align-items:center;gap:7px;padding:4px 5px;border-radius:5px;cursor:pointer;font-size:.76rem;transition:background .1s;}
+.mopt:hover{background:var(--surface3);}
+.mopt input{accent-color:var(--accent);}
 
-/* Section title */
-.sec-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; margin-bottom: 20px; }
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:300;display:flex;align-items:center;justify-content:center;padding:18px;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:26px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;animation:fu .18s ease;}
+.modal h3{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;margin-bottom:16px;}
+.mfoot{display:flex;gap:7px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap;}
 
-footer { text-align: center; padding: 40px 0 20px; color: var(--muted); font-size: 0.75rem; letter-spacing: 0.1em; position: relative; z-index: 1; }
-footer span { color: var(--accent); font-family: 'Syne', sans-serif; font-weight: 700; }
+/* MISC */
+.div{height:1px;background:var(--border);margin:12px 0;}
+.slbl{font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;margin-top:12px;}
+.empty{text-align:center;color:var(--muted);font-size:.78rem;padding:24px 0;}
+.empty .big{font-size:1.7rem;margin-bottom:6px;}
+.ld{text-align:center;color:var(--muted);padding:26px;font-size:.78rem;}
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-@media (max-width: 600px) {
-  .needed-grid { grid-template-columns: repeat(2,1fr); }
-  .abs-stats { grid-template-columns: repeat(3,1fr); }
-  .topbar { padding: 10px 14px; }
-  .nav-tab { padding: 12px 14px; font-size: 0.78rem; }
+footer{text-align:center;padding:32px 0 18px;color:var(--muted);font-size:.7rem;letter-spacing:.09em;position:relative;z-index:1;}
+footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+@media(max-width:620px){
+  .ng{grid-template-columns:repeat(2,1fr);}
+  .wdays{grid-template-columns:repeat(4,1fr);}
+  .topbar{padding:0 12px;}
+  .nav-tab{padding:10px 11px;font-size:.72rem;}
+  .container{padding:18px 12px 70px;}
+  .hero{padding:18px 16px;}
 }
 </style>
 </head>
 <body>
 
-<!-- AUTH SCREEN -->
+<!-- AUTH -->
 <div id="authScreen">
   <div class="auth-box">
-    <h1>ŠKOLSKI DNEVNIK</h1>
-    <p>Prati ocene, izostanke i vladanje</p>
+    <div class="auth-logo"><div class="auth-icon">📚</div><h1>ŠKOLSKI DNEVNIK</h1></div>
+    <div class="auth-sub">Ocene · Izostanci · Vladanje · Raspored · Kalendar</div>
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="switchTab('login')">Prijava</button>
       <button class="auth-tab" onclick="switchTab('register')">Registracija</button>
     </div>
-    <div id="loginForm">
-      <div class="field-group"><label>Email</label><input type="email" id="loginEmail" placeholder="tvoj@email.com" /></div>
-      <div class="field-group"><label>Lozinka</label><input type="password" id="loginPass" placeholder="••••••••" /></div>
+    <div id="lf">
+      <div class="fg"><label>Email</label><input type="email" id="le" placeholder="tvoj@email.com"/></div>
+      <div class="fg"><label>Lozinka</label><input type="password" id="lp" placeholder="••••••••"/></div>
       <button class="btn-primary" onclick="login()">Prijavi se</button>
     </div>
-    <div id="registerForm" style="display:none">
-      <div class="field-group"><label>Email</label><input type="email" id="regEmail" placeholder="tvoj@email.com" /></div>
-      <div class="field-group"><label>Lozinka</label><input type="password" id="regPass" placeholder="min. 6 karaktera" /></div>
+    <div id="rf" style="display:none">
+      <div class="fg"><label>Email</label><input type="email" id="re" placeholder="tvoj@email.com"/></div>
+      <div class="fg"><label>Lozinka</label><input type="password" id="rp" placeholder="min. 6 karaktera"/></div>
       <button class="btn-primary" onclick="register()">Napravi nalog</button>
     </div>
-    <div class="auth-msg" id="authMsg"></div>
+    <div class="auth-msg" id="am"></div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
   <div class="topbar">
-    <span class="topbar-logo">📚 ŠKOLSKI DNEVNIK</span>
-    <div style="display:flex;align-items:center;gap:12px;">
-      <span class="topbar-user" id="topbarUser"></span>
+    <div class="tl"><div class="t-icon">📚</div><span class="t-logo">ŠKOLSKI DNEVNIK</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="t-user" id="tu"></span>
       <button class="btn-logout" onclick="logout()">Odjavi se</button>
     </div>
   </div>
-
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showSection('ocene')">📊 Ocene</button>
-    <button class="nav-tab" onclick="showSection('izostanci')">📅 Izostanci</button>
-    <button class="nav-tab" onclick="showSection('vladanje')">⭐ Vladanje</button>
+    <button class="nav-tab active" onclick="showSec('home',this)">🏠 Početna</button>
+    <button class="nav-tab" onclick="showSec('ocene',this)">📊 Ocene</button>
+    <button class="nav-tab" onclick="showSec('izostanci',this)">📅 Izostanci</button>
+    <button class="nav-tab" onclick="showSec('vladanje',this)">⭐ Vladanje</button>
+    <button class="nav-tab" onclick="showSec('raspored',this)">🗓 Raspored</button>
+    <button class="nav-tab" onclick="showSec('casovi',this)">📝 Časovi</button>
+    <button class="nav-tab" onclick="showSec('kalendar',this)">📆 Kalendar</button>
   </div>
-
   <div class="container">
 
-    <!-- OCENE -->
-    <div class="section active" id="sec-ocene">
-      <div class="sec-title">Ocene po predmetima</div>
+    <!-- HOME -->
+    <div class="section active" id="sec-home">
+      <div class="hero">
+        <div class="hero-left">
+          <div class="hero-greet" id="hg">Dobrodošao! 👋</div>
+          <div class="hero-date" id="hd"></div>
+        </div>
+        <div class="hero-stats">
+          <div class="hstat"><div class="hv a0" id="hs1">—</div><div class="hl">Prosek 1. pol.</div></div>
+          <div class="hstat"><div class="hv a0" id="hs2">—</div><div class="hl">Prosek 2. pol.</div></div>
+          <div class="hstat"><div class="hv cr" id="hsa">0</div><div class="hl">Izostanaka</div></div>
+          <div class="hstat"><div class="hv" style="color:var(--accent4)" id="hse">0</div><div class="hl">Obaveza</div></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px" id="hqc"></div>
+      <div class="card"><div class="ch"><h2>📆 Predstojeće obaveze</h2></div><div class="cb" id="hup"><div class="ld">Učitavam...</div></div></div>
+      <div class="card"><div class="ch"><h2>📝 Današnji časovi</h2></div><div class="cb" id="htoday"><div class="ld">Učitavam...</div></div></div>
+    </div>
 
+    <!-- OCENE -->
+    <div class="section" id="sec-ocene">
+      <div class="sec-title">📊 Ocene</div>
+      <div class="gp-grid">
+        <div class="gp-box"><div class="gp-lbl">Generalni prosek — 1. polugodište</div><div class="gp-val a0" id="gp1">—</div></div>
+        <div class="gp-box"><div class="gp-lbl">Generalni prosek — 2. polugodište</div><div class="gp-val a0" id="gp2">—</div></div>
+      </div>
       <div class="card">
-        <div class="card-head"><h2>Dodaj predmet</h2></div>
-        <div class="card-body">
+        <div class="ch"><h2>➕ Dodaj predmet</h2></div>
+        <div class="cb">
           <div class="form-row">
-            <div class="form-field" style="flex:2">
-              <label>Naziv predmeta</label>
-              <input type="text" id="newSubjectName" placeholder="npr. Matematika" maxlength="60" />
-            </div>
+            <div class="ff" style="flex:2"><label>Naziv predmeta</label><input type="text" id="nsn" placeholder="npr. Matematika" maxlength="60"/></div>
             <button class="btn-add" onclick="addSubject()">+ Dodaj</button>
           </div>
         </div>
       </div>
-
-      <div id="subjectsList"><div class="loading">Učitavam predmete...</div></div>
+      <div id="sl"><div class="ld">Učitavam...</div></div>
     </div>
 
     <!-- IZOSTANCI -->
     <div class="section" id="sec-izostanci">
-      <div class="sec-title">Izostanci</div>
-
-      <div class="abs-stats">
-        <div class="abs-stat"><div class="num total" id="absTotal">0</div><div class="lbl">Ukupno časova</div></div>
-        <div class="abs-stat"><div class="num justified" id="absJust">0</div><div class="lbl">Opravdanih</div></div>
-        <div class="abs-stat"><div class="num unjustified" id="absUnjust">0</div><div class="lbl">Neopravdanih</div></div>
+      <div class="sec-title">📅 Izostanci</div>
+      <div class="abs-grid">
+        <div class="abs-box tot"><div class="abs-num ca" id="at">0</div><div class="abs-lbl">Ukupno</div></div>
+        <div class="abs-box jus"><div class="abs-num cg" id="aj">0</div><div class="abs-lbl">Opravdanih</div></div>
+        <div class="abs-box unj"><div class="abs-num cr" id="au">0</div><div class="abs-lbl">Neopravdanih</div></div>
       </div>
-
       <div class="card">
-        <div class="card-head"><h2>Dodaj izostanke</h2></div>
-        <div class="card-body">
+        <div class="ch"><h2>➕ Dodaj izostanke</h2></div>
+        <div class="cb">
           <div class="form-row">
-            <div class="form-field">
-              <label>Datum</label>
-              <input type="date" id="absDate" />
-            </div>
-            <div class="form-field" style="max-width:100px">
-              <label>Časova</label>
-              <input type="number" id="absHours" value="1" min="1" max="10" />
-            </div>
-            <div class="form-field" style="max-width:160px">
-              <label>Tip</label>
-              <select id="absType">
-                <option value="true">Opravdan</option>
-                <option value="false">Neopravdan</option>
-              </select>
-            </div>
+            <div class="ff"><label>Datum</label><input type="date" id="ad"/></div>
+            <div class="ff" style="max-width:85px"><label>Časova</label><input type="number" id="ah" value="1" min="1" max="10"/></div>
+            <div class="ff" style="max-width:145px"><label>Tip</label><select id="atp"><option value="true">Opravdan</option><option value="false">Neopravdan</option></select></div>
             <button class="btn-add" onclick="addAbsence()">+ Dodaj</button>
           </div>
         </div>
       </div>
-
-      <div class="card">
-        <div class="card-head"><h2>Lista izostanaka</h2></div>
-        <div class="card-body" id="absencesList"><div class="loading">Učitavam...</div></div>
-      </div>
+      <div class="card"><div class="ch"><h2>Lista izostanaka</h2></div><div class="cb" id="al"><div class="ld">Učitavam...</div></div></div>
     </div>
 
     <!-- VLADANJE -->
     <div class="section" id="sec-vladanje">
-      <div class="sec-title">Vladanje</div>
-
-      <!-- Ocena vladanja -->
+      <div class="sec-title">⭐ Vladanje</div>
       <div class="card">
-        <div class="card-head"><h2>Ocena vladanja</h2></div>
-        <div class="card-body">
-          <div class="beh-grade-display avg-0" id="behGradeDisplay">—</div>
-          <div class="form-row" style="justify-content:center">
-            <div class="form-field" style="max-width:120px">
-              <label>Postavi ocenu</label>
-              <select id="behGradeSelect">
-                <option value="">—</option>
-                <option value="5">5 — Primerno</option>
-                <option value="4">4 — Dobro</option>
-                <option value="3">3 — Zadovoljava</option>
-                <option value="2">2 — Ne zadovoljava</option>
-              </select>
+        <div class="ch"><h2>🏆 Zaključna ocena vladanja</h2></div>
+        <div class="cb">
+          <div class="bfrow">
+            <div class="fbox">
+              <div class="fl">1. Polugodište</div><div class="fv a0" id="bf1">—</div>
+              <select id="bfs1"><option value="">— Ocena —</option><option value="5">5 — Primerno</option><option value="4">4 — Dobro</option><option value="3">3 — Zadovoljava</option><option value="2">2 — Ne zadovoljava</option><option value="1">1</option></select>
+              <button onclick="saveBF(1)">Zaključi</button>
             </div>
-            <div style="display:flex;align-items:flex-end">
-              <button class="btn-add" onclick="saveBehGrade()">Sačuvaj</button>
+            <div class="fbox">
+              <div class="fl">2. Polugodište</div><div class="fv a0" id="bf2">—</div>
+              <select id="bfs2"><option value="">— Ocena —</option><option value="5">5 — Primerno</option><option value="4">4 — Dobro</option><option value="3">3 — Zadovoljava</option><option value="2">2 — Ne zadovoljava</option><option value="1">1</option></select>
+              <button onclick="saveBF(2)">Zaključi</button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Vaspitne mere i pohvale -->
       <div class="card">
-        <div class="card-head"><h2>Vaspitne mere i pohvale</h2></div>
-        <div class="card-body">
+        <div class="ch"><h2>📌 Pojedinačne ocene vladanja</h2></div>
+        <div class="cb">
           <div class="form-row">
-            <div class="form-field">
-              <label>Tip</label>
-              <select id="measureType">
+            <div class="ff" style="max-width:95px"><label>Ocena</label><select id="bgv"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div>
+            <div class="ff"><label>Datum</label><input type="date" id="bgd"/></div>
+          </div>
+          <div class="form-row" style="margin-top:7px">
+            <div class="ff"><label>Beleška (opciono)</label><input type="text" id="bgn" placeholder="npr. Pohvala na času..."/></div>
+            <button class="btn-add" onclick="addBG()">+ Dodaj</button>
+          </div>
+          <ul class="bgl" id="bgl" style="margin-top:13px"><div class="ld">Učitavam...</div></ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><h2>⚠️ Vaspitne mere i pohvale</h2></div>
+        <div class="cb">
+          <div class="form-row">
+            <div class="ff"><label>Tip</label>
+              <select id="mt">
                 <optgroup label="— MERE —">
                   <option value="mere|Pojačan vaspitni rad">Pojačan vaspitni rad</option>
                   <option value="mere|Opomena odeljenjskog starešine">Opomena odeljenjskog starešine</option>
@@ -432,387 +422,791 @@ footer span { color: var(--accent); font-family: 'Syne', sans-serif; font-weight
                 </optgroup>
               </select>
             </div>
-            <div style="display:flex;align-items:flex-end">
-              <button class="btn-add" onclick="addMeasure()">+ Dodaj</button>
-            </div>
+            <div class="ff"><label>Datum</label><input type="date" id="md"/></div>
           </div>
-          <ul class="measures-list" id="measuresList" style="margin-top:16px">
-            <div class="loading">Učitavam...</div>
-          </ul>
+          <div class="form-row" style="margin-top:7px">
+            <div class="ff"><label>Beleška (opciono)</label><input type="text" id="mn" placeholder="Dodatne informacije..."/></div>
+            <button class="btn-add" onclick="addMeasure()">+ Dodaj</button>
+          </div>
+          <div id="ml" style="margin-top:13px"><div class="ld">Učitavam...</div></div>
         </div>
       </div>
-
-      <!-- Upisi -->
       <div class="card">
-        <div class="card-head"><h2>Upisi u vladanje</h2></div>
-        <div class="card-body">
+        <div class="ch"><h2>📋 Upisi u vladanje</h2></div>
+        <div class="cb">
           <div class="form-row">
-            <div class="form-field">
-              <label>Predmet</label>
-              <select id="noteSubject"><option value="">— Izaberi predmet —</option></select>
-            </div>
-            <div class="form-field">
-              <label>Datum</label>
-              <input type="date" id="noteDate" />
-            </div>
+            <div class="ff"><label>Predmet</label><select id="nts"><option value="">— Izaberi —</option></select></div>
+            <div class="ff"><label>Datum</label><input type="date" id="ntd"/></div>
           </div>
-          <div class="form-row" style="margin-top:10px">
-            <div class="form-field" style="flex:1">
-              <label>Razlog upisa</label>
-              <textarea id="noteText" placeholder="Upiši razlog..."></textarea>
-            </div>
+          <div class="form-row" style="margin-top:7px">
+            <div class="ff"><label>Razlog upisa</label><textarea id="ntt" placeholder="Upiši razlog..."></textarea></div>
           </div>
-          <div style="margin-top:10px">
-            <button class="btn-add" onclick="addNote()">+ Dodaj upis</button>
-          </div>
-          <ul class="notes-list" id="notesList" style="margin-top:16px">
-            <div class="loading">Učitavam...</div>
-          </ul>
+          <div style="margin-top:7px"><button class="btn-add" onclick="addNote()">+ Dodaj upis</button></div>
+          <ul class="nl" id="ntl" style="margin-top:13px"><div class="ld">Učitavam...</div></ul>
         </div>
       </div>
     </div>
 
-  </div><!-- /container -->
+    <!-- RASPORED -->
+    <div class="section" id="sec-raspored">
+      <div class="sec-title">🗓 Raspored časova</div>
+      <div class="card">
+        <div class="ch"><h2>Nedeljni raspored — klikni ćeliju da izmeniš</h2></div>
+        <div class="cb" style="padding:10px"><div id="sg"><div class="ld">Učitavam...</div></div></div>
+      </div>
+    </div>
+
+    <!-- CASOVI -->
+    <div class="section" id="sec-casovi">
+      <div class="sec-title">📝 Upisivanje časova</div>
+      <div class="wnav">
+        <button class="btn-sm" onclick="wMove('casovi',-1)">← Prethodna</button>
+        <span class="wlbl" id="cwl"></span>
+        <button class="btn-sm" onclick="wMove('casovi',1)">Sledeća →</button>
+      </div>
+      <div class="wtbar">
+        <div style="display:flex;align-items:center;gap:8px"><span class="wtlbl">Tip nedelje:</span><span id="cwt"></span></div>
+        <button class="btn-sm" onclick="openWeekModal()">Podesi nedelju</button>
+      </div>
+      <div class="wdays" id="cwd"></div>
+      <div id="cdd"></div>
+    </div>
+
+    <!-- KALENDAR -->
+    <div class="section" id="sec-kalendar">
+      <div class="sec-title">📆 Kalendar obaveza</div>
+      <div class="card">
+        <div class="ch"><h2>➕ Dodaj obavezu</h2></div>
+        <div class="cb">
+          <div class="form-row">
+            <div class="ff"><label>Predmet</label><select id="cls"><option value="">— Izaberi —</option></select></div>
+            <div class="ff"><label>Datum</label><input type="date" id="cld"/></div>
+            <div class="ff"><label>Tip</label>
+              <select id="clt">
+                <option value="usmeno">Usmeno odgovaranje</option>
+                <option value="kontrolni">Kontrolni zadatak</option>
+                <option value="pismeni">Pismeni zadatak</option>
+                <option value="petnaestominutna">Petnaestominutna vežba</option>
+                <option value="nema_karta">Nema karta</option>
+                <option value="prakticni">Praktičan rad</option>
+                <option value="ostalo">Ostalo</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:7px">
+            <div class="ff"><label>Beleška</label><input type="text" id="cln" placeholder="npr. Poglavlje 5-7..."/></div>
+            <button class="btn-add" onclick="addCalEvent()">+ Dodaj</button>
+          </div>
+        </div>
+      </div>
+      <div class="wnav" style="margin-top:6px">
+        <button class="btn-sm" onclick="wMove('cal',-1)">← Prethodna</button>
+        <span class="wlbl" id="klwl"></span>
+        <button class="btn-sm" onclick="wMove('cal',1)">Sledeća →</button>
+      </div>
+      <div id="klwv"><div class="ld">Učitavam...</div></div>
+    </div>
+
+  </div>
+
+  <!-- MODALS -->
+  <div class="mo" id="schedMo" style="display:none" onclick="if(event.target===this)closeMo('schedMo')">
+    <div class="modal">
+      <h3 id="schedMoT">Podesi čas</h3>
+      <div class="ff"><label>Predmet</label><select id="schedSel"><option value="">— Bez predmeta —</option></select></div>
+      <div class="mfoot">
+        <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" onclick="clearSchedCell()">Obriši</button>
+        <button class="btn-sm" onclick="closeMo('schedMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveSchedCell()">Sačuvaj</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mo" id="dayMo" style="display:none" onclick="if(event.target===this)closeMo('dayMo')">
+    <div class="modal">
+      <h3 id="dayMoT">Podesi dan</h3>
+      <div class="ff" style="margin-bottom:11px"><label>Tip dana</label>
+        <select id="dts"><option value="nastavni">Nastavni</option><option value="neradni">Neradni</option><option value="nenastavni">Nenastavni (radni)</option></select>
+      </div>
+      <div class="ff"><label>Beleška (opciono)</label><input type="text" id="dns" placeholder="Razlog..."/></div>
+      <div class="mfoot">
+        <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" onclick="deleteDay()">Resetuj</button>
+        <button class="btn-sm" onclick="closeMo('dayMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveDay()">Sačuvaj</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mo" id="weekMo" style="display:none" onclick="if(event.target===this)closeMo('weekMo')">
+    <div class="modal">
+      <h3>Podesi nedelju</h3>
+      <div class="ff" style="margin-bottom:11px"><label>Tip nedelje</label>
+        <select id="wts"><option value="nastavna">Nastavna</option><option value="neradna">Neradna</option><option value="nenastavna">Nenastavna (radna)</option></select>
+      </div>
+      <div class="ff"><label>Beleška (opciono)</label><input type="text" id="wns" placeholder="Razlog..."/></div>
+      <div class="mfoot">
+        <button class="btn-sm" onclick="closeMo('weekMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveWeek()">Sačuvaj</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mo" id="lessonMo" style="display:none" onclick="if(event.target===this)closeMo('lessonMo')">
+    <div class="modal">
+      <h3 id="lessonMoT">Upiši čas</h3>
+      <div class="form-row" style="margin-bottom:11px">
+        <div class="ff"><label>Predmet</label><select id="lss"><option value="">— Izaberi —</option></select></div>
+        <div class="ff" style="max-width:85px"><label>Čas (0-7)</label><input type="number" id="lsp" min="0" max="7" value="1"/></div>
+      </div>
+      <div class="ff" style="margin-bottom:11px"><label>Nastavna jedinica</label><input type="text" id="lst" placeholder="npr. Kvadratne jednačine..."/></div>
+      <div class="ff"><label>Tip časa (možeš izabrati više)</label>
+        <div class="msel" id="ltypes">
+          <label class="mopt"><input type="checkbox" value="Vežbanje"> Vežbanje</label>
+          <label class="mopt"><input type="checkbox" value="Laboratorijska vežba"> Laboratorijska vežba</label>
+          <label class="mopt"><input type="checkbox" value="Nastava na daljinu"> Nastava na daljinu</label>
+          <label class="mopt"><input type="checkbox" value="Obnavljanje"> Obnavljanje</label>
+          <label class="mopt"><input type="checkbox" value="Obrada"> Obrada</label>
+          <label class="mopt"><input type="checkbox" value="Obučavanje"> Obučavanje</label>
+          <label class="mopt"><input type="checkbox" value="Praktičan rad"> Praktičan rad</label>
+          <label class="mopt"><input type="checkbox" value="Provera"> Provera</label>
+          <label class="mopt"><input type="checkbox" value="Radionica"> Radionica</label>
+          <label class="mopt"><input type="checkbox" value="Sistematizacija"> Sistematizacija</label>
+          <label class="mopt"><input type="checkbox" value="Uvežbavanje"> Uvežbavanje</label>
+          <label class="mopt"><input type="checkbox" value="Utvrđivanje"> Utvrđivanje</label>
+        </div>
+      </div>
+      <div class="mfoot">
+        <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" id="ldb" onclick="deleteLesson()" style="display:none">Obriši</button>
+        <button class="btn-sm" onclick="closeMo('lessonMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveLesson()">Sačuvaj</button>
+      </div>
+    </div>
+  </div>
 
   <footer>Made by <span>Dušan Ranđelović</span></footer>
-</div><!-- /app -->
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = 'https://uygjcopyohzslvrzvrmv.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_obcXHm5fjOYYpjVZt44u2w_aBT01gEC';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SB_URL='https://uygjcopyohzslvrzvrmv.supabase.co';
+const SB_KEY='sb_publishable_obcXHm5fjOYYpjVZt44u2w_aBT01gEC';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+let U=null,subjects=[],schedule=[],absences=[],lessons=[],calEvents=[],schoolDays=[],schoolWeeks=[];
+let schedCell={dow:null,per:null};
+let casoviWeek=getMonday(new Date());
+let calWeek=getMonday(new Date());
+let selectedDay=null,editLessonId=null;
 
-let currentUser = null;
-let subjects = [];
+// ===== UTILS =====
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function getMonday(d){const dt=new Date(d);const day=dt.getDay();const diff=dt.getDate()-day+(day===0?-6:1);dt.setDate(diff);return new Date(dt.getFullYear(),dt.getMonth(),dt.getDate());}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function fmt(d){if(!d)return'';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('sr-Latn',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function fmtShort(d){if(!d)return'';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('sr-Latn',{day:'2-digit',month:'2-digit'});}
+function toISO(d){return d.toISOString().split('T')[0];}
+function weekLabel(mon){const sun=addDays(mon,6);return fmtShort(toISO(mon))+' — '+fmtShort(toISO(sun));}
+function avgClass(a){if(!a)return'a0';if(a>=4.5)return'a5';if(a>=3.5)return'a4';if(a>=2.5)return'a3';if(a>=1.5)return'a2';return'a0';}
+const DAYS=['Pon','Uto','Sre','Čet','Pet','Sub','Ned'];
+const DAYS_FULL=['Ponedeljak','Utorak','Sreda','Četvrtak','Petak','Subota','Nedelja'];
+const THR={5:4.5,4:3.5,3:2.5,2:1.5};
+const CAL_LABELS={usmeno:'Usmeno',kontrolni:'Kontrolni',pismeni:'Pismeni',petnaestominutna:'15-min vežba',nema_karta:'Nema karta',prakticni:'Praktičan rad',ostalo:'Ostalo'};
+
+function howMany(grades,t){
+  const th=THR[t],vals=(grades||[]).map(g=>g.value),n=vals.length,sum=vals.reduce((a,b)=>a+b,0);
+  if(n&&sum/n>=th)return{c:0,imp:false};
+  const need=Math.ceil((th*n-sum)/(5-th));
+  if(need>9999)return{c:0,imp:true};
+  return{c:Math.max(need,0),imp:false};
+}
 
 // ===== AUTH =====
-function switchTab(tab) {
-  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0) === (tab==='login')));
-  document.getElementById('loginForm').style.display = tab === 'login' ? '' : 'none';
-  document.getElementById('registerForm').style.display = tab === 'register' ? '' : 'none';
-  document.getElementById('authMsg').textContent = '';
+function switchTab(t){
+  document.querySelectorAll('.auth-tab').forEach((el,i)=>el.classList.toggle('active',(i===0)===(t==='login')));
+  document.getElementById('lf').style.display=t==='login'?'':'none';
+  document.getElementById('rf').style.display=t==='register'?'':'none';
+  document.getElementById('am').textContent='';
 }
-
-function setAuthMsg(msg, type) {
-  const el = document.getElementById('authMsg');
-  el.textContent = msg;
-  el.className = 'auth-msg ' + type;
+function setAM(m,t){const e=document.getElementById('am');e.textContent=m;e.className='auth-msg '+(t||'');}
+async function login(){
+  const e=document.getElementById('le').value.trim(),p=document.getElementById('lp').value;
+  if(!e||!p)return setAM('Unesite email i lozinku.','err');
+  setAM('Prijavljujem...','');
+  const{error}=await sb.auth.signInWithPassword({email:e,password:p});
+  if(error)setAM(error.message,'err');
 }
-
-async function login() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const pass = document.getElementById('loginPass').value;
-  if (!email || !pass) return setAuthMsg('Unesite email i lozinku.', 'error');
-  setAuthMsg('Prijavljujem...', '');
-  const { error } = await sb.auth.signInWithPassword({ email, password: pass });
-  if (error) return setAuthMsg(error.message, 'error');
+async function register(){
+  const e=document.getElementById('re').value.trim(),p=document.getElementById('rp').value;
+  if(!e||!p)return setAM('Unesite email i lozinku.','err');
+  if(p.length<6)return setAM('Lozinka min. 6 karaktera.','err');
+  setAM('Registrujem...','');
+  const{error}=await sb.auth.signUp({email:e,password:p});
+  if(error)return setAM(error.message,'err');
+  setAM('Nalog napravljen! Prijavi se.','ok');
 }
+async function logout(){await sb.auth.signOut();}
 
-async function register() {
-  const email = document.getElementById('regEmail').value.trim();
-  const pass = document.getElementById('regPass').value;
-  if (!email || !pass) return setAuthMsg('Unesite email i lozinku.', 'error');
-  if (pass.length < 6) return setAuthMsg('Lozinka mora imati min. 6 karaktera.', 'error');
-  setAuthMsg('Registrujem...', '');
-  const { error } = await sb.auth.signUp({ email, password: pass });
-  if (error) return setAuthMsg(error.message, 'error');
-  setAuthMsg('Nalog napravljen! Možeš se prijaviti.', 'success');
-}
-
-async function logout() {
-  await sb.auth.signOut();
-}
-
-sb.auth.onAuthStateChange((event, session) => {
-  if (session?.user) {
-    currentUser = session.user;
-    document.getElementById('authScreen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    document.getElementById('topbarUser').textContent = currentUser.email;
-    loadAll();
+sb.auth.onAuthStateChange((ev,sess)=>{
+  if(sess?.user){
+    U=sess.user;
+    document.getElementById('authScreen').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('tu').textContent=U.email;
+    initDates();loadAll();
   } else {
-    currentUser = null;
-    document.getElementById('authScreen').style.display = 'flex';
-    document.getElementById('app').style.display = 'none';
+    U=null;
+    document.getElementById('authScreen').style.display='flex';
+    document.getElementById('app').style.display='none';
   }
 });
 
+function initDates(){
+  const td=toISO(new Date());
+  ['ad','bgd','md','ntd','cld'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=td;});
+}
+
 // ===== NAV =====
-function showSection(name) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('sec-' + name).classList.add('active');
-  event.target.classList.add('active');
+function showSec(n,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+n).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(n==='casovi')renderCasoviWeek();
+  if(n==='kalendar')renderCalWeek();
+  if(n==='raspored')renderSchedule();
 }
 
 // ===== LOAD ALL =====
-async function loadAll() {
-  await loadSubjects();
-  await loadAbsences();
-  await loadBehavior();
-  await loadMeasures();
-  await loadNotes();
+async function loadAll(){
+  await Promise.all([loadSubjects(),loadAbsences(),loadBG(),loadBF(),loadMeasures(),loadNotes(),loadSchedule(),loadDays(),loadWeeks(),loadLessons(),loadCalEvents()]);
+  renderHome();
 }
 
-// ===== SUBJECTS & GRADES =====
-async function loadSubjects() {
-  const { data: subs } = await sb.from('subjects').select('*, grades(*)').eq('user_id', currentUser.id).order('created_at');
-  subjects = subs || [];
-  renderSubjects();
-  populateNoteSubjects();
+// ===== SUBJECTS =====
+async function loadSubjects(){
+  const{data}=await sb.from('subjects').select('*,grades(*),subject_finals(*)').eq('user_id',U.id).order('created_at');
+  subjects=data||[];
+  renderSubjects();renderGP();populateSubjectSelects();
 }
-
-function renderSubjects() {
-  const el = document.getElementById('subjectsList');
-  if (!subjects.length) { el.innerHTML = '<div class="empty"><div class="big">📚</div>Nema predmeta. Dodaj prvi!</div>'; return; }
-  el.innerHTML = subjects.map((s, idx) => renderSubjectCard(s, idx)).join('');
+function renderGP(){
+  [1,2].forEach(s=>{
+    const finals=subjects.map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade).filter(Boolean);
+    const el=document.getElementById('gp'+s);
+    if(!finals.length){el.textContent='—';el.className='gp-val a0';return;}
+    const avg=finals.reduce((a,b)=>a+b,0)/finals.length;
+    el.textContent=avg.toFixed(2);el.className='gp-val '+avgClass(avg);
+  });
 }
-
-const THRESHOLDS = { 5: 4.50, 4: 3.50, 3: 2.50, 2: 1.50 };
-
-function calcAvg(grades) {
-  if (!grades || !grades.length) return 0;
-  return grades.reduce((a, b) => a + b.value, 0) / grades.length;
+function calcAvg(g){if(!g||!g.length)return 0;return g.reduce((a,b)=>a+b.value,0)/g.length;}
+function renderSubjects(){
+  const el=document.getElementById('sl');
+  if(!subjects.length){el.innerHTML='<div class="empty"><div class="big">📚</div>Nema predmeta. Dodaj prvi!</div>';return;}
+  el.innerHTML=subjects.map(s=>renderSCard(s)).join('');
 }
-
-function avgColorClass(avg) {
-  if (!avg) return 'avg-0';
-  if (avg >= 4.5) return 'avg-5';
-  if (avg >= 3.5) return 'avg-4';
-  if (avg >= 2.5) return 'avg-3';
-  if (avg >= 1.5) return 'avg-2';
-  return 'avg-0';
-}
-
-function howMany(grades, targetGrade) {
-  const threshold = THRESHOLDS[targetGrade];
-  const vals = (grades || []).map(g => g.value);
-  const n = vals.length, sum = vals.reduce((a,b)=>a+b,0);
-  const avg = n ? sum/n : 0;
-  if (avg >= threshold) return { count: 0, impossible: false };
-  const needed = Math.ceil((threshold * n - sum) / (5 - threshold));
-  if (needed > 9999) return { count: 0, impossible: true };
-  return { count: Math.max(needed, 0), impossible: false };
-}
-
-function renderSubjectCard(s, idx) {
-  const avg = calcAvg(s.grades);
-  const avgDisplay = avg ? avg.toFixed(2) : '—';
-  const color = avgColorClass(avg);
-  const chips = (s.grades || []).map(g =>
-    `<span class="chip chip-${g.value}"><span>${g.value}</span><button class="btn-del" onclick="removeGrade('${g.id}','${s.id}')">×</button></span>`
-  ).join('');
-
-  const neededCards = [5,4,3,2].map(t => {
-    const r = howMany(s.grades, t);
-    const already = avg >= THRESHOLDS[t];
-    let label = already
-      ? `<div class="nc already">✓ Postignuto</div>`
-      : r.impossible
-        ? `<div class="nc impossible">✗ Nemoguće</div>`
-        : `<div class="nc">još <strong>${r.count}</strong> ${r.count===1?'petica':r.count<5?'petice':'petica'}</div>`;
-    return `<div class="needed-card g${t}"><div class="tg">${t}</div>${label}</div>`;
+function renderSCard(s){
+  const avg=calcAvg(s.grades),ad=avg?avg.toFixed(2):'—',ac=avgClass(avg);
+  const chips=(s.grades||[]).map(g=>`<span class="chip c${g.value}"><span>${g.value}</span><button class="btn-del" onclick="removeGrade('${g.id}')">×</button></span>`).join('');
+  const nc=[5,4,3,2].map(t=>{
+    const r=howMany(s.grades,t),al=avg>=THR[t];
+    const lbl=al?`<div class="nc ok">✓ Postignuto</div>`:r.imp?`<div class="nc imp">✗ Nemoguće</div>`:`<div class="nc">još <strong>${r.c}</strong> ${r.c===1?'petica':r.c<5?'petice':'petica'}</div>`;
+    return`<div class="nc-card g${t}"><div class="tg">${t}</div>${lbl}</div>`;
   }).join('');
-
-  return `<div class="subject-card">
-    <div class="subject-head">
-      <span class="subject-name">${esc(s.name)}</span>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="avg-badge ${color}">${avgDisplay}</span>
-        <button class="btn-del" style="font-size:1.1rem" onclick="removeSubject('${s.id}')">🗑</button>
+  const finals=s.subject_finals||[],f1=finals.find(f=>f.semester===1),f2=finals.find(f=>f.semester===2);
+  const finHtml=`<div class="finals-row">
+    <div class="fbox"><div class="fl">Zaključna — 1. pol.</div><div class="fv ${f1?avgClass(f1.grade):'a0'}">${f1?f1.grade:'—'}</div>
+      <select id="fs1-${s.id}">${[5,4,3,2,1].map(v=>`<option value="${v}"${f1&&f1.grade===v?' selected':''}>${v}</option>`).join('')}</select>
+      <button onclick="saveFinal('${s.id}',1)">Zaključi</button></div>
+    <div class="fbox"><div class="fl">Zaključna — 2. pol.</div><div class="fv ${f2?avgClass(f2.grade):'a0'}">${f2?f2.grade:'—'}</div>
+      <select id="fs2-${s.id}">${[5,4,3,2,1].map(v=>`<option value="${v}"${f2&&f2.grade===v?' selected':''}>${v}</option>`).join('')}</select>
+      <button onclick="saveFinal('${s.id}',2)">Zaključi</button></div>
+  </div>`;
+  return`<div class="subj-card">
+    <div class="shead">
+      <span class="sname">${esc(s.name)}</span>
+      <div style="display:flex;align-items:center;gap:7px">
+        <span class="avg-b ${ac}">${ad}</span>
+        <button class="btn-del" style="font-size:1rem" onclick="removeSubject('${s.id}')">🗑</button>
       </div>
     </div>
-    <div class="subject-body">
-      <div style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Ocene</div>
-      <div class="chips">${chips || '<span style="color:var(--muted);font-size:0.8rem">Nema ocena</span>'}</div>
-      <div class="form-row" style="margin-top:12px">
-        <select class="form-field" style="max-width:80px;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:Space Mono,monospace" id="gs-${s.id}">
+    <div class="sbody">
+      <div class="slbl">Tekuće ocene</div>
+      <div class="chips">${chips||'<span style="color:var(--muted);font-size:.75rem">Nema ocena</span>'}</div>
+      <div class="form-row" style="margin-top:9px">
+        <select style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:Space Mono,monospace;font-size:.78rem;padding:6px 9px;outline:none;max-width:70px" id="gs-${s.id}">
           <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
         </select>
         <button class="btn-add" onclick="addGrade('${s.id}')">+ Ocena</button>
       </div>
-      <div class="divider"></div>
-      <div style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Potrebno za zaključenu...</div>
-      <div class="needed-grid">${neededCards}</div>
+      <div class="div"></div>
+      <div class="slbl">Potrebno za zaključenu...</div>
+      <div class="ng">${nc}</div>
+      <div class="div"></div>
+      <div class="slbl">Zaključne ocene</div>
+      ${finHtml}
     </div>
   </div>`;
 }
-
-async function addSubject() {
-  const input = document.getElementById('newSubjectName');
-  const name = input.value.trim();
-  if (!name) return input.focus();
-  const { error } = await sb.from('subjects').insert({ name, user_id: currentUser.id });
-  if (!error) { input.value = ''; await loadSubjects(); }
+async function addSubject(){const i=document.getElementById('nsn'),n=i.value.trim();if(!n)return i.focus();await sb.from('subjects').insert({name:n,user_id:U.id});i.value='';await loadSubjects();renderHome();}
+async function removeSubject(id){if(!confirm('Obrisati predmet i sve ocene?'))return;await sb.from('subjects').delete().eq('id',id);await loadSubjects();renderHome();}
+async function addGrade(sid){const v=parseInt(document.getElementById('gs-'+sid).value);await sb.from('grades').insert({subject_id:sid,user_id:U.id,value:v});await loadSubjects();renderHome();}
+async function removeGrade(id){await sb.from('grades').delete().eq('id',id);await loadSubjects();renderHome();}
+async function saveFinal(sid,sem){
+  const v=document.getElementById(`fs${sem}-${sid}`).value;if(!v)return;
+  await sb.from('subject_finals').upsert({subject_id:sid,user_id:U.id,semester:sem,grade:parseInt(v)},{onConflict:'subject_id,semester'});
+  await loadSubjects();renderHome();
 }
-
-async function removeSubject(id) {
-  if (!confirm('Obrisati predmet i sve ocene?')) return;
-  await sb.from('subjects').delete().eq('id', id);
-  await loadSubjects();
-}
-
-async function addGrade(subjectId) {
-  const val = parseInt(document.getElementById('gs-' + subjectId).value);
-  const { error } = await sb.from('grades').insert({ subject_id: subjectId, user_id: currentUser.id, value: val });
-  if (!error) await loadSubjects();
-}
-
-async function removeGrade(gradeId, subjectId) {
-  await sb.from('grades').delete().eq('id', gradeId);
-  await loadSubjects();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('newSubjectName').addEventListener('keydown', e => { if (e.key === 'Enter') addSubject(); });
-  // Set today's date as default
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('absDate').value = today;
-  document.getElementById('noteDate').value = today;
-});
 
 // ===== ABSENCES =====
-let absences = [];
-
-async function loadAbsences() {
-  const { data } = await sb.from('absences').select('*').eq('user_id', currentUser.id).order('date', { ascending: false });
-  absences = data || [];
-  renderAbsences();
+async function loadAbsences(){
+  const{data}=await sb.from('absences').select('*').eq('user_id',U.id).order('date',{ascending:false});
+  absences=data||[];renderAbsences();
 }
-
-function renderAbsences() {
-  const total = absences.reduce((a,b)=>a+b.hours,0);
-  const just = absences.filter(a=>a.justified).reduce((a,b)=>a+b.hours,0);
-  const unjust = total - just;
-  document.getElementById('absTotal').textContent = total;
-  document.getElementById('absJust').textContent = just;
-  document.getElementById('absUnjust').textContent = unjust;
-
-  const el = document.getElementById('absencesList');
-  if (!absences.length) { el.innerHTML = '<div class="empty">Nema izostanaka 🎉</div>'; return; }
-  el.innerHTML = `<div class="table-wrap"><table>
-    <thead><tr><th>Datum</th><th>Časova</th><th>Tip</th><th></th></tr></thead>
-    <tbody>${absences.map(a => `
-      <tr>
-        <td>${a.date}</td>
-        <td>${a.hours}</td>
-        <td><span class="badge ${a.justified?'opr':'neopr'}">${a.justified?'Opravdan':'Neopravdan'}</span></td>
-        <td><button class="btn-del" onclick="removeAbsence('${a.id}')">×</button></td>
-      </tr>`).join('')}
-    </tbody>
-  </table></div>`;
+function renderAbsences(){
+  const tot=absences.reduce((a,b)=>a+b.hours,0),jus=absences.filter(a=>a.justified).reduce((a,b)=>a+b.hours,0);
+  document.getElementById('at').textContent=tot;
+  document.getElementById('aj').textContent=jus;
+  document.getElementById('au').textContent=tot-jus;
+  document.getElementById('hsa').textContent=tot;
+  const el=document.getElementById('al');
+  if(!absences.length){el.innerHTML='<div class="empty">Nema izostanaka 🎉</div>';return;}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>Datum</th><th>Časova</th><th>Tip</th><th></th></tr></thead><tbody>${absences.map(a=>`<tr><td>${fmt(a.date)}</td><td>${a.hours}</td><td><span class="badge ${a.justified?'b-opr':'b-neopr'}">${a.justified?'Opravdan':'Neopravdan'}</span></td><td><button class="btn-del" onclick="removeAbsence('${a.id}')">×</button></td></tr>`).join('')}</tbody></table></div>`;
 }
-
-async function addAbsence() {
-  const date = document.getElementById('absDate').value;
-  const hours = parseInt(document.getElementById('absHours').value) || 1;
-  const justified = document.getElementById('absType').value === 'true';
-  if (!date) return;
-  await sb.from('absences').insert({ user_id: currentUser.id, date, hours, justified });
-  await loadAbsences();
+async function addAbsence(){
+  const d=document.getElementById('ad').value,h=parseInt(document.getElementById('ah').value)||1,j=document.getElementById('atp').value==='true';
+  if(!d)return;
+  await sb.from('absences').insert({user_id:U.id,date:d,hours:h,justified:j});await loadAbsences();
 }
+async function removeAbsence(id){await sb.from('absences').delete().eq('id',id);await loadAbsences();}
 
-async function removeAbsence(id) {
-  await sb.from('absences').delete().eq('id', id);
-  await loadAbsences();
+// ===== BEHAVIOR GRADES =====
+async function loadBG(){
+  const{data}=await sb.from('behavior').select('*').eq('user_id',U.id).eq('is_final',false).order('date',{ascending:false});
+  const list=data||[],el=document.getElementById('bgl');
+  if(!list.length){el.innerHTML='<div class="empty">Nema pojedinačnih ocena</div>';return;}
+  el.innerHTML=list.map(g=>`<li><div><span class="bgn ${avgClass(g.grade)}">${g.grade}</span><div class="bg-meta">${fmt(g.date)||''}</div>${g.note?`<div class="bg-note">${esc(g.note)}</div>`:''}</div><button class="btn-del" onclick="removeBG('${g.id}')">×</button></li>`).join('');
 }
-
-// ===== BEHAVIOR =====
-async function loadBehavior() {
-  const { data } = await sb.from('behavior').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(1);
-  const grade = data?.[0]?.grade || null;
-  const el = document.getElementById('behGradeDisplay');
-  if (grade) {
-    el.textContent = grade;
-    el.className = 'beh-grade-display ' + avgColorClass(grade + (grade >= 4 ? 0.5 : 0));
-    document.getElementById('behGradeSelect').value = grade;
-  } else {
-    el.textContent = '—'; el.className = 'beh-grade-display avg-0';
-  }
+async function addBG(){
+  const v=parseInt(document.getElementById('bgv').value),d=document.getElementById('bgd').value,n=document.getElementById('bgn').value.trim()||null;
+  if(!d)return;
+  await sb.from('behavior').insert({user_id:U.id,grade:v,date:d,note:n,is_final:false});
+  document.getElementById('bgn').value='';await loadBG();
 }
+async function removeBG(id){await sb.from('behavior').delete().eq('id',id);await loadBG();}
 
-async function saveBehGrade() {
-  const val = document.getElementById('behGradeSelect').value;
-  if (!val) return;
-  // Delete old, insert new
-  await sb.from('behavior').delete().eq('user_id', currentUser.id);
-  await sb.from('behavior').insert({ user_id: currentUser.id, grade: parseInt(val) });
-  await loadBehavior();
+// ===== BEHAVIOR FINALS =====
+async function loadBF(){
+  const{data}=await sb.from('behavior').select('*').eq('user_id',U.id).eq('is_final',true);
+  const list=data||[];
+  [1,2].forEach(s=>{
+    const r=list.find(x=>x.semester===s),el=document.getElementById('bf'+s);
+    if(r){el.textContent=r.grade;el.className='fv '+avgClass(r.grade);document.getElementById('bfs'+s).value=r.grade;}
+    else{el.textContent='—';el.className='fv a0';}
+  });
+}
+async function saveBF(s){
+  const v=document.getElementById('bfs'+s).value;if(!v)return;
+  await sb.from('behavior').delete().eq('user_id',U.id).eq('is_final',true).eq('semester',s);
+  await sb.from('behavior').insert({user_id:U.id,grade:parseInt(v),is_final:true,semester:s});
+  await loadBF();
 }
 
 // ===== MEASURES =====
-async function loadMeasures() {
-  const { data } = await sb.from('measures').select('*').eq('user_id', currentUser.id).order('created_at');
-  renderMeasures(data || []);
+async function loadMeasures(){
+  const{data}=await sb.from('measures').select('*').eq('user_id',U.id).order('created_at');
+  const list=data||[],el=document.getElementById('ml');
+  if(!list.length){el.innerHTML='<div class="empty">Nema mera ni pohvala</div>';return;}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>Tip</th><th>Naziv</th><th>Datum</th><th>Beleška</th><th></th></tr></thead><tbody>${list.map(m=>`<tr><td><span class="badge b-${m.type}">${m.type==='mere'?'Mera':'Pohvala'}</span></td><td>${esc(m.name)}</td><td>${fmt(m.date)||'—'}</td><td style="color:var(--muted)">${m.note?esc(m.note):'—'}</td><td><button class="btn-del" onclick="removeMeasure('${m.id}')">×</button></td></tr>`).join('')}</tbody></table></div>`;
 }
-
-function renderMeasures(list) {
-  const el = document.getElementById('measuresList');
-  if (!list.length) { el.innerHTML = '<div class="empty">Nema mera ni pohvala</div>'; return; }
-  el.innerHTML = list.map(m => `
-    <li>
-      <div>
-        <span class="measure-badge ${m.type}">${m.type === 'mere' ? 'Mera' : 'Pohvala'}</span>
-        <span style="margin-left:8px">${esc(m.name)}</span>
-      </div>
-      <button class="btn-del" onclick="removeMeasure('${m.id}')">×</button>
-    </li>`).join('');
+async function addMeasure(){
+  const raw=document.getElementById('mt').value,[type,name]=raw.split('|');
+  const d=document.getElementById('md').value||null,n=document.getElementById('mn').value.trim()||null;
+  await sb.from('measures').insert({user_id:U.id,type,name,date:d,note:n});
+  document.getElementById('mn').value='';await loadMeasures();
 }
-
-async function addMeasure() {
-  const raw = document.getElementById('measureType').value;
-  const [type, name] = raw.split('|');
-  await sb.from('measures').insert({ user_id: currentUser.id, type, name });
-  await loadMeasures();
-}
-
-async function removeMeasure(id) {
-  await sb.from('measures').delete().eq('id', id);
-  await loadMeasures();
-}
+async function removeMeasure(id){await sb.from('measures').delete().eq('id',id);await loadMeasures();}
 
 // ===== NOTES =====
-async function loadNotes() {
-  const { data } = await sb.from('behavior_notes').select('*, subjects(name)').eq('user_id', currentUser.id).order('date', { ascending: false });
-  renderNotes(data || []);
+async function loadNotes(){
+  const{data}=await sb.from('behavior_notes').select('*,subjects(name)').eq('user_id',U.id).order('date',{ascending:false});
+  const list=data||[],el=document.getElementById('ntl');
+  if(!list.length){el.innerHTML='<div class="empty">Nema upisa</div>';return;}
+  el.innerHTML=list.map(n=>`<li><div class="nmeta">${fmt(n.date)}${n.subjects?' · '+esc(n.subjects.name):''} <button class="btn-del" onclick="removeNote('${n.id}')">×</button></div><div class="ntext">${esc(n.note)}</div></li>`).join('');
+}
+async function addNote(){
+  const s=document.getElementById('nts').value||null,d=document.getElementById('ntd').value,n=document.getElementById('ntt').value.trim();
+  if(!d||!n)return;
+  await sb.from('behavior_notes').insert({user_id:U.id,subject_id:s,date:d,note:n});
+  document.getElementById('ntt').value='';await loadNotes();
+}
+async function removeNote(id){await sb.from('behavior_notes').delete().eq('id',id);await loadNotes();}
+
+// ===== SCHEDULE =====
+async function loadSchedule(){
+  const{data}=await sb.from('schedule').select('*,subjects(name)').eq('user_id',U.id);
+  schedule=data||[];
+}
+function renderSchedule(){
+  const cols=8;// 0-7 periods
+  let html=`<div class="sg" style="grid-template-columns:36px repeat(7,1fr)">`;
+  html+=`<div class="sg-head"></div>`;
+  DAYS.forEach(d=>html+=`<div class="sg-head">${d}</div>`);
+  for(let p=0;p<=7;p++){
+    html+=`<div class="sg-per">${p}</div>`;
+    for(let dow=0;dow<7;dow++){
+      const cell=schedule.find(c=>c.day_of_week===dow&&c.period===p);
+      html+=`<div class="sg-cell ${cell?'filled':''}" onclick="openSchedModal(${dow},${p})">`;
+      if(cell)html+=`<span class="cn">${esc(cell.subjects?.name||'?')}</span>`;
+      html+=`</div>`;
+    }
+  }
+  html+=`</div>`;
+  document.getElementById('sg').innerHTML=html;
+  // populate sched modal select
+  const sel=document.getElementById('schedSel');
+  sel.innerHTML='<option value="">— Bez predmeta —</option>'+subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+}
+function openSchedModal(dow,per){
+  schedCell={dow,per};
+  document.getElementById('schedMoT').textContent=`${DAYS_FULL[dow]} — Čas ${per}`;
+  const existing=schedule.find(c=>c.day_of_week===dow&&c.period===per);
+  document.getElementById('schedSel').value=existing?.subject_id||'';
+  document.getElementById('schedMo').style.display='flex';
+}
+async function saveSchedCell(){
+  const sid=document.getElementById('schedSel').value||null;
+  if(sid){
+    await sb.from('schedule').upsert({user_id:U.id,day_of_week:schedCell.dow,period:schedCell.per,subject_id:sid},{onConflict:'user_id,day_of_week,period'});
+  } else {
+    await sb.from('schedule').delete().eq('user_id',U.id).eq('day_of_week',schedCell.dow).eq('period',schedCell.per);
+  }
+  closeMo('schedMo');await loadSchedule();renderSchedule();
+}
+async function clearSchedCell(){
+  await sb.from('schedule').delete().eq('user_id',U.id).eq('day_of_week',schedCell.dow).eq('period',schedCell.per);
+  closeMo('schedMo');await loadSchedule();renderSchedule();
 }
 
-function renderNotes(list) {
-  const el = document.getElementById('notesList');
-  if (!list.length) { el.innerHTML = '<div class="empty">Nema upisa</div>'; return; }
-  el.innerHTML = list.map(n => `
-    <li>
-      <div class="note-meta">${n.date}${n.subjects ? ' · ' + esc(n.subjects.name) : ''} <button class="btn-del" onclick="removeNote('${n.id}')">×</button></div>
-      <div class="note-text">${esc(n.note)}</div>
-    </li>`).join('');
+// ===== DAYS/WEEKS =====
+async function loadDays(){const{data}=await sb.from('school_days').select('*').eq('user_id',U.id);schoolDays=data||[];}
+async function loadWeeks(){const{data}=await sb.from('school_weeks').select('*').eq('user_id',U.id);schoolWeeks=data||[];}
+async function loadLessons(){const{data}=await sb.from('lessons').select('*,subjects(name)').eq('user_id',U.id).order('date').order('period');lessons=data||[];}
+async function loadCalEvents(){const{data}=await sb.from('calendar_events').select('*,subjects(name)').eq('user_id',U.id).order('date');calEvents=data||[];}
+
+// ===== WEEK NAVIGATION =====
+function wMove(type,dir){
+  if(type==='casovi'){casoviWeek=addDays(casoviWeek,dir*7);renderCasoviWeek();}
+  else{calWeek=addDays(calWeek,dir*7);renderCalWeek();}
 }
 
-function populateNoteSubjects() {
-  const sel = document.getElementById('noteSubject');
-  sel.innerHTML = '<option value="">— Izaberi predmet —</option>' +
-    subjects.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+// ===== CASOVI WEEK =====
+function renderCasoviWeek(){
+  document.getElementById('cwl').textContent=weekLabel(casoviWeek);
+  const ws=toISO(casoviWeek);
+  const wk=schoolWeeks.find(w=>w.week_start===ws);
+  const wtype=wk?.type||'nastavna';
+  const wtypeBadges={nastavna:'b-nastavni',neradna:'b-neradni',nenastavna:'b-nenastavni'};
+  document.getElementById('cwt').innerHTML=`<span class="badge ${wtypeBadges[wtype]}">${wtype.charAt(0).toUpperCase()+wtype.slice(1)}</span>${wk?.note?` <span style="color:var(--muted);font-size:.68rem">— ${esc(wk.note)}</span>`:''}`;
+  // days
+  const daysEl=document.getElementById('cwd');
+  let dhtml='';
+  for(let i=0;i<7;i++){
+    const d=addDays(casoviWeek,i);
+    const ds=toISO(d);
+    const sd=schoolDays.find(x=>x.date===ds);
+    const dtype=sd?.type||'nastavni';
+    const dayLessons=lessons.filter(l=>l.date===ds);
+    const dayEvents=calEvents.filter(e=>e.date===ds);
+    const isToday=ds===toISO(new Date());
+    let cls='wday';
+    if(dtype==='neradni')cls+=' neradni';
+    else if(dtype==='nenastavni')cls+=' nenastavni';
+    if(selectedDay===ds)cls+=' sel';
+    dhtml+=`<div class="${cls}" onclick="selectDay('${ds}')">
+      <div class="wdn">${DAYS[i]}</div>
+      <div class="wdd" style="${isToday?'color:var(--accent3)':''}">${d.getDate()}</div>
+      ${dtype!=='nastavni'?`<div class="wdb badge ${dtype==='neradni'?'b-neradni':'b-nenastavni'}" style="font-size:.55rem">${dtype}</div>`:''}
+      ${dayLessons.length?`<div style="font-size:.6rem;color:var(--accent);margin-top:2px">${dayLessons.length} čas${dayLessons.length===1?'':'ova'}</div>`:''}
+      ${dayEvents.length?`<div class="wdot"></div>`:''}
+    </div>`;
+  }
+  daysEl.innerHTML=dhtml;
+  if(selectedDay)renderDayDetail(selectedDay);
+}
+function selectDay(ds){
+  selectedDay=ds;
+  renderCasoviWeek();
+}
+function renderDayDetail(ds){
+  const el=document.getElementById('cdd');
+  const d=new Date(ds+'T00:00:00');
+  const dayName=DAYS_FULL[d.getDay()===0?6:d.getDay()-1];
+  const sd=schoolDays.find(x=>x.date===ds);
+  const dtype=sd?.type||'nastavni';
+  const dtypeBadges={nastavni:'b-nastavni',neradni:'b-neradni',nenastavni:'b-nenastavni'};
+  const dayLessons=lessons.filter(l=>l.date===ds).sort((a,b)=>a.period-b.period);
+  const dayEvents=calEvents.filter(e=>e.date===ds);
+
+  let html=`<div class="ddetail">
+    <div class="dhead">
+      <div>
+        <div class="dtitle">${dayName}, ${fmt(ds)}</div>
+        <span class="badge ${dtypeBadges[dtype]}" style="margin-top:4px;display:inline-block">${dtype.charAt(0).toUpperCase()+dtype.slice(1)}</span>
+        ${sd?.note?`<span style="color:var(--muted);font-size:.68rem;margin-left:6px">${esc(sd.note)}</span>`:''}
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <button class="btn-sm" onclick="openDayModal('${ds}')">Podesi dan</button>
+        <button class="btn-add" onclick="openLessonModal('${ds}')">+ Upiši čas</button>
+      </div>
+    </div>`;
+
+  if(dayEvents.length){
+    html+=`<div style="margin-bottom:12px"><div class="slbl">Obaveze za ovaj dan</div>`;
+    dayEvents.forEach(e=>{
+      html+=`<div style="display:flex;align-items:center;gap:7px;background:rgba(247,106,176,.06);border:1px solid rgba(247,106,176,.2);border-radius:8px;padding:7px 11px;margin-bottom:5px;font-size:.76rem">
+        <span class="ct ct-${e.type}">${CAL_LABELS[e.type]||e.type}</span>
+        <span>${e.subjects?esc(e.subjects.name):'—'}</span>
+        ${e.note?`<span style="color:var(--muted)">· ${esc(e.note)}</span>`:''}
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  if(!dayLessons.length){
+    html+=`<div class="empty" style="padding:16px 0">Nema upisanih časova</div>`;
+  } else {
+    dayLessons.forEach(l=>{
+      html+=`<div class="lesson">
+        <div class="lper">${l.period}</div>
+        <div class="linfo">
+          <div class="ltitle">${esc(l.subjects?.name||'—')}</div>
+          <div class="lmeta">${esc(l.title)}</div>
+          ${l.types&&l.types.length?`<div class="ltypes">${l.types.map(t=>`<span class="ltype">${esc(t)}</span>`).join('')}</div>`:''}
+        </div>
+        <div style="display:flex;gap:5px">
+          <button class="btn-sm" onclick="openEditLesson('${l.id}','${ds}')">✏️</button>
+          <button class="btn-del" onclick="deleteLessonById('${l.id}','${ds}')">×</button>
+        </div>
+      </div>`;
+    });
+  }
+  html+=`</div>`;
+  el.innerHTML=html;
 }
 
-async function addNote() {
-  const subject_id = document.getElementById('noteSubject').value || null;
-  const date = document.getElementById('noteDate').value;
-  const note = document.getElementById('noteText').value.trim();
-  if (!date || !note) return;
-  await sb.from('behavior_notes').insert({ user_id: currentUser.id, subject_id, date, note });
-  document.getElementById('noteText').value = '';
-  await loadNotes();
+// ===== LESSON MODAL =====
+let currentLessonDate=null;
+function openLessonModal(ds){
+  currentLessonDate=ds;editLessonId=null;
+  document.getElementById('lessonMoT').textContent='Upiši čas — '+fmt(ds);
+  document.getElementById('lst').value='';
+  document.getElementById('lsp').value=1;
+  document.querySelectorAll('#ltypes input[type=checkbox]').forEach(cb=>cb.checked=false);
+  // default subject from schedule
+  const d=new Date(ds+'T00:00:00');
+  const dow=d.getDay()===0?6:d.getDay()-1;
+  const sel=document.getElementById('lss');
+  sel.innerHTML='<option value="">— Izaberi —</option>'+subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  document.getElementById('ldb').style.display='none';
+  document.getElementById('lessonMo').style.display='flex';
+}
+function openEditLesson(id,ds){
+  const l=lessons.find(x=>x.id===id);if(!l)return;
+  currentLessonDate=ds;editLessonId=id;
+  document.getElementById('lessonMoT').textContent='Izmeni čas — '+fmt(ds);
+  const sel=document.getElementById('lss');
+  sel.innerHTML='<option value="">— Izaberi —</option>'+subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  sel.value=l.subject_id||'';
+  document.getElementById('lsp').value=l.period;
+  document.getElementById('lst').value=l.title;
+  document.querySelectorAll('#ltypes input[type=checkbox]').forEach(cb=>{cb.checked=(l.types||[]).includes(cb.value);});
+  document.getElementById('ldb').style.display='';
+  document.getElementById('lessonMo').style.display='flex';
+}
+async function saveLesson(){
+  const sid=document.getElementById('lss').value||null;
+  const per=parseInt(document.getElementById('lsp').value)||0;
+  const title=document.getElementById('lst').value.trim();
+  const types=[...document.querySelectorAll('#ltypes input[type=checkbox]:checked')].map(cb=>cb.value);
+  if(!title)return;
+  if(editLessonId){
+    await sb.from('lessons').update({subject_id:sid,period:per,title,types}).eq('id',editLessonId);
+  } else {
+    await sb.from('lessons').insert({user_id:U.id,subject_id:sid,date:currentLessonDate,period:per,title,types});
+  }
+  closeMo('lessonMo');await loadLessons();renderDayDetail(currentLessonDate);renderCasoviWeek();
+}
+async function deleteLesson(){
+  if(!editLessonId)return;
+  await sb.from('lessons').delete().eq('id',editLessonId);
+  closeMo('lessonMo');await loadLessons();renderDayDetail(currentLessonDate);renderCasoviWeek();
+}
+async function deleteLessonById(id,ds){
+  await sb.from('lessons').delete().eq('id',id);
+  await loadLessons();renderDayDetail(ds);renderCasoviWeek();
 }
 
-async function removeNote(id) {
-  await sb.from('behavior_notes').delete().eq('id', id);
-  await loadNotes();
+// ===== DAY MODAL =====
+let currentDayDate=null;
+function openDayModal(ds){
+  currentDayDate=ds;
+  const d=new Date(ds+'T00:00:00');
+  document.getElementById('dayMoT').textContent=DAYS_FULL[d.getDay()===0?6:d.getDay()-1]+', '+fmt(ds);
+  const sd=schoolDays.find(x=>x.date===ds);
+  document.getElementById('dts').value=sd?.type||'nastavni';
+  document.getElementById('dns').value=sd?.note||'';
+  document.getElementById('dayMo').style.display='flex';
+}
+async function saveDay(){
+  const type=document.getElementById('dts').value,note=document.getElementById('dns').value.trim()||null;
+  await sb.from('school_days').upsert({user_id:U.id,date:currentDayDate,type,note},{onConflict:'user_id,date'});
+  closeMo('dayMo');await loadDays();renderCasoviWeek();renderDayDetail(currentDayDate);
+}
+async function deleteDay(){
+  await sb.from('school_days').delete().eq('user_id',U.id).eq('date',currentDayDate);
+  closeMo('dayMo');await loadDays();renderCasoviWeek();if(selectedDay)renderDayDetail(selectedDay);
 }
 
-// ===== UTILS =====
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// ===== WEEK MODAL =====
+function openWeekModal(){
+  const ws=toISO(casoviWeek);
+  const wk=schoolWeeks.find(w=>w.week_start===ws);
+  document.getElementById('wts').value=wk?.type||'nastavna';
+  document.getElementById('wns').value=wk?.note||'';
+  document.getElementById('weekMo').style.display='flex';
 }
-</script>
-</body>
-</html>
+async function saveWeek(){
+  const type=document.getElementById('wts').value,note=document.getElementById('wns').value.trim()||null;
+  const ws=toISO(casoviWeek);
+  await sb.from('school_weeks').upsert({user_id:U.id,week_start:ws,type,note},{onConflict:'user_id,week_start'});
+  closeMo('weekMo');await loadWeeks();renderCasoviWeek();
+}
+
+// ===== CALENDAR =====
+async function addCalEvent(){
+  const sid=document.getElementById('cls').value||null;
+  const d=document.getElementById('cld').value;
+  const type=document.getElementById('clt').value;
+  const note=document.getElementById('cln').value.trim()||null;
+  if(!d||!type)return;
+  await sb.from('calendar_events').insert({user_id:U.id,subject_id:sid,date:d,type,note});
+  document.getElementById('cln').value='';
+  await loadCalEvents();renderCalWeek();renderHome();
+  // also refresh casovi if same week visible
+  if(document.getElementById('sec-casovi').classList.contains('active'))renderCasoviWeek();
+}
+async function removeCalEvent(id){
+  await sb.from('calendar_events').delete().eq('id',id);
+  await loadCalEvents();renderCalWeek();renderHome();
+}
+function renderCalWeek(){
+  document.getElementById('klwl').textContent=weekLabel(calWeek);
+  const el=document.getElementById('klwv');
+  let html='';
+  let total=0;
+  for(let i=0;i<7;i++){
+    const d=addDays(calWeek,i);
+    const ds=toISO(d);
+    const evs=calEvents.filter(e=>e.date===ds);
+    if(!evs.length)continue;
+    total+=evs.length;
+    html+=`<div style="margin-bottom:14px"><div style="font-family:Syne,sans-serif;font-weight:700;font-size:.8rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">${DAYS_FULL[i]}, ${fmt(ds)}</div>`;
+    evs.forEach(e=>{
+      html+=`<div class="cev">
+        <div class="ced">${d.getDate()}</div>
+        <div class="cei">
+          <div class="cet">${e.subjects?esc(e.subjects.name):'—'}</div>
+          <div class="ces"><span class="ct ct-${e.type}">${CAL_LABELS[e.type]||e.type}</span>${e.note?` · ${esc(e.note)}`:''}</div>
+        </div>
+        <button class="btn-del" onclick="removeCalEvent('${e.id}')">×</button>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+  if(!total)html='<div class="empty"><div class="big">📆</div>Nema obaveza ove nedelje</div>';
+  el.innerHTML=html;
+}
+
+// ===== HOME =====
+function renderHome(){
+  // greeting
+  const h=new Date().getHours();
+  const g=h<12?'Dobro jutro':'h<18'?'Dobar dan':'Dobro veče';
+  document.getElementById('hg').textContent=(h<12?'Dobro jutro':'h<18?Dobar dan:Dobro veče')+' 👋';
+  document.getElementById('hg').textContent=(h<12?'Dobro jutro':h<18?'Dobar dan':'Dobro veče')+' 👋';
+  const days=['nedelja','ponedeljak','utorak','sreda','četvrtak','petak','subota'];
+  const months=['januar','februar','mart','april','maj','jun','jul','avgust','septembar','oktobar','novembar','decembar'];
+  const now=new Date();
+  document.getElementById('hd').textContent=`${days[now.getDay()]}, ${now.getDate()}. ${months[now.getMonth()]} ${now.getFullYear()}.`;
+
+  // stats
+  const tot=absences.reduce((a,b)=>a+b.hours,0);
+  document.getElementById('hsa').textContent=tot;
+  const upcoming=calEvents.filter(e=>e.date>=toISO(new Date())).slice(0,10);
+  document.getElementById('hse').textContent=upcoming.length;
+
+  // prosek
+  [1,2].forEach(s=>{
+    const finals=subjects.map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade).filter(Boolean);
+    const el=document.getElementById('hs'+s);
+    if(!finals.length){el.textContent='—';el.className='hv a0';return;}
+    const avg=finals.reduce((a,b)=>a+b,0)/finals.length;
+    el.textContent=avg.toFixed(2);el.className='hv '+avgClass(avg);
+  });
+
+  // quick cards
+  document.getElementById('hqc').innerHTML=`
+    <div class="card" style="cursor:pointer" onclick="document.querySelectorAll('.nav-tab')[1].click()">
+      <div class="cb" style="text-align:center">
+        <div style="font-size:1.6rem;margin-bottom:4px">📊</div>
+        <div style="font-family:Syne,sans-serif;font-weight:700;font-size:.85rem">${subjects.length} predmeta</div>
+        <div style="font-size:.68rem;color:var(--muted);margin-top:3px">Klikni za ocene</div>
+      </div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="document.querySelectorAll('.nav-tab')[2].click()">
+      <div class="cb" style="text-align:center">
+        <div style="font-size:1.6rem;margin-bottom:4px">📅</div>
+        <div style="font-family:Syne,sans-serif;font-weight:700;font-size:.85rem">${tot} izostanaka</div>
+        <div style="font-size:.68rem;color:var(--muted);margin-top:3px">Klikni za detalje</div>
+      </div>
+    </div>`;
+
+  // upcoming events
+  const upEl=document.getElementById('hup');
+  const upcomingAll=calEvents.filter(e=>e.date>=toISO(new Date())).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
+  if(!upcomingAll.length){upEl.innerHTML='<div class="empty">Nema predstojecih obaveza 🎉</div>';return;}
+  upEl.innerHTML=upcomingAll.map(e=>`<div class="cev">
+    <div class="ced">${fmtShort(e.date)}</div>
+    <div class="cei">
+      <div class="cet">${e.subjects?esc(e.subjects.name):'—'}</div>
+      <div class="ces"><span class="ct ct-${e.type}">${CAL_LABELS[e.type]||e.type}</span>${e.note?` · ${esc(e.note)}`:''}</div>
+    </div>
+  </div>`).join('');
+
+  // today's lessons
+  const td=toISO(new Date());
+  const tdl=lessons.filter(l=>l.date===td).sort((a,b)=>a.period-b.period);
+  const tlEl=document.getElementById('htoday');
+  if(!tdl.length){tlEl.innerHTML='<div class="empty">Nema upisanih časova za danas</div>';return;}
+  tlEl.innerHTML=tdl.map(l=>`<div class="lesson">
+    <div class="lper">${l.period}</div>
+    <div class="linfo">
+      <div class="ltitle">${esc(l.subjects?.name||'—')}</div>
+      <div class="lmeta">${esc(l.title)}</div>
+      ${l.types&&l.types.length?`<div class="ltypes">${l.types.map(t=>`<span class="ltype">${esc(t)}</span>`).join('')}</div>`:''}
+    </div>
+  </div>`).join('');
+}
+
+// ===== POPULATE SELECTS =====
+function populateSubjectSelects(){
+  const opts='<option value="">— Izaberi —</option>'+subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  ['nts','cls'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});
+}
+
+// ===== MODAL HELPERS =====
+function closeMo(id){document.getElementById(id).style.display='none';}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('nsn').addEventListener('keydown',e=>{if(e.key==='Enter')addSubject();});
+});
+</script></body></html>
