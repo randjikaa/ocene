@@ -650,7 +650,7 @@ async function register(){
   if(error)return setAM(error.message,'err');
   setAM('Nalog napravljen! Prijavi se.','ok');
 }
-async function logout(){await sb.auth.signOut();subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;}
+async function logout(){await sb.auth.signOut();window.location.reload();}
 
 sb.auth.onAuthStateChange((ev,sess)=>{
   if(sess?.user){
