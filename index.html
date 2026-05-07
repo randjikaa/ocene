@@ -654,12 +654,21 @@ async function logout(){await sb.auth.signOut();subjects=[];absences=[];lessons=
 
 sb.auth.onAuthStateChange((ev,sess)=>{
   if(sess?.user){
+    // Uvek ocisti stare podatke pre ucitavanja novih
+    subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;
     U=sess.user;
     document.getElementById('authScreen').style.display='none';
     document.getElementById('app').style.display='block';
     document.getElementById('tu').textContent=U.email;
+    // Reset na pocetnu stranicu
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById('sec-home').classList.add('active');
+    document.querySelector('.nav-tab').classList.add('active');
     initDates();loadAll();
   } else {
+    // Ocisti sve pri odjavi
+    subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;
     U=null;
     document.getElementById('authScreen').style.display='flex';
     document.getElementById('app').style.display='none';
