@@ -1083,7 +1083,11 @@ async function initApp(user){
   initDates();
   // Load school years first, then all data
   await loadSchoolYears();
-  if(currentYearId) await loadAll();
+  if(currentYearId){
+    // Wait for Supabase to be ready before loading data
+    await new Promise(r=>setTimeout(r,800));
+    await loadAll();
+  }
 }
 
 function showAuth(){
