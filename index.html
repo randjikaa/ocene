@@ -1182,8 +1182,9 @@ async function loadAll(){
 
 // ===== SUBJECTS =====
 async function loadSubjects(){
-  const{data}=await sb.from('subjects').select('*,grades(id,value,semester,date,type,note,calendar_event_id),subject_finals(*)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('created_at');
-  subjects=data||[];
+  const subs=await sbQuery('subjects','select=*,grades(id,value,semester,date,type,note,calendar_event_id),subject_finals(*)&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&order=created_at');
+  const data=Array.isArray(subs)?subs:[];
+  subjects=Array.isArray(data)?data:[];
   renderSubjects();renderGP();populateSubjectSelects();
 }
 function renderGP(){
@@ -1357,8 +1358,8 @@ async function saveFinal(sid,sem){
 
 // ===== ABSENCES =====
 async function loadAbsences(){
-  const{data}=await sb.from('absences').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date',{ascending:false});
-  absences=data||[];renderAbsences();
+  const data=await sbQuery('absences','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&order=date.desc');
+  absences=Array.isArray(data)?data:[];renderAbsences();
 }
 function toggleAbsType(){
   const j=document.getElementById('atp').value==='true';
@@ -1456,7 +1457,7 @@ async function saveEditAbsence(){
 // ===== BEHAVIOR GRADES =====
 let editBGId=null,editBGVal=5;
 async function loadBG(){
-  const{data}=await sb.from('behavior').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).eq('is_final',false).order('date',{ascending:false});
+  const data=await sbQuery('behavior','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&is_final=eq.false&order=date.desc');
   const list=data||[],el=document.getElementById('bgl');
   if(!list.length){el.innerHTML='<div class="empty">Nema pojedinačnih ocena</div>';return;}
   el.innerHTML=list.map(g=>`<li>
@@ -1515,7 +1516,7 @@ async function removeBG(id){await sb.from('behavior').delete().eq('id',id);await
 
 // ===== BEHAVIOR FINALS =====
 async function loadBF(){
-  const{data}=await sb.from('behavior').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).eq('is_final',true);
+  const data=await sbQuery('behavior','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&is_final=eq.true');
   const list=data||[];
   [1,2].forEach(s=>{
     const r=list.find(x=>x.semester===s),el=document.getElementById('bf'+s);
@@ -1533,7 +1534,7 @@ async function saveBF(s){
 // ===== MEASURES =====
 let editMeasureId=null;
 async function loadMeasures(){
-  const{data}=await sb.from('measures').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).order('created_at');
+  const data=await sbQuery('measures','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&order=created_at');
   const list=data||[],el=document.getElementById('ml');
   if(!list.length){el.innerHTML='<div class="empty">Nema mera ni pohvala</div>';return;}
   el.innerHTML=`<div class="tw"><table><thead><tr><th>Tip</th><th>Naziv</th><th>Datum</th><th>Beleška</th><th></th></tr></thead><tbody>${list.map(m=>`<tr>
@@ -1571,7 +1572,7 @@ async function removeMeasure(id){await sb.from('measures').delete().eq('id',id);
 // ===== NOTES =====
 let editNoteId=null;
 async function loadNotes(){
-  const{data}=await sb.from('behavior_notes').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date',{ascending:false});
+  const data=await sbQuery('behavior_notes','select=*,subjects(name)&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&order=date.desc');
   const list=data||[],el=document.getElementById('ntl');
   if(!list.length){el.innerHTML='<div class="empty">Nema upisa</div>';return;}
   el.innerHTML=list.map(n=>`<li>
@@ -1612,7 +1613,7 @@ async function removeNote(id){await sb.from('behavior_notes').delete().eq('id',i
 
 // ===== SCHEDULE =====
 async function loadSchedule(){
-  const{data}=await sb.from('schedule').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId);
+  const data=await sbQuery('schedule','select=*,subjects(name)&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId);
   schedule=data||[];
 }
 function renderSchedule(){
@@ -1657,13 +1658,13 @@ async function clearSchedCell(){
 }
 
 // ===== DAYS/WEEKS =====
-async function loadDays(){const{data}=await sb.from('school_days').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId);schoolDays=data||[];}
-async function loadWeeks(){const{data}=await sb.from('school_weeks').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId);schoolWeeks=data||[];}
-async function loadLessons(){const{data}=await sb.from('lessons').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date').order('period');lessons=data||[];}
+async function loadDays(){const data=await sbQuery('school_days','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId);schoolDays=Array.isArray(data)?data:[];}
+async function loadWeeks(){const data=await sbQuery('school_weeks','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId);schoolWeeks=Array.isArray(data)?data:[];}
+async function loadLessons(){const{data}=await sb.from('lessons').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date').order('period');lessons=Array.isArray(data)?data:[];}
 async function loadCalEvents(){
   // Load calendar events without grades join first to avoid issues
-  const{data}=await sb.from('calendar_events').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date');
-  calEvents=data||[];
+  const data=await sbQuery('calendar_events','select=*,subjects(name)&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&order=date');
+  calEvents=Array.isArray(data)?data:[];
   // Then try to load linked grades separately
   if(calEvents.length){
     const gradeIds=calEvents.map(e=>e.grade_id).filter(Boolean);
