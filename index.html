@@ -301,7 +301,10 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
 <div id="app">
   <div class="topbar">
     <div class="tl"><div class="t-icon">📚</div><span class="t-logo">ŠKOLSKI DNEVNIK</span></div>
-    <div style="display:flex;align-items:center;gap:10px">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <select id="schoolYearSel" onchange="changeSchoolYear()" style="background:var(--surface2);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:Space Mono,monospace;font-size:.75rem;padding:5px 10px;outline:none;cursor:pointer;">
+        <option value="">— Školska godina —</option>
+      </select>
       <span class="t-user" id="tu"></span>
       <button class="btn-logout" onclick="logout()">Odjavi se</button>
     </div>
@@ -330,6 +333,10 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
           <div class="hstat"><div class="hv cr" id="hsa">0</div><div class="hl">Izostanaka</div></div>
           <div class="hstat"><div class="hv" style="color:var(--accent4)" id="hse">0</div><div class="hl">Obaveza</div></div>
         </div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="ch"><h2>🎓 Školska godina</h2><button class="btn-add" onclick="openNewYearModal()">+ Nova godina</button></div>
+        <div class="cb" id="schoolYearInfo"><div class="ld">Učitavam...</div></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px" id="hqc"></div>
       <div class="card"><div class="ch"><h2>📆 Predstojeće obaveze</h2></div><div class="cb" id="hup"><div class="ld">Učitavam...</div></div></div>
@@ -504,6 +511,7 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
       <div class="wtbar">
         <div style="display:flex;align-items:center;gap:8px"><span class="wtlbl">Tip nedelje:</span><span id="cwt"></span></div>
         <button class="btn-sm" onclick="openWeekModal()">Podesi nedelju</button>
+        <button class="btn-sm" onclick="openBulkDaysModal()">📅 Više dana</button>
       </div>
       <div class="wdays" id="cwd"></div>
       <div id="cdd"></div>
@@ -526,6 +534,12 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
                 <option value="petnaestominutna">Petnaestominutna vežba</option>
                 <option value="nema_karta">Nema karta</option>
                 <option value="prakticni">Praktičan rad</option>
+                <option value="prezentacija_pano">Prezentacija/pano</option>
+                <option value="prezentacija_teza">Prezentacija teze</option>
+                <option value="likovni_rad">Likovni rad</option>
+                <option value="pregledanje_sveske">Pregledanje sveske</option>
+                <option value="rad_racunar">Rad na računaru</option>
+                <option value="fizicke">Fizičke aktivnosti</option>
                 <option value="ostalo">Ostalo</option>
               </select>
             </div>
@@ -739,6 +753,89 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
     </div>
   </div>
 
+  <!-- NEW SCHOOL YEAR MODAL -->
+  <div class="mo" id="newYearMo" style="display:none" onclick="if(event.target===this)closeMo('newYearMo')">
+    <div class="modal">
+      <h3 id="newYearMoT">Nova školska godina</h3>
+      <div class="ff" style="margin-bottom:11px"><label>Naziv (npr. 2025/2026)</label><input type="text" id="syName" placeholder="2025/2026"/></div>
+      <div class="form-row" style="margin-bottom:11px">
+        <div class="ff"><label>Početak</label><input type="date" id="syStart"/></div>
+        <div class="ff"><label>Kraj</label><input type="date" id="syEnd"/></div>
+      </div>
+      <div class="mfoot">
+        <button class="btn-sm" onclick="closeMo('newYearMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveSchoolYear()">Sačuvaj</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BULK DAYS MODAL -->
+  <div class="mo" id="bulkDaysMo" style="display:none" onclick="if(event.target===this)closeMo('bulkDaysMo')">
+    <div class="modal">
+      <h3>Podesi više dana/nedelja</h3>
+      <div class="form-row" style="margin-bottom:11px">
+        <div class="ff"><label>Od datuma</label><input type="date" id="bulkFrom"/></div>
+        <div class="ff"><label>Do datuma</label><input type="date" id="bulkTo"/></div>
+      </div>
+      <div class="ff" style="margin-bottom:11px"><label>Tip dana</label>
+        <select id="bulkType">
+          <option value="nastavni">Nastavni</option>
+          <option value="neradni">Neradni</option>
+          <option value="nenastavni">Nenastavni (radni)</option>
+        </select>
+      </div>
+      <div class="ff" style="margin-bottom:11px"><label>Beleška (opciono)</label><input type="text" id="bulkNote" placeholder="npr. Zimski raspust"/></div>
+      <div class="ff" style="margin-bottom:4px"><label>Primeni samo na dane</label>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd0" checked> Pon</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd1" checked> Uto</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd2" checked> Sre</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd3" checked> Čet</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd4" checked> Pet</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd5"> Sub</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd6"> Ned</label>
+        </div>
+      </div>
+      <div class="mfoot">
+        <button class="btn-sm" onclick="closeMo('bulkDaysMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveBulkDays()">Primeni</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT CAL EVENT MODAL -->
+  <div class="mo" id="calEditMo" style="display:none" onclick="if(event.target===this)closeMo('calEditMo')">
+    <div class="modal">
+      <h3>Izmeni obavezu</h3>
+      <div class="form-row" style="margin-bottom:11px">
+        <div class="ff"><label>Predmet</label><select id="ceEditSubject"></select></div>
+        <div class="ff"><label>Datum</label><input type="date" id="ceEditDate"/></div>
+      </div>
+      <div class="ff" style="margin-bottom:11px"><label>Tip</label>
+        <select id="ceEditType">
+          <option value="usmeno">Usmeno odgovaranje</option>
+          <option value="kontrolni">Kontrolni zadatak</option>
+          <option value="pismeni">Pismeni zadatak</option>
+          <option value="petnaestominutna">Petnaestominutna vežba</option>
+          <option value="nema_karta">Nema karta</option>
+          <option value="prakticni">Praktičan rad</option>
+          <option value="prezentacija_pano">Prezentacija/pano</option>
+          <option value="prezentacija_teza">Prezentacija teze</option>
+          <option value="likovni_rad">Likovni rad</option>
+          <option value="pregledanje_sveske">Pregledanje sveske</option>
+          <option value="rad_racunar">Rad na računaru</option>
+          <option value="fizicke">Fizičke aktivnosti</option>
+          <option value="ostalo">Ostalo</option>
+        </select>
+      </div>
+      <div class="ff"><label>Beleška (opciono)</label><input type="text" id="ceEditNote" placeholder="Napomena..."/></div>
+      <div class="mfoot">
+        <button class="btn-sm" onclick="closeMo('calEditMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveEditCalEvent()">Sačuvaj</button>
+      </div>
+    </div>
+  </div>
+
   <!-- GRADE MODAL -->
   <div class="mo" id="gradeMo" style="display:none" onclick="if(event.target===this)closeMo('gradeMo')">
     <div class="modal">
@@ -754,10 +851,9 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
         <div class="ff"><label>Polugodište</label>
           <select id="gradeSem"><option value="1">1. Polugodište</option><option value="2">2. Polugodište</option></select>
         </div>
-      </div>
-      <div class="ff" style="margin-bottom:10px;display:none" id="gradeDateRow">
-        <label>Datum (iz obaveze)</label>
-        <input type="date" id="gradeDate" readonly style="opacity:.6"/>
+        <div class="ff" id="gradeDateRow"><label>Datum (opciono)</label>
+          <input type="date" id="gradeDate"/>
+        </div>
       </div>
       <div class="ff" style="margin-bottom:10px"><label>Tip ocene</label>
         <select id="gradeType">
@@ -769,6 +865,12 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
           <option>Nema karta</option>
           <option>Praktičan rad</option>
           <option>Aktivnost na času</option>
+          <option>Prezentacija/pano</option>
+          <option>Prezentacija teze</option>
+          <option>Likovni rad</option>
+          <option>Pregledanje sveske</option>
+          <option>Rad na računaru</option>
+          <option>Fizičke aktivnosti</option>
           <option>Ostalo</option>
         </select>
       </div>
@@ -789,11 +891,107 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
 const SB_URL='https://uygjcopyohzslvrzvrmv.supabase.co';
 const SB_KEY='sb_publishable_obcXHm5fjOYYpjVZt44u2w_aBT01gEC';
 const sb=supabase.createClient(SB_URL,SB_KEY);
-let U=null,subjects=[],schedule=[],absences=[],lessons=[],calEvents=[],schoolDays=[],schoolWeeks=[];
+let U=null,subjects=[],schedule=[],absences=[],lessons=[],calEvents=[],schoolDays=[],schoolWeeks=[],schoolYears=[],currentYearId=null;
 let schedCell={dow:null,per:null};
 let casoviWeek=getMonday(new Date());
 let calWeek=getMonday(new Date());
 let selectedDay=null,editLessonId=null;
+
+// ===== SCHOOL YEARS =====
+async function loadSchoolYears(){
+  const{data}=await sb.from('school_years').select('*').eq('user_id',U.id).order('start_date',{ascending:false});
+  schoolYears=data||[];
+  renderSchoolYearSelector();
+  renderSchoolYearInfo();
+  // If no years exist, create default 2025/2026
+  if(!schoolYears.length){
+    await createDefaultYear();
+    return;
+  }
+  // Set active year or most recent
+  const active=schoolYears.find(y=>y.is_active)||schoolYears[0];
+  if(active&&!currentYearId){
+    currentYearId=active.id;
+    document.getElementById('schoolYearSel').value=active.id;
+  }
+}
+async function createDefaultYear(){
+  const{data}=await sb.from('school_years').insert({
+    user_id:U.id,name:'2025/2026',
+    start_date:'2025-09-01',end_date:'2026-06-15',is_active:true
+  }).select();
+  if(data?.[0]){
+    schoolYears=[data[0]];
+    currentYearId=data[0].id;
+    renderSchoolYearSelector();
+    renderSchoolYearInfo();
+    // Migrate existing data to this year
+    await migrateExistingData(data[0].id);
+  }
+}
+async function migrateExistingData(yearId){
+  // Move all existing data without school_year_id to this year
+  const tables=['subjects','grades','absences','behavior','measures','behavior_notes','lessons','calendar_events','schedule','school_days','school_weeks','subject_finals'];
+  for(const t of tables){
+    await sb.from(t).update({school_year_id:yearId}).eq('user_id',U.id).is('school_year_id',null);
+  }
+  await loadAll();
+}
+function renderSchoolYearSelector(){
+  const sel=document.getElementById('schoolYearSel');
+  sel.innerHTML=schoolYears.map(y=>`<option value="${y.id}"${y.id===currentYearId?' selected':''}>${y.name}</option>`).join('');
+}
+function renderSchoolYearInfo(){
+  const el=document.getElementById('schoolYearInfo');
+  if(!el)return;
+  if(!schoolYears.length){el.innerHTML='<div class="empty">Nema školskih godina</div>';return;}
+  el.innerHTML=schoolYears.map(y=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap">
+      <div>
+        <span style="font-family:Syne,sans-serif;font-weight:700;font-size:.9rem">${esc(y.name)}</span>
+        <span style="font-size:.72rem;color:var(--muted);margin-left:8px">${fmt(y.start_date)} — ${fmt(y.end_date)}</span>
+        ${y.is_active?'<span style="background:rgba(106,247,184,.15);color:var(--accent3);font-size:.66rem;padding:1px 7px;border-radius:100px;margin-left:6px">Aktivna</span>':''}
+      </div>
+      <div style="display:flex;gap:6px">
+        ${!y.is_active?`<button class="btn-sm" onclick="setActiveYear('${y.id}')">Aktiviraj</button>`:''}
+        <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" onclick="deleteYear('${y.id}')">Obriši</button>
+      </div>
+    </div>`).join('');
+}
+function openNewYearModal(){
+  document.getElementById('newYearMoT').textContent='Nova školska godina';
+  document.getElementById('syName').value='';
+  document.getElementById('syStart').value='';
+  document.getElementById('syEnd').value='';
+  document.getElementById('newYearMo').style.display='flex';
+}
+async function saveSchoolYear(){
+  const name=document.getElementById('syName').value.trim();
+  const start=document.getElementById('syStart').value;
+  const end=document.getElementById('syEnd').value;
+  if(!name||!start||!end)return;
+  await sb.from('school_years').insert({user_id:U.id,name,start_date:start,end_date:end,is_active:false});
+  closeMo('newYearMo');
+  await loadSchoolYears();
+}
+async function setActiveYear(id){
+  await sb.from('school_years').update({is_active:false}).eq('user_id',U.id);
+  await sb.from('school_years').update({is_active:true}).eq('id',id);
+  currentYearId=id;
+  await loadSchoolYears();
+  await loadAll();
+}
+async function deleteYear(id){
+  if(!confirm('Obrisati školsku godinu i SVE podatke za nju?'))return;
+  await sb.from('school_years').delete().eq('id',id);
+  if(currentYearId===id)currentYearId=schoolYears.find(y=>y.id!==id)?.id||null;
+  await loadSchoolYears();
+  if(currentYearId)await loadAll();
+}
+async function changeSchoolYear(){
+  currentYearId=document.getElementById('schoolYearSel').value||null;
+  if(currentYearId)await loadAll();
+}
 
 // ===== UTILS =====
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -814,7 +1012,7 @@ function avgClass(a){if(!a)return'a0';if(a>=4.5)return'a5';if(a>=3.5)return'a4';
 const DAYS=['Pon','Uto','Sre','Čet','Pet','Sub','Ned'];
 const DAYS_FULL=['Ponedeljak','Utorak','Sreda','Četvrtak','Petak','Subota','Nedelja'];
 const THR={5:4.5,4:3.5,3:2.5,2:1.5};
-const CAL_LABELS={usmeno:'Usmeno',kontrolni:'Kontrolni',pismeni:'Pismeni',petnaestominutna:'15-min vežba',nema_karta:'Nema karta',prakticni:'Praktičan rad',ostalo:'Ostalo'};
+const CAL_LABELS={usmeno:'Usmeno',kontrolni:'Kontrolni',pismeni:'Pismeni',petnaestominutna:'15-min vežba',nema_karta:'Nema karta',prakticni:'Praktičan rad',prezentacija_pano:'Prezentacija/pano',prezentacija_teza:'Prezentacija teze',likovni_rad:'Likovni rad',pregledanje_sveske:'Pregledanje sveske',rad_racunar:'Rad na računaru',fizicke:'Fizičke aktivnosti',ostalo:'Ostalo'};
 
 function howMany(grades,t){
   const th=THR[t],vals=(grades||[]).map(g=>g.value),n=vals.length,sum=vals.reduce((a,b)=>a+b,0);
@@ -891,13 +1089,14 @@ function showSec(n,btn){
 
 // ===== LOAD ALL =====
 async function loadAll(){
+  if(!currentYearId)return;
   await Promise.all([loadSubjects(),loadAbsences(),loadBG(),loadBF(),loadMeasures(),loadNotes(),loadSchedule(),loadDays(),loadWeeks(),loadLessons(),loadCalEvents()]);
   renderHome();
 }
 
 // ===== SUBJECTS =====
 async function loadSubjects(){
-  const{data}=await sb.from('subjects').select('*,grades(*),subject_finals(*)').eq('user_id',U.id).order('created_at');
+  const{data}=await sb.from('subjects').select('*,grades(*),subject_finals(*)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('created_at');
   subjects=data||[];
   renderSubjects();renderGP();populateSubjectSelects();
 }
@@ -990,7 +1189,6 @@ function openAddGrade(sid){
   gradeModalSubjectId=sid;editGradeId=null;selectedGradeVal=1;gradeModalCalEventId=null;
   document.getElementById('gradeMoT').textContent='Dodaj ocenu';
   document.getElementById('gradeDate').value=toISO(new Date());
-  document.getElementById('gradeDateRow').style.display='none';
   document.getElementById('gradeSem').value='1';
   document.getElementById('gradeType').value='';
   document.getElementById('gradeNote').value='';
@@ -1007,7 +1205,6 @@ function openEditGrade(gid,sid){
   gradeModalSubjectId=sid;editGradeId=gid;selectedGradeVal=g.value;gradeModalCalEventId=null;
   document.getElementById('gradeMoT').textContent='Izmeni ocenu';
   document.getElementById('gradeDate').value=g.date||toISO(new Date());
-  document.getElementById('gradeDateRow').style.display=g.date?'':'none';
   document.getElementById('gradeSem').value=g.semester||1;
   document.getElementById('gradeType').value=g.type||'';
   document.getElementById('gradeNote').value=g.note||'';
@@ -1029,16 +1226,14 @@ function selectGradeVal(v){
 }
 async function saveGrade(){
   const sem=parseInt(document.getElementById('gradeSem').value);
-  // Only save date if it's visible (i.e. added from calendar event)
-  const dateRowVisible=document.getElementById('gradeDateRow').style.display!=='none';
-  const date=dateRowVisible?(document.getElementById('gradeDate').value||null):null;
+  const date=document.getElementById('gradeDate').value||null;
   const type=document.getElementById('gradeType').value||null;
   const note=document.getElementById('gradeNote').value.trim()||null;
   let gradeId=editGradeId;
   if(editGradeId){
     await sb.from('grades').update({value:selectedGradeVal,semester:sem,date,type,note}).eq('id',editGradeId);
   } else {
-    const{data}=await sb.from('grades').insert({subject_id:gradeModalSubjectId,user_id:U.id,value:selectedGradeVal,semester:sem,date,type,note,calendar_event_id:gradeModalCalEventId}).select();
+    const{data}=await sb.from('grades').insert({subject_id:gradeModalSubjectId,user_id:U.id,value:selectedGradeVal,semester:sem,date,type,note,calendar_event_id:gradeModalCalEventId,school_year_id:currentYearId}).select();
     gradeId=data?.[0]?.id;
     // Link calendar event to grade
     if(gradeModalCalEventId&&gradeId){
@@ -1065,7 +1260,7 @@ async function deleteGrade(){
   renderHome();
 }
 
-async function addSubject(){const i=document.getElementById('nsn'),n=i.value.trim();if(!n)return i.focus();await sb.from('subjects').insert({name:n,user_id:U.id});i.value='';await loadSubjects();renderHome();}
+async function addSubject(){const i=document.getElementById('nsn'),n=i.value.trim();if(!n)return i.focus();await sb.from('subjects').insert({name:n,user_id:U.id,school_year_id:currentYearId});i.value='';await loadSubjects();renderHome();}
 async function removeSubject(id){if(!confirm('Obrisati predmet i sve ocene?'))return;await sb.from('subjects').delete().eq('id',id);await loadSubjects();renderHome();}
 async function removeGrade(id){await sb.from('grades').delete().eq('id',id);await loadSubjects();renderHome();}
 async function saveFinal(sid,sem){
@@ -1076,7 +1271,7 @@ async function saveFinal(sid,sem){
 
 // ===== ABSENCES =====
 async function loadAbsences(){
-  const{data}=await sb.from('absences').select('*').eq('user_id',U.id).order('date',{ascending:false});
+  const{data}=await sb.from('absences').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date',{ascending:false});
   absences=data||[];renderAbsences();
 }
 function toggleAbsType(){
@@ -1143,7 +1338,7 @@ async function addAbsence(){
   const absence_type=j?(document.getElementById('absKind').value||null):null;
   const note=document.getElementById('absNote').value.trim()||null;
   if(!d)return;
-  await sb.from('absences').insert({user_id:U.id,date:d,hours:h,justified:j,absence_type,note});
+  await sb.from('absences').insert({user_id:U.id,date:d,hours:h,justified:j,absence_type,note,school_year_id:currentYearId});
   await loadAbsences();
 }
 async function removeAbsence(id){await sb.from('absences').delete().eq('id',id);await loadAbsences();}
@@ -1175,7 +1370,7 @@ async function saveEditAbsence(){
 // ===== BEHAVIOR GRADES =====
 let editBGId=null,editBGVal=5;
 async function loadBG(){
-  const{data}=await sb.from('behavior').select('*').eq('user_id',U.id).eq('is_final',false).order('date',{ascending:false});
+  const{data}=await sb.from('behavior').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).eq('is_final',false).order('date',{ascending:false});
   const list=data||[],el=document.getElementById('bgl');
   if(!list.length){el.innerHTML='<div class="empty">Nema pojedinačnih ocena</div>';return;}
   el.innerHTML=list.map(g=>`<li>
@@ -1227,14 +1422,14 @@ async function saveEditBG(){
 async function addBG(){
   const v=parseInt(document.getElementById('bgv').value),d=document.getElementById('bgd').value,n=document.getElementById('bgn').value.trim()||null;
   if(!d)return;
-  await sb.from('behavior').insert({user_id:U.id,grade:v,date:d,note:n,is_final:false});
+  await sb.from('behavior').insert({user_id:U.id,grade:v,date:d,note:n,is_final:false,school_year_id:currentYearId});
   document.getElementById('bgn').value='';await loadBG();
 }
 async function removeBG(id){await sb.from('behavior').delete().eq('id',id);await loadBG();}
 
 // ===== BEHAVIOR FINALS =====
 async function loadBF(){
-  const{data}=await sb.from('behavior').select('*').eq('user_id',U.id).eq('is_final',true);
+  const{data}=await sb.from('behavior').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).eq('is_final',true);
   const list=data||[];
   [1,2].forEach(s=>{
     const r=list.find(x=>x.semester===s),el=document.getElementById('bf'+s);
@@ -1245,14 +1440,14 @@ async function loadBF(){
 async function saveBF(s){
   const v=document.getElementById('bfs'+s).value;if(!v)return;
   await sb.from('behavior').delete().eq('user_id',U.id).eq('is_final',true).eq('semester',s);
-  await sb.from('behavior').insert({user_id:U.id,grade:parseInt(v),is_final:true,semester:s});
+  await sb.from('behavior').insert({user_id:U.id,grade:parseInt(v),is_final:true,semester:s,school_year_id:currentYearId});
   await loadBF();renderGPBehavior();
 }
 
 // ===== MEASURES =====
 let editMeasureId=null;
 async function loadMeasures(){
-  const{data}=await sb.from('measures').select('*').eq('user_id',U.id).order('created_at');
+  const{data}=await sb.from('measures').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).order('created_at');
   const list=data||[],el=document.getElementById('ml');
   if(!list.length){el.innerHTML='<div class="empty">Nema mera ni pohvala</div>';return;}
   el.innerHTML=`<div class="tw"><table><thead><tr><th>Tip</th><th>Naziv</th><th>Datum</th><th>Beleška</th><th></th></tr></thead><tbody>${list.map(m=>`<tr>
@@ -1282,7 +1477,7 @@ async function saveEditMeasure(){
 async function addMeasure(){
   const raw=document.getElementById('mt').value,[type,name]=raw.split('|');
   const d=document.getElementById('md').value||null,n=document.getElementById('mn').value.trim()||null;
-  await sb.from('measures').insert({user_id:U.id,type,name,date:d,note:n});
+  await sb.from('measures').insert({user_id:U.id,type,name,date:d,note:n,school_year_id:currentYearId});
   document.getElementById('mn').value='';await loadMeasures();
 }
 async function removeMeasure(id){await sb.from('measures').delete().eq('id',id);await loadMeasures();}
@@ -1290,7 +1485,7 @@ async function removeMeasure(id){await sb.from('measures').delete().eq('id',id);
 // ===== NOTES =====
 let editNoteId=null;
 async function loadNotes(){
-  const{data}=await sb.from('behavior_notes').select('*,subjects(name)').eq('user_id',U.id).order('date',{ascending:false});
+  const{data}=await sb.from('behavior_notes').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date',{ascending:false});
   const list=data||[],el=document.getElementById('ntl');
   if(!list.length){el.innerHTML='<div class="empty">Nema upisa</div>';return;}
   el.innerHTML=list.map(n=>`<li>
@@ -1324,14 +1519,14 @@ async function saveEditNote(){
 async function addNote(){
   const s=document.getElementById('nts').value||null,d=document.getElementById('ntd').value,n=document.getElementById('ntt').value.trim();
   if(!d||!n)return;
-  await sb.from('behavior_notes').insert({user_id:U.id,subject_id:s,date:d,note:n});
+  await sb.from('behavior_notes').insert({user_id:U.id,subject_id:s,date:d,note:n,school_year_id:currentYearId});
   document.getElementById('ntt').value='';await loadNotes();
 }
 async function removeNote(id){await sb.from('behavior_notes').delete().eq('id',id);await loadNotes();}
 
 // ===== SCHEDULE =====
 async function loadSchedule(){
-  const{data}=await sb.from('schedule').select('*,subjects(name)').eq('user_id',U.id);
+  const{data}=await sb.from('schedule').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId);
   schedule=data||[];
 }
 function renderSchedule(){
@@ -1364,7 +1559,7 @@ function openSchedModal(dow,per){
 async function saveSchedCell(){
   const sid=document.getElementById('schedSel').value||null;
   if(sid){
-    await sb.from('schedule').upsert({user_id:U.id,day_of_week:schedCell.dow,period:schedCell.per,subject_id:sid},{onConflict:'user_id,day_of_week,period'});
+    await sb.from('schedule').upsert({user_id:U.id,day_of_week:schedCell.dow,period:schedCell.per,subject_id:sid,school_year_id:currentYearId},{onConflict:'user_id,day_of_week,period'});
   } else {
     await sb.from('schedule').delete().eq('user_id',U.id).eq('day_of_week',schedCell.dow).eq('period',schedCell.per);
   }
@@ -1376,12 +1571,12 @@ async function clearSchedCell(){
 }
 
 // ===== DAYS/WEEKS =====
-async function loadDays(){const{data}=await sb.from('school_days').select('*').eq('user_id',U.id);schoolDays=data||[];}
-async function loadWeeks(){const{data}=await sb.from('school_weeks').select('*').eq('user_id',U.id);schoolWeeks=data||[];}
-async function loadLessons(){const{data}=await sb.from('lessons').select('*,subjects(name)').eq('user_id',U.id).order('date').order('period');lessons=data||[];}
+async function loadDays(){const{data}=await sb.from('school_days').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId);schoolDays=data||[];}
+async function loadWeeks(){const{data}=await sb.from('school_weeks').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId);schoolWeeks=data||[];}
+async function loadLessons(){const{data}=await sb.from('lessons').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date').order('period');lessons=data||[];}
 async function loadCalEvents(){
   // Load calendar events without grades join first to avoid issues
-  const{data}=await sb.from('calendar_events').select('*,subjects(name)').eq('user_id',U.id).order('date');
+  const{data}=await sb.from('calendar_events').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date');
   calEvents=data||[];
   // Then try to load linked grades separately
   if(calEvents.length){
@@ -1552,7 +1747,7 @@ async function saveLesson(){
   if(editLessonId){
     await sb.from('lessons').update({subject_id:sid,period:per,title,types}).eq('id',editLessonId);
   } else {
-    const{data}=await sb.from('lessons').insert({user_id:U.id,subject_id:sid,date:currentLessonDate,period:per,title,types}).select();
+    const{data}=await sb.from('lessons').insert({user_id:U.id,subject_id:sid,date:currentLessonDate,period:per,title,types,school_year_id:currentYearId}).select();
     lessonId=data?.[0]?.id;
   }
   // Handle absence
@@ -1597,7 +1792,7 @@ function openDayModal(ds){
 }
 async function saveDay(){
   const type=document.getElementById('dts').value,note=document.getElementById('dns').value.trim()||null;
-  await sb.from('school_days').upsert({user_id:U.id,date:currentDayDate,type,note},{onConflict:'user_id,date'});
+  await sb.from('school_days').upsert({user_id:U.id,date:currentDayDate,type,note,school_year_id:currentYearId},{onConflict:'user_id,date'});
   closeMo('dayMo');await loadDays();renderCasoviWeek();renderDayDetail(currentDayDate);
 }
 async function deleteDay(){
@@ -1616,7 +1811,7 @@ function openWeekModal(){
 async function saveWeek(){
   const type=document.getElementById('wts').value,note=document.getElementById('wns').value.trim()||null;
   const ws=toISO(casoviWeek);
-  await sb.from('school_weeks').upsert({user_id:U.id,week_start:ws,type,note},{onConflict:'user_id,week_start'});
+  await sb.from('school_weeks').upsert({user_id:U.id,week_start:ws,type,note,school_year_id:currentYearId},{onConflict:'user_id,week_start'});
   closeMo('weekMo');await loadWeeks();renderCasoviWeek();
 }
 
@@ -1627,11 +1822,34 @@ async function addCalEvent(){
   const type=document.getElementById('clt').value;
   const note=document.getElementById('cln').value.trim()||null;
   if(!d||!type)return;
-  await sb.from('calendar_events').insert({user_id:U.id,subject_id:sid,date:d,type,note});
+  await sb.from('calendar_events').insert({user_id:U.id,subject_id:sid,date:d,type,note,school_year_id:currentYearId});
   document.getElementById('cln').value='';
   await loadCalEvents();renderCalWeek();renderHome();
   // also refresh casovi if same week visible
   if(document.getElementById('sec-casovi').classList.contains('active'))renderCasoviWeek();
+}
+let editCalEventId=null;
+function openEditCalEvent(id){
+  editCalEventId=id;
+  const e=calEvents.find(x=>x.id===id);if(!e)return;
+  const sel=document.getElementById('ceEditSubject');
+  sel.innerHTML='<option value="">— Izaberi —</option>'+subjects.map(s=>`<option value="${s.id}"${s.id===e.subject_id?' selected':''}>${esc(s.name)}</option>`).join('');
+  document.getElementById('ceEditDate').value=e.date||'';
+  document.getElementById('ceEditType').value=e.type||'usmeno';
+  document.getElementById('ceEditNote').value=e.note||'';
+  document.getElementById('calEditMo').style.display='flex';
+}
+async function saveEditCalEvent(){
+  if(!editCalEventId)return;
+  const subject_id=document.getElementById('ceEditSubject').value||null;
+  const date=document.getElementById('ceEditDate').value;
+  const type=document.getElementById('ceEditType').value;
+  const note=document.getElementById('ceEditNote').value.trim()||null;
+  if(!date)return;
+  await sb.from('calendar_events').update({subject_id,date,type,note}).eq('id',editCalEventId);
+  editCalEventId=null;
+  closeMo('calEditMo');
+  await loadCalEvents();renderCalWeek();renderHome();
 }
 async function removeCalEvent(id){
   await sb.from('calendar_events').delete().eq('id',id);
@@ -1660,6 +1878,7 @@ function renderCalWeek(){
           <div class="ces"><span class="ct ct-${e.type}">${CAL_LABELS[e.type]||e.type}</span>${e.note?` · ${esc(e.note)}`:''}</div>
         </div>
         ${gradeHtml}
+        <button class="btn-sm" onclick="openEditCalEvent('${e.id}')" style="font-size:.7rem;padding:4px 8px">✏️</button>
         <button class="btn-del" onclick="removeCalEvent('${e.id}')">×</button>
       </div>`;
     });
@@ -1678,7 +1897,6 @@ function openAddGradeFromCal(calEventId){
   gradeModalCalEventId=calEventId;
   document.getElementById('gradeMoT').textContent='Dodaj ocenu — '+esc(e.subjects?.name||'');
   document.getElementById('gradeDate').value=e.date||toISO(new Date());
-  document.getElementById('gradeDateRow').style.display='';
   document.getElementById('gradeSem').value='1';
   document.getElementById('gradeType').value=CAL_LABELS[e.type]||'';
   document.getElementById('gradeNote').value='';
@@ -1698,7 +1916,6 @@ function openEditGradeFromCal(calEventId){
   selectedGradeVal=e.grades.value;
   document.getElementById('gradeMoT').textContent='Izmeni ocenu — '+esc(e.subjects?.name||'');
   document.getElementById('gradeDate').value=e.grades.date||e.date||toISO(new Date());
-  document.getElementById('gradeDateRow').style.display='';
   document.getElementById('gradeSem').value=e.grades.semester||1;
   document.getElementById('gradeType').value=e.grades.type||'';
   document.getElementById('gradeNote').value=e.grades.note||'';
@@ -1790,6 +2007,41 @@ function renderHome(){
 function populateSubjectSelects(){
   const opts='<option value="">— Izaberi —</option>'+subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
   ['nts','cls'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});
+}
+
+// ===== BULK DAYS =====
+function openBulkDaysModal(){
+  const today=toISO(new Date());
+  document.getElementById('bulkFrom').value=today;
+  document.getElementById('bulkTo').value=today;
+  document.getElementById('bulkType').value='neradni';
+  document.getElementById('bulkNote').value='';
+  document.getElementById('bulkDaysMo').style.display='flex';
+}
+async function saveBulkDays(){
+  const from=new Date(document.getElementById('bulkFrom').value+'T00:00:00');
+  const to=new Date(document.getElementById('bulkTo').value+'T00:00:00');
+  const type=document.getElementById('bulkType').value;
+  const note=document.getElementById('bulkNote').value.trim()||null;
+  const checkedDays=[0,1,2,3,4,5,6].filter(i=>document.getElementById('bd'+i).checked);
+  if(!from||!to||from>to)return;
+  // Collect all dates in range that match checked days
+  const upserts=[];
+  let d=new Date(from);
+  while(d<=to){
+    const dow=d.getDay()===0?6:d.getDay()-1; // 0=mon
+    if(checkedDays.includes(dow)){
+      upserts.push({user_id:U.id,date:toISO(d),type,note,school_year_id:currentYearId});
+    }
+    d=addDays(d,1);
+  }
+  if(!upserts.length)return;
+  // Upsert in batches
+  await sb.from('school_days').upsert(upserts,{onConflict:'user_id,date'});
+  closeMo('bulkDaysMo');
+  await loadDays();
+  renderCasoviWeek();
+  alert(`Podešeno ${upserts.length} dana kao "${type}"!`);
 }
 
 // ===== MODAL HELPERS =====
