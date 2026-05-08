@@ -22,7 +22,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(38,38,58,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(38,38,58,.35) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
 
 /* AUTH */
-#authScreen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px;}
+#authScreen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px;}#authScreen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 20% 30%,rgba(124,106,247,.18) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 80% 70%,rgba(106,247,184,.12) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 50% 10%,rgba(247,106,176,.1) 0%,transparent 60%);pointer-events:none;z-index:0;}#authScreen::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(40,40,58,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(40,40,58,.5) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;z-index:0;}
 .auth-box{background:var(--surface);border:1px solid var(--border2);border-radius:22px;padding:40px;width:100%;max-width:410px;position:relative;z-index:1;box-shadow:0 0 80px rgba(124,106,247,.15);}
 .auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:5px;}
 .auth-icon{width:42px;height:42px;background:linear-gradient(135deg,var(--accent),var(--accent3));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
@@ -175,7 +175,19 @@ tr:hover td{background:rgba(255,255,255,.018);}
 .ntext{font-size:.8rem;}
 
 /* SCHEDULE */
-.sg{display:grid;gap:1px;background:var(--border);border-radius:11px;overflow:hidden;font-size:.72rem;}
+/* GRADE CARD */
+.grade-item{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:all .15s;position:relative;}
+.grade-item:hover{border-color:var(--accent);transform:translateY(-1px);}
+.grade-item .gval{font-family:Syne,sans-serif;font-weight:800;font-size:1.2rem;}
+.grade-item .gtype{font-size:.62rem;color:var(--muted);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.grade-item .gdate{font-size:.6rem;color:var(--muted);}
+.sem-section{margin-bottom:14px;}
+.sem-label{font-family:Syne,sans-serif;font-weight:700;font-size:.8rem;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.sem-avg{font-family:Syne,sans-serif;font-weight:800;font-size:.9rem;margin-left:auto;}
+.grades-wrap{display:flex;flex-wrap:wrap;gap:6px;}
+/* ABSENCE TYPE */
+.abs-type-badge{font-size:.66rem;padding:1px 7px;border-radius:100px;background:rgba(106,247,184,.1);color:var(--accent3);margin-top:2px;display:inline-block;}
+.sg-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:11px;}.sg{display:grid;gap:1px;background:var(--border);border-radius:11px;overflow:hidden;font-size:.72rem;min-width:600px;}
 .sg-head{background:var(--surface2);padding:7px 5px;text-align:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;color:var(--muted);}
 .sg-per{background:var(--surface2);padding:7px 5px;text-align:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.66rem;color:var(--muted);}
 .sg-cell{background:var(--surface);padding:5px;min-height:42px;cursor:pointer;transition:background .13s;display:flex;align-items:center;justify-content:center;text-align:center;}
@@ -357,7 +369,30 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
           <div class="form-row">
             <div class="ff"><label>Datum</label><input type="date" id="ad"/></div>
             <div class="ff" style="max-width:85px"><label>Časova</label><input type="number" id="ah" value="1" min="1" max="10"/></div>
-            <div class="ff" style="max-width:145px"><label>Tip</label><select id="atp"><option value="true">Opravdan</option><option value="false">Neopravdan</option></select></div>
+            <div class="ff" style="max-width:145px"><label>Opravdan?</label><select id="atp" onchange="toggleAbsType()"><option value="true">Opravdan</option><option value="false">Neopravdan</option></select></div>
+          </div>
+          <div class="form-row" style="margin-top:7px" id="absTypeRow">
+            <div class="ff"><label>Vrsta opravdanog</label>
+              <select id="absKind">
+                <option value="">— Izaberi —</option>
+                <option>Administrativni postupci</option>
+                <option>Bolest - opravdao roditelj</option>
+                <option>Bolest - opravdao staratelj/hranitelj</option>
+                <option>Bolest - potvrda lekara</option>
+                <option>Dozvola</option>
+                <option>Ispit</option>
+                <option>Nastup</option>
+                <option>Odlazak na specijalistički tretman</option>
+                <option>Opravdan - ostalo</option>
+                <option>Pregled</option>
+                <option>Saobraćaj</option>
+                <option>Sportsko odsustvo</option>
+                <option>Takmičenje</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:7px">
+            <div class="ff"><label>Beleška (opciono)</label><input type="text" id="absNote" placeholder="Napomena..."/></div>
             <button class="btn-add" onclick="addAbsence()">+ Dodaj</button>
           </div>
         </div>
@@ -452,7 +487,7 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
       <div class="sec-title">🗓 Raspored časova</div>
       <div class="card">
         <div class="ch"><h2>Nedeljni raspored — klikni ćeliju da izmeniš</h2></div>
-        <div class="cb" style="padding:10px"><div id="sg"><div class="ld">Učitavam...</div></div></div>
+        <div class="cb" style="padding:10px"><div class="sg-wrap"><div id="sg"><div class="ld">Učitavam...</div></div></div></div>
       </div>
     </div>
 
@@ -559,7 +594,7 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
         <div class="ff" style="max-width:85px"><label>Čas (0-7)</label><input type="number" id="lsp" min="0" max="7" value="1"/></div>
       </div>
       <div class="ff" style="margin-bottom:11px"><label>Nastavna jedinica</label><input type="text" id="lst" placeholder="npr. Kvadratne jednačine..."/></div>
-      <div class="ff"><label>Tip časa (možeš izabrati više)</label>
+      <div class="ff" style="margin-bottom:11px"><label>Tip časa (možeš izabrati više)</label>
         <div class="msel" id="ltypes">
           <label class="mopt"><input type="checkbox" value="Vežbanje"> Vežbanje</label>
           <label class="mopt"><input type="checkbox" value="Laboratorijska vežba"> Laboratorijska vežba</label>
@@ -575,10 +610,82 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
           <label class="mopt"><input type="checkbox" value="Utvrđivanje"> Utvrđivanje</label>
         </div>
       </div>
+      <div style="background:rgba(247,106,106,.06);border:1px solid rgba(247,106,106,.2);border-radius:9px;padding:12px;margin-bottom:4px">
+        <div style="font-family:Syne,sans-serif;font-weight:700;font-size:.8rem;margin-bottom:10px;color:var(--danger)">📋 Izostanak sa ovog časa</div>
+        <div class="form-row">
+          <div class="ff" style="max-width:150px"><label>Status</label>
+            <select id="labsType" onchange="toggleLessonAbsType()">
+              <option value="none">Nije odsutan</option>
+              <option value="false">Neopravdan</option>
+              <option value="true">Opravdan</option>
+            </select>
+          </div>
+        </div>
+        <div id="labsKindRow" style="display:none;margin-top:8px">
+          <div class="ff"><label>Vrsta opravdanog</label>
+            <select id="labsKind">
+              <option value="">— Izaberi —</option>
+              <option>Administrativni postupci</option>
+              <option>Bolest - opravdao roditelj</option>
+              <option>Bolest - opravdao staratelj/hranitelj</option>
+              <option>Bolest - potvrda lekara</option>
+              <option>Dozvola</option>
+              <option>Ispit</option>
+              <option>Nastup</option>
+              <option>Odlazak na specijalistički tretman</option>
+              <option>Opravdan - ostalo</option>
+              <option>Pregled</option>
+              <option>Saobraćaj</option>
+              <option>Sportsko odsustvo</option>
+              <option>Takmičenje</option>
+            </select>
+          </div>
+        </div>
+        <div class="ff" style="margin-top:8px"><label>Beleška izostanka</label><input type="text" id="labsNote" placeholder="Napomena..."/></div>
+      </div>
       <div class="mfoot">
-        <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" id="ldb" onclick="deleteLesson()" style="display:none">Obriši</button>
+        <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" id="ldb" onclick="deleteLesson()">Obriši</button>
         <button class="btn-sm" onclick="closeMo('lessonMo')">Otkaži</button>
         <button class="btn-add" onclick="saveLesson()">Sačuvaj</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRADE MODAL -->
+  <div class="mo" id="gradeMo" style="display:none" onclick="if(event.target===this)closeMo('gradeMo')">
+    <div class="modal">
+      <h3 id="gradeMoT">Dodaj ocenu</h3>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px" id="gradeValBtns">
+        <button onclick="selectGradeVal(1)" class="btn-sm" id="gvb1" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">1</button>
+        <button onclick="selectGradeVal(2)" class="btn-sm" id="gvb2" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">2</button>
+        <button onclick="selectGradeVal(3)" class="btn-sm" id="gvb3" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">3</button>
+        <button onclick="selectGradeVal(4)" class="btn-sm" id="gvb4" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">4</button>
+        <button onclick="selectGradeVal(5)" class="btn-sm" id="gvb5" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">5</button>
+      </div>
+      <div class="form-row" style="margin-bottom:10px">
+        <div class="ff"><label>Polugodište</label>
+          <select id="gradeSem"><option value="1">1. Polugodište</option><option value="2">2. Polugodište</option></select>
+        </div>
+        <div class="ff"><label>Datum</label><input type="date" id="gradeDate"/></div>
+      </div>
+      <div class="ff" style="margin-bottom:10px"><label>Tip ocene</label>
+        <select id="gradeType">
+          <option value="">— Izaberi —</option>
+          <option>Usmeno odgovaranje</option>
+          <option>Kontrolni zadatak</option>
+          <option>Pismeni zadatak</option>
+          <option>Petnaestominutna vežba</option>
+          <option>Nema karta</option>
+          <option>Praktičan rad</option>
+          <option>Aktivnost na času</option>
+          <option>Ostalo</option>
+        </select>
+      </div>
+      <div class="ff"><label>Beleška (opciono)</label><input type="text" id="gradeNote" placeholder="Napomena..."/></div>
+      <div class="mfoot">
+        <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" id="gradeDeleteBtn" onclick="deleteGrade()" style="display:none">Obriši</button>
+        <button class="btn-sm" onclick="closeMo('gradeMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveGrade()">Sačuvaj</button>
       </div>
     </div>
   </div>
@@ -718,15 +825,28 @@ function renderSubjects(){
   if(!subjects.length){el.innerHTML='<div class="empty"><div class="big">📚</div>Nema predmeta. Dodaj prvi!</div>';return;}
   el.innerHTML=subjects.map(s=>renderSCard(s)).join('');
 }
+let gradeModalSubjectId=null,editGradeId=null,selectedGradeVal=1,gradeModalCalEventId=null;
+
 function renderSCard(s){
-  const avg=calcAvg(s.grades),ad=avg?avg.toFixed(2):'—',ac=avgClass(avg);
-  const chips=(s.grades||[]).map(g=>`<span class="chip c${g.value}"><span>${g.value}</span><button class="btn-del" onclick="removeGrade('${g.id}')">×</button></span>`).join('');
+  const grades1=(s.grades||[]).filter(g=>g.semester===1||!g.semester);
+  const grades2=(s.grades||[]).filter(g=>g.semester===2);
+  const avg1=grades1.length?grades1.reduce((a,b)=>a+b.value,0)/grades1.length:0;
+  const avg2=grades2.length?grades2.reduce((a,b)=>a+b.value,0)/grades2.length:0;
+  const avgAll=calcAvg(s.grades);
   const nc=[5,4,3,2].map(t=>{
-    const r=howMany(s.grades,t),al=avg>=THR[t];
+    const r=howMany(s.grades,t),al=avgAll>=THR[t];
     const lbl=al?`<div class="nc ok">✓ Postignuto</div>`:r.imp?`<div class="nc imp">✗ Nemoguće</div>`:`<div class="nc">još <strong>${r.c}</strong> ${r.c===1?'petica':r.c<5?'petice':'petica'}</div>`;
     return`<div class="nc-card g${t}"><div class="tg">${t}</div>${lbl}</div>`;
   }).join('');
   const finals=s.subject_finals||[],f1=finals.find(f=>f.semester===1),f2=finals.find(f=>f.semester===2);
+  const renderGrades=(glist)=>glist.length?glist.map(g=>`
+    <div class="grade-item c${g.value}" onclick="openEditGrade('${g.id}','${s.id}')">
+      <div>
+        <div class="gval ${avgClass(g.value)}">${g.value}</div>
+        ${g.type?`<div class="gtype">${esc(g.type)}</div>`:''}
+        ${g.date?`<div class="gdate">${fmtShort(g.date)}</div>`:''}
+      </div>
+    </div>`).join(''):`<span style="color:var(--muted);font-size:.75rem">Nema ocena</span>`;
   const finHtml=`<div class="finals-row">
     <div class="fbox"><div class="fl">Zaključna — 1. pol.</div><div class="fv ${f1?avgClass(f1.grade):'a0'}">${f1?f1.grade:'—'}</div>
       <select id="fs1-${s.id}">${[5,4,3,2,1].map(v=>`<option value="${v}"${f1&&f1.grade===v?' selected':''}>${v}</option>`).join('')}</select>
@@ -739,18 +859,19 @@ function renderSCard(s){
     <div class="shead">
       <span class="sname">${esc(s.name)}</span>
       <div style="display:flex;align-items:center;gap:7px">
-        <span class="avg-b ${ac}">${ad}</span>
+        <span class="avg-b ${avgClass(avgAll)}">${avgAll?avgAll.toFixed(2):'—'}</span>
+        <button class="btn-add" onclick="openAddGrade('${s.id}')">+ Ocena</button>
         <button class="btn-del" style="font-size:1rem" onclick="removeSubject('${s.id}')">🗑</button>
       </div>
     </div>
     <div class="sbody">
-      <div class="slbl">Tekuće ocene</div>
-      <div class="chips">${chips||'<span style="color:var(--muted);font-size:.75rem">Nema ocena</span>'}</div>
-      <div class="form-row" style="margin-top:9px">
-        <select style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:Space Mono,monospace;font-size:.78rem;padding:6px 9px;outline:none;max-width:70px" id="gs-${s.id}">
-          <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
-        </select>
-        <button class="btn-add" onclick="addGrade('${s.id}')">+ Ocena</button>
+      <div class="sem-section">
+        <div class="sem-label">1. Polugodište <span class="sem-avg ${avgClass(avg1)}">${avg1?avg1.toFixed(2):'—'}</span></div>
+        <div class="grades-wrap">${renderGrades(grades1)}</div>
+      </div>
+      <div class="sem-section">
+        <div class="sem-label">2. Polugodište <span class="sem-avg ${avgClass(avg2)}">${avg2?avg2.toFixed(2):'—'}</span></div>
+        <div class="grades-wrap">${renderGrades(grades2)}</div>
       </div>
       <div class="div"></div>
       <div class="slbl">Potrebno za zaključenu...</div>
@@ -761,9 +882,84 @@ function renderSCard(s){
     </div>
   </div>`;
 }
+
+function openAddGrade(sid){
+  gradeModalSubjectId=sid;editGradeId=null;selectedGradeVal=1;
+  document.getElementById('gradeMoT').textContent='Dodaj ocenu';
+  document.getElementById('gradeDate').value=toISO(new Date());
+  document.getElementById('gradeSem').value='1';
+  document.getElementById('gradeType').value='';
+  document.getElementById('gradeNote').value='';
+  document.getElementById('gradeDeleteBtn').style.display='none';
+  [1,2,3,4,5].forEach(v=>{
+    const b=document.getElementById('gvb'+v);
+    b.style.background=v===1?'var(--accent)':'';
+    b.style.color=v===1?'#fff':'';
+  });
+  document.getElementById('gradeMo').style.display='flex';
+}
+function openEditGrade(gid,sid){
+  const g=subjects.find(s=>s.id===sid)?.grades?.find(x=>x.id===gid);if(!g)return;
+  gradeModalSubjectId=sid;editGradeId=gid;selectedGradeVal=g.value;
+  document.getElementById('gradeMoT').textContent='Izmeni ocenu';
+  document.getElementById('gradeDate').value=g.date||toISO(new Date());
+  document.getElementById('gradeSem').value=g.semester||1;
+  document.getElementById('gradeType').value=g.type||'';
+  document.getElementById('gradeNote').value=g.note||'';
+  document.getElementById('gradeDeleteBtn').style.display='';
+  [1,2,3,4,5].forEach(v=>{
+    const b=document.getElementById('gvb'+v);
+    b.style.background=v===g.value?'var(--accent)':'';
+    b.style.color=v===g.value?'#fff':'';
+  });
+  document.getElementById('gradeMo').style.display='flex';
+}
+function selectGradeVal(v){
+  selectedGradeVal=v;
+  [1,2,3,4,5].forEach(x=>{
+    const b=document.getElementById('gvb'+x);
+    b.style.background=x===v?'var(--accent)':'';
+    b.style.color=x===v?'#fff':'';
+  });
+}
+async function saveGrade(){
+  const sem=parseInt(document.getElementById('gradeSem').value);
+  const date=document.getElementById('gradeDate').value||null;
+  const type=document.getElementById('gradeType').value||null;
+  const note=document.getElementById('gradeNote').value.trim()||null;
+  let gradeId=editGradeId;
+  if(editGradeId){
+    await sb.from('grades').update({value:selectedGradeVal,semester:sem,date,type,note}).eq('id',editGradeId);
+  } else {
+    const{data}=await sb.from('grades').insert({subject_id:gradeModalSubjectId,user_id:U.id,value:selectedGradeVal,semester:sem,date,type,note,calendar_event_id:gradeModalCalEventId}).select();
+    gradeId=data?.[0]?.id;
+    // Link calendar event to grade
+    if(gradeModalCalEventId&&gradeId){
+      await sb.from('calendar_events').update({grade_id:gradeId}).eq('id',gradeModalCalEventId);
+    }
+  }
+  gradeModalCalEventId=null;
+  closeMo('gradeMo');
+  await loadSubjects();
+  await loadCalEvents();
+  renderCalWeek();
+  renderHome();
+}
+async function deleteGrade(){
+  if(!editGradeId)return;
+  // Unlink from calendar event if linked
+  await sb.from('calendar_events').update({grade_id:null}).eq('grade_id',editGradeId);
+  await sb.from('grades').delete().eq('id',editGradeId);
+  gradeModalCalEventId=null;
+  closeMo('gradeMo');
+  await loadSubjects();
+  await loadCalEvents();
+  renderCalWeek();
+  renderHome();
+}
+
 async function addSubject(){const i=document.getElementById('nsn'),n=i.value.trim();if(!n)return i.focus();await sb.from('subjects').insert({name:n,user_id:U.id});i.value='';await loadSubjects();renderHome();}
 async function removeSubject(id){if(!confirm('Obrisati predmet i sve ocene?'))return;await sb.from('subjects').delete().eq('id',id);await loadSubjects();renderHome();}
-async function addGrade(sid){const v=parseInt(document.getElementById('gs-'+sid).value);await sb.from('grades').insert({subject_id:sid,user_id:U.id,value:v});await loadSubjects();renderHome();}
 async function removeGrade(id){await sb.from('grades').delete().eq('id',id);await loadSubjects();renderHome();}
 async function saveFinal(sid,sem){
   const v=document.getElementById(`fs${sem}-${sid}`).value;if(!v)return;
@@ -776,6 +972,10 @@ async function loadAbsences(){
   const{data}=await sb.from('absences').select('*').eq('user_id',U.id).order('date',{ascending:false});
   absences=data||[];renderAbsences();
 }
+function toggleAbsType(){
+  const j=document.getElementById('atp').value==='true';
+  document.getElementById('absTypeRow').style.display=j?'':'none';
+}
 function renderAbsences(){
   const tot=absences.reduce((a,b)=>a+b.hours,0),jus=absences.filter(a=>a.justified).reduce((a,b)=>a+b.hours,0);
   document.getElementById('at').textContent=tot;
@@ -784,12 +984,22 @@ function renderAbsences(){
   document.getElementById('hsa').textContent=tot;
   const el=document.getElementById('al');
   if(!absences.length){el.innerHTML='<div class="empty">Nema izostanaka 🎉</div>';return;}
-  el.innerHTML=`<div class="tw"><table><thead><tr><th>Datum</th><th>Časova</th><th>Tip</th><th></th></tr></thead><tbody>${absences.map(a=>`<tr><td>${fmt(a.date)}</td><td>${a.hours}</td><td><span class="badge ${a.justified?'b-opr':'b-neopr'}">${a.justified?'Opravdan':'Neopravdan'}</span></td><td><button class="btn-del" onclick="removeAbsence('${a.id}')">×</button></td></tr>`).join('')}</tbody></table></div>`;
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>Datum</th><th>Časova</th><th>Tip</th><th>Vrsta</th><th>Beleška</th><th></th></tr></thead><tbody>${absences.map(a=>`<tr>
+    <td>${fmt(a.date)}</td><td>${a.hours}</td>
+    <td><span class="badge ${a.justified?'b-opr':'b-neopr'}">${a.justified?'Opravdan':'Neopravdan'}</span></td>
+    <td style="font-size:.7rem;color:var(--muted)">${a.absence_type||'—'}</td>
+    <td style="font-size:.7rem;color:var(--muted)">${a.note||'—'}</td>
+    <td><button class="btn-del" onclick="removeAbsence('${a.id}')">×</button></td>
+  </tr>`).join('')}</tbody></table></div>`;
 }
 async function addAbsence(){
-  const d=document.getElementById('ad').value,h=parseInt(document.getElementById('ah').value)||1,j=document.getElementById('atp').value==='true';
+  const d=document.getElementById('ad').value,h=parseInt(document.getElementById('ah').value)||1;
+  const j=document.getElementById('atp').value==='true';
+  const absence_type=j?(document.getElementById('absKind').value||null):null;
+  const note=document.getElementById('absNote').value.trim()||null;
   if(!d)return;
-  await sb.from('absences').insert({user_id:U.id,date:d,hours:h,justified:j});await loadAbsences();
+  await sb.from('absences').insert({user_id:U.id,date:d,hours:h,justified:j,absence_type,note});
+  await loadAbsences();
 }
 async function removeAbsence(id){await sb.from('absences').delete().eq('id',id);await loadAbsences();}
 
@@ -905,7 +1115,7 @@ async function clearSchedCell(){
 async function loadDays(){const{data}=await sb.from('school_days').select('*').eq('user_id',U.id);schoolDays=data||[];}
 async function loadWeeks(){const{data}=await sb.from('school_weeks').select('*').eq('user_id',U.id);schoolWeeks=data||[];}
 async function loadLessons(){const{data}=await sb.from('lessons').select('*,subjects(name)').eq('user_id',U.id).order('date').order('period');lessons=data||[];}
-async function loadCalEvents(){const{data}=await sb.from('calendar_events').select('*,subjects(name)').eq('user_id',U.id).order('date');calEvents=data||[];}
+async function loadCalEvents(){const{data}=await sb.from('calendar_events').select('*,subjects(name),grades(id,value,type,date,note,semester)').eq('user_id',U.id).order('date');calEvents=data||[];}
 
 // ===== WEEK NAVIGATION =====
 function wMove(type,dir){
@@ -1010,18 +1220,21 @@ function renderDayDetail(ds){
 
 // ===== LESSON MODAL =====
 let currentLessonDate=null;
+function resetAbsFields(){
+  document.getElementById('labsType').value='none';
+  document.getElementById('labsKindRow').style.display='none';
+  document.getElementById('labsNote').value='';
+}
 function openLessonModal(ds){
   currentLessonDate=ds;editLessonId=null;
   document.getElementById('lessonMoT').textContent='Upiši čas — '+fmt(ds);
   document.getElementById('lst').value='';
   document.getElementById('lsp').value=1;
   document.querySelectorAll('#ltypes input[type=checkbox]').forEach(cb=>cb.checked=false);
-  // default subject from schedule
-  const d=new Date(ds+'T00:00:00');
-  const dow=jsDayToIdx(d.getDay());
   const sel=document.getElementById('lss');
   sel.innerHTML='<option value="">— Izaberi —</option>'+subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
   document.getElementById('ldb').style.display='none';
+  resetAbsFields();
   document.getElementById('lessonMo').style.display='flex';
 }
 function openEditLesson(id,ds){
@@ -1035,7 +1248,19 @@ function openEditLesson(id,ds){
   document.getElementById('lst').value=l.title;
   document.querySelectorAll('#ltypes input[type=checkbox]').forEach(cb=>{cb.checked=(l.types||[]).includes(cb.value);});
   document.getElementById('ldb').style.display='';
+  // Check if there's an existing absence for this lesson
+  const existingAbs=absences.find(a=>a.lesson_id===id);
+  if(existingAbs){
+    document.getElementById('labsType').value=existingAbs.justified?'true':'false';
+    document.getElementById('labsKindRow').style.display=existingAbs.justified?'':'none';
+    if(existingAbs.absence_type)document.getElementById('labsKind').value=existingAbs.absence_type;
+    document.getElementById('labsNote').value=existingAbs.note||'';
+  } else { resetAbsFields(); }
   document.getElementById('lessonMo').style.display='flex';
+}
+function toggleLessonAbsType(){
+  const v=document.getElementById('labsType').value;
+  document.getElementById('labsKindRow').style.display=v==='true'?'':'none';
 }
 async function saveLesson(){
   const sid=document.getElementById('lss').value||null;
@@ -1043,10 +1268,26 @@ async function saveLesson(){
   const title=document.getElementById('lst').value.trim();
   const types=[...document.querySelectorAll('#ltypes input[type=checkbox]:checked')].map(cb=>cb.value);
   if(!title)return;
+  let lessonId=editLessonId;
   if(editLessonId){
     await sb.from('lessons').update({subject_id:sid,period:per,title,types}).eq('id',editLessonId);
   } else {
-    await sb.from('lessons').insert({user_id:U.id,subject_id:sid,date:currentLessonDate,period:per,title,types});
+    const{data}=await sb.from('lessons').insert({user_id:U.id,subject_id:sid,date:currentLessonDate,period:per,title,types}).select();
+    lessonId=data?.[0]?.id;
+  }
+  // Handle absence
+  const absType=document.getElementById('labsType').value;
+  if(absType!=='none'&&currentLessonDate){
+    const justified=absType==='true';
+    const absence_type=justified?(document.getElementById('labsKind').value||null):null;
+    const note=document.getElementById('labsNote').value.trim()||null;
+    // Remove old absence for this lesson if editing
+    if(editLessonId)await sb.from('absences').delete().eq('lesson_id',editLessonId).eq('user_id',U.id);
+    await sb.from('absences').insert({user_id:U.id,date:currentLessonDate,hours:1,justified,absence_type,note,lesson_id:lessonId});
+    await loadAbsences();
+  } else if(editLessonId){
+    await sb.from('absences').delete().eq('lesson_id',editLessonId).eq('user_id',U.id);
+    await loadAbsences();
   }
   closeMo('lessonMo');await loadLessons();renderDayDetail(currentLessonDate);renderCasoviWeek();
 }
@@ -1126,12 +1367,16 @@ function renderCalWeek(){
     total+=evs.length;
     html+=`<div style="margin-bottom:14px"><div style="font-family:Syne,sans-serif;font-weight:700;font-size:.8rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">${DAYS_FULL[i]}, ${fmt(ds)}</div>`;
     evs.forEach(e=>{
+      const g=e.grades;
+      const gradeHtml=g?`<span class="avg-b ${avgClass(g.value)}" style="font-size:1.1rem;cursor:pointer" onclick="openEditGradeFromCal('${e.id}')">${g.value}</span>`
+        :`<button class="btn-sm" style="font-size:.66rem;padding:3px 8px" onclick="openAddGradeFromCal('${e.id}')">+ Ocena</button>`;
       html+=`<div class="cev">
         <div class="ced">${d.getDate()}</div>
         <div class="cei">
           <div class="cet">${e.subjects?esc(e.subjects.name):'—'}</div>
           <div class="ces"><span class="ct ct-${e.type}">${CAL_LABELS[e.type]||e.type}</span>${e.note?` · ${esc(e.note)}`:''}</div>
         </div>
+        ${gradeHtml}
         <button class="btn-del" onclick="removeCalEvent('${e.id}')">×</button>
       </div>`;
     });
@@ -1139,6 +1384,48 @@ function renderCalWeek(){
   }
   if(!total)html='<div class="empty"><div class="big">📆</div>Nema obaveza ove nedelje</div>';
   el.innerHTML=html;
+}
+
+// ===== GRADE FROM CALENDAR =====
+function openAddGradeFromCal(calEventId){
+  const e=calEvents.find(x=>x.id===calEventId);if(!e)return;
+  // Find subject
+  gradeModalSubjectId=e.subject_id;
+  editGradeId=null;
+  selectedGradeVal=1;
+  // Store cal event id for linking
+  gradeModalCalEventId=calEventId;
+  document.getElementById('gradeMoT').textContent='Dodaj ocenu — '+esc(e.subjects?.name||'');
+  document.getElementById('gradeDate').value=e.date||toISO(new Date());
+  document.getElementById('gradeSem').value='1';
+  document.getElementById('gradeType').value=CAL_LABELS[e.type]||'';
+  document.getElementById('gradeNote').value='';
+  document.getElementById('gradeDeleteBtn').style.display='none';
+  [1,2,3,4,5].forEach(v=>{
+    const b=document.getElementById('gvb'+v);
+    b.style.background=v===1?'var(--accent)':'';
+    b.style.color=v===1?'#fff':'';
+  });
+  document.getElementById('gradeMo').style.display='flex';
+}
+function openEditGradeFromCal(calEventId){
+  const e=calEvents.find(x=>x.id===calEventId);if(!e||!e.grades)return;
+  gradeModalSubjectId=e.subject_id;
+  editGradeId=e.grades.id;
+  gradeModalCalEventId=calEventId;
+  selectedGradeVal=e.grades.value;
+  document.getElementById('gradeMoT').textContent='Izmeni ocenu — '+esc(e.subjects?.name||'');
+  document.getElementById('gradeDate').value=e.grades.date||e.date||toISO(new Date());
+  document.getElementById('gradeSem').value=e.grades.semester||1;
+  document.getElementById('gradeType').value=e.grades.type||'';
+  document.getElementById('gradeNote').value=e.grades.note||'';
+  document.getElementById('gradeDeleteBtn').style.display='';
+  [1,2,3,4,5].forEach(v=>{
+    const b=document.getElementById('gvb'+v);
+    b.style.background=v===e.grades.value?'var(--accent)':'';
+    b.style.color=v===e.grades.value?'#fff':'';
+  });
+  document.getElementById('gradeMo').style.display='flex';
 }
 
 // ===== HOME =====
