@@ -899,23 +899,23 @@ let selectedDay=null,editLessonId=null;
 
 // ===== SCHOOL YEARS =====
 async function loadSchoolYears(){
-  const{data}=await sb.from('school_years').select('*').eq('user_id',U.id).order('start_date',{ascending:false});
-  schoolYears=data||[];
-  // Set active year or most recent — always, not just when currentYearId is null
-  const active=schoolYears.find(y=>y.is_active)||schoolYears[0];
-  if(active){
-    // Only override if no saved year, or saved year not in list
-    if(!currentYearId||!schoolYears.find(y=>y.id===currentYearId)){
-      currentYearId=active.id;
+  try{
+    const{data,error}=await sb.from('school_years').select('*').eq('user_id',U.id).order('start_date',{ascending:false});
+    if(error){console.error('loadSchoolYears error:',error);return;}
+    schoolYears=data||[];
+    if(!schoolYears.length){
+      await createDefaultYear();
+      return;
     }
+    // Restore saved year or use active/first
+    const savedId=sessionStorage.getItem('schoolYearId');
+    const savedYear=savedId?schoolYears.find(y=>y.id===savedId):null;
+    const activeYear=schoolYears.find(y=>y.is_active)||schoolYears[0];
+    currentYearId=(savedYear||activeYear).id;
     sessionStorage.setItem('schoolYearId',currentYearId);
-  } else if(!schoolYears.length){
-    // Only create default if truly no years exist
-    await createDefaultYear();
-    return;
-  }
-  renderSchoolYearSelector();
-  renderSchoolYearInfo();
+    renderSchoolYearSelector();
+    renderSchoolYearInfo();
+  }catch(e){console.error('loadSchoolYears exception:',e);}
 }
 async function createDefaultYear(){
   const{data}=await sb.from('school_years').insert({
