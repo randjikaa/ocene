@@ -1069,8 +1069,11 @@ async function initApp(user){
   document.getElementById('sec-home').classList.add('active');
   document.querySelector('.nav-tab').classList.add('active');
   initDates();
+  console.log('Before loadSchoolYears, currentYearId=',currentYearId);
   await loadSchoolYears();
+  console.log('After loadSchoolYears, currentYearId=',currentYearId,'schoolYears=',schoolYears.length);
   if(currentYearId) await loadAll();
+  else console.log('No currentYearId after loadSchoolYears!');
 }
 
 function showAuth(){
