@@ -1054,6 +1054,7 @@ async function register(){
 async function logout(){await sb.auth.signOut();window.location.reload();}
 
 async function initApp(user){
+  console.log('initApp called for:', user?.email);
   subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;schoolYears=[];
   currentYearId=sessionStorage.getItem('schoolYearId')||null;
   U=user;
@@ -1086,8 +1087,9 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     if(stored){
       const parsed=JSON.parse(stored);
       user=parsed?.user||parsed?.currentSession?.user||null;
+      console.log('Found stored user:', user?.email);
     }
-  }catch(e){}
+  }catch(e){console.error('localStorage parse error:',e);}
 
   if(user){
     await initApp(user);
