@@ -900,22 +900,35 @@ let selectedDay=null,editLessonId=null;
 // ===== SCHOOL YEARS =====
 async function loadSchoolYears(){
   try{
-    const{data,error}=await sb.from('school_years').select('*').eq('user_id',U.id).order('start_date',{ascending:false});
-    if(error){console.error('loadSchoolYears error:',error);return;}
-    schoolYears=data||[];
+    // Use fetch directly to avoid Supabase lock on refresh
+    const stored=localStorage.getItem('sb-uygjcopyohzslvrzvrmv-auth-token');
+    const token=stored?JSON.parse(stored)?.access_token:null;
+    const SURL='https://uygjcopyohzslvrzvrmv.supabase.co';
+    const SKEY='sb_publishable_obcXHm5fjOYYpjVZt44u2w_aBT01gEC';
+    const headers={'apikey':SKEY,'Authorization':'Bearer '+(token||SKEY)};
+    const r=await fetch(SURL+'/rest/v1/school_years?select=*&user_id=eq.'+U.id+'&order=start_date.desc',{headers});
+    schoolYears=await r.json();
+    if(!Array.isArray(schoolYears))schoolYears=[];
     if(!schoolYears.length){
-      await createDefaultYear();
-      return;
+      // Create default year via fetch
+      const cr=await fetch(SURL+'/rest/v1/school_years',{
+        method:'POST',
+        headers:{...headers,'Content-Type':'application/json','Prefer':'return=representation'},
+        body:JSON.stringify({user_id:U.id,name:'2025/2026',start_date:'2025-09-01',end_date:'2026-06-12',is_active:true})
+      });
+      const created=await cr.json();
+      schoolYears=Array.isArray(created)?created:[created];
+      // Migrate existing data
+      if(schoolYears[0]?.id) await migrateExistingData(schoolYears[0].id);
     }
-    // Restore saved year or use active/first
     const savedId=sessionStorage.getItem('schoolYearId');
     const savedYear=savedId?schoolYears.find(y=>y.id===savedId):null;
     const activeYear=schoolYears.find(y=>y.is_active)||schoolYears[0];
-    currentYearId=(savedYear||activeYear).id;
-    sessionStorage.setItem('schoolYearId',currentYearId);
+    currentYearId=(savedYear||activeYear)?.id||null;
+    if(currentYearId)sessionStorage.setItem('schoolYearId',currentYearId);
     renderSchoolYearSelector();
     renderSchoolYearInfo();
-  }catch(e){console.error('loadSchoolYears exception:',e);}
+  }catch(e){console.error('loadSchoolYears error:',e);}
 }
 async function createDefaultYear(){
   const{data}=await sb.from('school_years').insert({
@@ -956,7 +969,6 @@ function renderSchoolYearInfo(){
       </div>
       <div style="display:flex;gap:6px">
         ${!y.is_active?`<button class="btn-sm" onclick="setActiveYear('${y.id}')">Aktiviraj</button>`:''}
-        <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" onclick="deleteYear('${y.id}')">Obriši</button>
       </div>
     </div>`).join('');
 }
@@ -1052,18 +1064,12 @@ async function register(){
   setAM('Nalog napravljen! Prijavi se.','ok');
 }
 async function logout(){
-  // Clear auth from localStorage directly since sb.auth.signOut() may be blocked
-  try{await sb.auth.signOut();}catch(e){}
   localStorage.removeItem('sb-uygjcopyohzslvrzvrmv-auth-token');
   sessionStorage.removeItem('schoolYearId');
   window.location.reload();
 }
 
-let _appInitDone=false;
 async function initApp(user){
-  if(_appInitDone){console.log('initApp skipped - already done');return;}
-  _appInitDone=true;
-  console.log('initApp called for:', user?.email);
   subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;schoolYears=[];
   currentYearId=sessionStorage.getItem('schoolYearId')||null;
   U=user;
@@ -1075,35 +1081,8 @@ async function initApp(user){
   document.getElementById('sec-home').classList.add('active');
   document.querySelector('.nav-tab').classList.add('active');
   initDates();
-  // Use fetch directly to bypass Supabase lock bug
-  const stored=localStorage.getItem('sb-uygjcopyohzslvrzvrmv-auth-token');
-  const token=stored?JSON.parse(stored)?.access_token:null;
-  if(!token){console.error('No token!');return;}
-  
-  const SURL='https://uygjcopyohzslvrzvrmv.supabase.co';
-  const SKEY='sb_publishable_obcXHm5fjOYYpjVZt44u2w_aBT01gEC';
-  const headers={'apikey':SKEY,'Authorization':'Bearer '+token,'Content-Type':'application/json'};
-  
-  // Load school years via fetch
-  try{
-    const r=await fetch(SURL+'/rest/v1/school_years?select=*&user_id=eq.'+U.id+'&order=start_date.desc',{headers});
-    schoolYears=await r.json();
-    console.log('School years loaded via fetch:',schoolYears.length);
-    if(!schoolYears.length){
-      // Create default year
-      const cr=await fetch(SURL+'/rest/v1/school_years',{method:'POST',headers:{...headers,'Prefer':'return=representation'},body:JSON.stringify({user_id:U.id,name:'2025/2026',start_date:'2025-09-01',end_date:'2026-06-12',is_active:true})});
-      schoolYears=await cr.json();
-    }
-    const savedId=sessionStorage.getItem('schoolYearId');
-    const savedYear=savedId?schoolYears.find(y=>y.id===savedId):null;
-    const activeYear=schoolYears.find(y=>y.is_active)||schoolYears[0];
-    currentYearId=(savedYear||activeYear)?.id||null;
-    if(currentYearId)sessionStorage.setItem('schoolYearId',currentYearId);
-    renderSchoolYearSelector();
-    renderSchoolYearInfo();
-  }catch(e){console.error('fetch school years error:',e);return;}
-  
-  console.log('currentYearId after fetch:',currentYearId);
+  // Load school years first, then all data
+  await loadSchoolYears();
   if(currentYearId) await loadAll();
 }
 
@@ -1188,9 +1167,8 @@ async function loadAll(){
 
 // ===== SUBJECTS =====
 async function loadSubjects(){
-  const subs=await sbQuery('subjects','select=*,grades(id,value,semester,date,type,note,calendar_event_id),subject_finals(*)&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&order=created_at');
-  const data=Array.isArray(subs)?subs:[];
-  subjects=Array.isArray(data)?data:[];
+  const{data}=await sb.from('subjects').select('*,grades(id,value,semester,date,type,note,calendar_event_id),subject_finals(*)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('created_at');
+  subjects=data||[];
   renderSubjects();renderGP();populateSubjectSelects();
 }
 function renderGP(){
@@ -1205,8 +1183,8 @@ function renderSubjects(){
 let gradeModalSubjectId=null,editGradeId=null,selectedGradeVal=1,gradeModalCalEventId=null;
 
 function renderSCard(s){
-  const grades1=(s.grades||[]).filter(g=>g.semester===1||!g.semester);
-  const grades2=(s.grades||[]).filter(g=>g.semester===2);
+  const grades1=(s.grades||[]).filter(g=>g.semester===1||!g.semester).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const grades2=(s.grades||[]).filter(g=>g.semester===2).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   const avg1=grades1.length?grades1.reduce((a,b)=>a+b.value,0)/grades1.length:0;
   const avg2=grades2.length?grades2.reduce((a,b)=>a+b.value,0)/grades2.length:0;
   const avgAll=calcAvg(s.grades);
@@ -1346,8 +1324,8 @@ async function saveFinal(sid,sem){
 
 // ===== ABSENCES =====
 async function loadAbsences(){
-  const data=await sbQuery('absences','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&order=date.desc');
-  absences=Array.isArray(data)?data:[];renderAbsences();
+  const{data}=await sb.from('absences').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date',{ascending:false});
+  absences=data||[];renderAbsences();
 }
 function toggleAbsType(){
   const j=document.getElementById('atp').value==='true';
@@ -1445,7 +1423,7 @@ async function saveEditAbsence(){
 // ===== BEHAVIOR GRADES =====
 let editBGId=null,editBGVal=5;
 async function loadBG(){
-  const data=await sbQuery('behavior','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&is_final=eq.false&order=date.desc');
+  const{data}=await sb.from('behavior').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).eq('is_final',false).order('date',{ascending:false});
   const list=data||[],el=document.getElementById('bgl');
   if(!list.length){el.innerHTML='<div class="empty">Nema pojedinačnih ocena</div>';return;}
   el.innerHTML=list.map(g=>`<li>
@@ -1504,7 +1482,7 @@ async function removeBG(id){await sb.from('behavior').delete().eq('id',id);await
 
 // ===== BEHAVIOR FINALS =====
 async function loadBF(){
-  const data=await sbQuery('behavior','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&is_final=eq.true');
+  const{data}=await sb.from('behavior').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).eq('is_final',true);
   const list=data||[];
   [1,2].forEach(s=>{
     const r=list.find(x=>x.semester===s),el=document.getElementById('bf'+s);
@@ -1522,7 +1500,7 @@ async function saveBF(s){
 // ===== MEASURES =====
 let editMeasureId=null;
 async function loadMeasures(){
-  const data=await sbQuery('measures','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&order=created_at');
+  const{data}=await sb.from('measures').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).order('created_at');
   const list=data||[],el=document.getElementById('ml');
   if(!list.length){el.innerHTML='<div class="empty">Nema mera ni pohvala</div>';return;}
   el.innerHTML=`<div class="tw"><table><thead><tr><th>Tip</th><th>Naziv</th><th>Datum</th><th>Beleška</th><th></th></tr></thead><tbody>${list.map(m=>`<tr>
@@ -1560,7 +1538,7 @@ async function removeMeasure(id){await sb.from('measures').delete().eq('id',id);
 // ===== NOTES =====
 let editNoteId=null;
 async function loadNotes(){
-  const data=await sbQuery('behavior_notes','select=*,subjects(name)&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&order=date.desc');
+  const{data}=await sb.from('behavior_notes').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date',{ascending:false});
   const list=data||[],el=document.getElementById('ntl');
   if(!list.length){el.innerHTML='<div class="empty">Nema upisa</div>';return;}
   el.innerHTML=list.map(n=>`<li>
@@ -1601,7 +1579,7 @@ async function removeNote(id){await sb.from('behavior_notes').delete().eq('id',i
 
 // ===== SCHEDULE =====
 async function loadSchedule(){
-  const data=await sbQuery('schedule','select=*,subjects(name)&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId);
+  const{data}=await sb.from('schedule').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId);
   schedule=data||[];
 }
 function renderSchedule(){
@@ -1646,13 +1624,13 @@ async function clearSchedCell(){
 }
 
 // ===== DAYS/WEEKS =====
-async function loadDays(){const data=await sbQuery('school_days','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId);schoolDays=Array.isArray(data)?data:[];}
-async function loadWeeks(){const data=await sbQuery('school_weeks','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId);schoolWeeks=Array.isArray(data)?data:[];}
-async function loadLessons(){const data=await sbQuery('lessons','select=*,subjects(name)&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&order=date,period');lessons=Array.isArray(data)?data:[];}
+async function loadDays(){const{data}=await sb.from('school_days').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId);schoolDays=data||[];}
+async function loadWeeks(){const{data}=await sb.from('school_weeks').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId);schoolWeeks=data||[];}
+async function loadLessons(){const{data}=await sb.from('lessons').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date').order('period');lessons=data||[];}
 async function loadCalEvents(){
   // Load calendar events without grades join first to avoid issues
-  const data=await sbQuery('calendar_events','select=*,subjects(name)&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&order=date');
-  calEvents=Array.isArray(data)?data:[];
+  const{data}=await sb.from('calendar_events').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date');
+  calEvents=data||[];
   // Then try to load linked grades separately
   if(calEvents.length){
     const gradeIds=calEvents.map(e=>e.grade_id).filter(Boolean);
@@ -2022,7 +2000,7 @@ function renderHome(){
   document.getElementById('hse').textContent=upcoming.length;
 
   // prosek (sa vladanjem) - using cached behavior data
-  sbQuery('behavior','select=grade,semester&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&is_final=eq.true').then(bdata=>{
+  sb.from('behavior').select('grade,semester').eq('user_id',U.id).eq('school_year_id',currentYearId).eq('is_final',true).then(({data:bdata})=>{
     [1,2].forEach(s=>{
       const finals=subjects.map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade).filter(Boolean);
       const beh=Array.isArray(bdata)?bdata.find(r=>r.semester===s)?.grade||null:null;
