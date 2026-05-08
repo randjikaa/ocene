@@ -904,7 +904,11 @@ async function loadSchoolYears(){
   // Set active year or most recent — always, not just when currentYearId is null
   const active=schoolYears.find(y=>y.is_active)||schoolYears[0];
   if(active){
-    currentYearId=active.id;
+    // Only override if no saved year, or saved year not in list
+    if(!currentYearId||!schoolYears.find(y=>y.id===currentYearId)){
+      currentYearId=active.id;
+    }
+    sessionStorage.setItem('schoolYearId',currentYearId);
   } else if(!schoolYears.length){
     // Only create default if truly no years exist
     await createDefaultYear();
@@ -988,7 +992,10 @@ async function deleteYear(id){
 }
 async function changeSchoolYear(){
   currentYearId=document.getElementById('schoolYearSel').value||null;
-  if(currentYearId)await loadAll();
+  if(currentYearId){
+    sessionStorage.setItem('schoolYearId',currentYearId);
+    await loadAll();
+  }
 }
 
 // ===== UTILS =====
@@ -1048,7 +1055,9 @@ async function logout(){await sb.auth.signOut();window.location.reload();}
 
 sb.auth.onAuthStateChange(async (ev,sess)=>{
   if(sess?.user){
-    subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;schoolYears=[];currentYearId=null;
+    subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;schoolYears=[];
+    // Restore saved year if exists
+    currentYearId=sessionStorage.getItem('schoolYearId')||null;
     U=sess.user;
     document.getElementById('authScreen').style.display='none';
     document.getElementById('app').style.display='block';
@@ -1060,11 +1069,13 @@ sb.auth.onAuthStateChange(async (ev,sess)=>{
     initDates();
     await loadSchoolYears();
     if(currentYearId) await loadAll();
-  } else {
+  } else if(ev==='SIGNED_OUT'){
     subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;schoolYears=[];currentYearId=null;
+    sessionStorage.removeItem('schoolYearId');
     U=null;
     document.getElementById('authScreen').style.display='flex';
     document.getElementById('app').style.display='none';
+    window.location.reload();
   }
 });
 
@@ -1093,7 +1104,7 @@ async function loadAll(){
 
 // ===== SUBJECTS =====
 async function loadSubjects(){
-  const{data}=await sb.from('subjects').select('*,grades(*),subject_finals(*)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('created_at');
+  const{data}=await sb.from('subjects').select('*,grades(id,value,semester,date,type,note,calendar_event_id),subject_finals(*)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('created_at');
   subjects=data||[];
   renderSubjects();renderGP();populateSubjectSelects();
 }
@@ -2022,23 +2033,59 @@ async function saveBulkDays(){
   const note=document.getElementById('bulkNote').value.trim()||null;
   const checkedDays=[0,1,2,3,4,5,6].filter(i=>document.getElementById('bd'+i).checked);
   if(!from||!to||from>to)return;
+
   // Collect all dates in range that match checked days
-  const upserts=[];
+  const dayUpserts=[];
   let d=new Date(from);
   while(d<=to){
     const dow=d.getDay()===0?6:d.getDay()-1; // 0=mon
     if(checkedDays.includes(dow)){
-      upserts.push({user_id:U.id,date:toISO(d),type,note,school_year_id:currentYearId});
+      dayUpserts.push({user_id:U.id,date:toISO(d),type,note,school_year_id:currentYearId});
     }
     d=addDays(d,1);
   }
-  if(!upserts.length)return;
-  // Upsert in batches
-  await sb.from('school_days').upsert(upserts,{onConflict:'user_id,date'});
+  if(!dayUpserts.length)return;
+
+  await sb.from('school_days').upsert(dayUpserts,{onConflict:'user_id,date'});
+
+  // Auto-mark weeks as neradna if ALL 7 days in that week are set to same type
+  // Find all weeks touched by the range
+  const weekUpserts=[];
+  let weekStart=getMonday(from);
+  const weekEnd=getMonday(to);
+  while(weekStart<=weekEnd){
+    const ws=toISO(weekStart);
+    // Check all 7 days of this week
+    const allDays=[];
+    for(let i=0;i<7;i++) allDays.push(toISO(addDays(weekStart,i)));
+    // After upsert, reload days and check
+    const{data:wdData}=await sb.from('school_days')
+      .select('date,type')
+      .eq('user_id',U.id)
+      .eq('school_year_id',currentYearId)
+      .in('date',allDays);
+    const wdMap={};
+    (wdData||[]).forEach(x=>wdMap[x.date]=x.type);
+    // Also include the ones we just upserted
+    dayUpserts.forEach(x=>{if(allDays.includes(x.date))wdMap[x.date]=x.type;});
+    const coveredDays=allDays.filter(d=>wdMap[d]);
+    const allSameType=coveredDays.length===7&&coveredDays.every(d=>wdMap[d]===type);
+    if(allSameType){
+      // Map day type to week type
+      const weekType=type==='neradni'?'neradna':type==='nenastavni'?'nenastavna':'nastavna';
+      weekUpserts.push({user_id:U.id,week_start:ws,type:weekType,note,school_year_id:currentYearId});
+    }
+    weekStart=addDays(weekStart,7);
+  }
+  if(weekUpserts.length){
+    await sb.from('school_weeks').upsert(weekUpserts,{onConflict:'user_id,week_start'});
+  }
+
   closeMo('bulkDaysMo');
   await loadDays();
+  await loadWeeks();
   renderCasoviWeek();
-  alert(`Podešeno ${upserts.length} dana kao "${type}"!`);
+  alert(`Podešeno ${dayUpserts.length} dana${weekUpserts.length?' i '+weekUpserts.length+' nedelja':''} kao "${type}"!`);
 }
 
 // ===== MODAL HELPERS =====
