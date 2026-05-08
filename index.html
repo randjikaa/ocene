@@ -1066,6 +1066,7 @@ async function register(){
 async function logout(){
   localStorage.removeItem('sb-uygjcopyohzslvrzvrmv-auth-token');
   sessionStorage.removeItem('schoolYearId');
+  sessionStorage.removeItem('wasLoggedIn');
   window.location.reload();
 }
 
@@ -1085,7 +1086,17 @@ async function initApp(user){
   await loadSchoolYears();
   if(currentYearId){
     // Wait for Supabase to be ready before loading data
-    await new Promise(r=>setTimeout(r,2000));
+    // Wait for Supabase to be ready by polling
+    await new Promise(resolve=>{
+      let tries=0;
+      const check=()=>{
+        sb.from('school_years').select('id').limit(1).then(({data,error})=>{
+          if(data!==null||tries>15){resolve();}
+          else{tries++;setTimeout(check,300);}
+        });
+      };
+      check();
+    });
     await loadAll();
   }
 }
@@ -1152,6 +1163,59 @@ function showSec(n,btn){
 }
 
 // ===== LOAD ALL =====
+async function loadAllViaFetch(){
+  if(!currentYearId)return;
+  const stored=localStorage.getItem('sb-uygjcopyohzslvrzvrmv-auth-token');
+  const token=stored?JSON.parse(stored)?.access_token:null;
+  if(!token)return;
+  const SURL='https://uygjcopyohzslvrzvrmv.supabase.co';
+  const SKEY='sb_publishable_obcXHm5fjOYYpjVZt44u2w_aBT01gEC';
+  const h={'apikey':SKEY,'Authorization':'Bearer '+token};
+  const uid=U.id, yid=currentYearId;
+  const q=(t,s)=>fetch(SURL+'/rest/v1/'+t+'?'+s,{headers:h}).then(r=>r.json()).then(d=>Array.isArray(d)?d:[]);
+
+  // Load all in parallel via fetch
+  const [subs,abs,bg,bf,meas,notes,sched,days,weeks,less,cal]=await Promise.all([
+    q('subjects','select=*,grades(id,value,semester,date,type,note,calendar_event_id),subject_finals(*)&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&order=created_at'),
+    q('absences','select=*&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&order=date.desc'),
+    q('behavior','select=*&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&is_final=eq.false&order=date.desc'),
+    q('behavior','select=*&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&is_final=eq.true'),
+    q('measures','select=*&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&order=created_at'),
+    q('behavior_notes','select=*,subjects(name)&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&order=date.desc'),
+    q('schedule','select=*,subjects(name)&user_id=eq.'+uid+'&school_year_id=eq.'+yid),
+    q('school_days','select=*&user_id=eq.'+uid+'&school_year_id=eq.'+yid),
+    q('school_weeks','select=*&user_id=eq.'+uid+'&school_year_id=eq.'+yid),
+    q('lessons','select=*,subjects(name)&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&order=date,period'),
+    q('calendar_events','select=*,subjects(name)&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&order=date'),
+  ]);
+
+  subjects=subs; absences=abs; schedule=sched; schoolDays=days; schoolWeeks=weeks; lessons=less; calEvents=cal;
+  
+  // Render behavior
+  const bgl=document.getElementById('bgl');
+  if(bgl){const list=bg;if(!list.length){bgl.innerHTML='<div class="empty">Nema pojedinačnih ocena</div>';}else{bgl.innerHTML=list.map(g=>`<li><div><span class="bgn ${avgClass(g.grade)}">${g.grade}</span><div class="bg-meta">${fmt(g.date)||''}</div>${g.note?`<div class="bg-note">${esc(g.note)}</div>`:''}</div><div style="display:flex;gap:5px;align-items:center"><button class="btn-sm" onclick="openEditBG('${g.id}')">✏️</button><button class="btn-del" onclick="removeBG('${g.id}')">×</button></div></li>`).join('');}}
+  
+  // BF
+  [1,2].forEach(s=>{const r=bf.find(x=>x.semester===s),el=document.getElementById('bf'+s);if(r){el.textContent=r.grade;el.className='fv '+avgClass(r.grade);document.getElementById('bfs'+s).value=r.grade;}else{el.textContent='—';el.className='fv a0';}});
+  
+  // Measures
+  const ml=document.getElementById('ml');
+  if(ml){if(!meas.length){ml.innerHTML='<div class="empty">Nema mera ni pohvala</div>';}else{ml.innerHTML=`<div class="tw"><table><thead><tr><th>Tip</th><th>Naziv</th><th>Datum</th><th>Beleška</th><th></th></tr></thead><tbody>${meas.map(m=>`<tr><td><span class="badge b-${m.type}">${m.type==='mere'?'Mera':'Pohvala'}</span></td><td>${esc(m.name)}</td><td>${fmt(m.date)||'—'}</td><td style="color:var(--muted)">${m.note?esc(m.note):'—'}</td><td style="display:flex;gap:4px"><button class="btn-sm" onclick="openEditMeasure('${m.id}','${m.date||''}','${esc(m.note||'')}')">✏️</button><button class="btn-del" onclick="removeMeasure('${m.id}')">×</button></td></tr>`).join('')}</tbody></table></div>`;}}
+  
+  // Notes
+  const ntl=document.getElementById('ntl');
+  if(ntl){if(!notes.length){ntl.innerHTML='<div class="empty">Nema upisa</div>';}else{ntl.innerHTML=notes.map(n=>`<li><div class="nmeta">${fmt(n.date)}${n.subjects?' · '+esc(n.subjects.name):''}</div><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px"><div class="ntext">${esc(n.note)}</div><div style="display:flex;gap:4px;flex-shrink:0"><button class="btn-sm" onclick="openEditNote('${n.id}','${n.subject_id||''}','${n.date||''}',\`${esc(n.note)}\`)">✏️</button><button class="btn-del" onclick="removeNote('${n.id}')">×</button></div></div></li>`).join('');}}
+  
+  populateSubjectSelects();
+  renderSubjects();
+  renderGP();
+  renderAbsences();
+  renderSchedule();
+  renderCasoviWeek();
+  renderCalWeek();
+  renderHome();
+}
+
 async function sbQuery(table, query=''){
   // Try supabase client first, fallback to fetch if locked
   const stored=localStorage.getItem('sb-uygjcopyohzslvrzvrmv-auth-token');
