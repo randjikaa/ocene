@@ -1051,7 +1051,13 @@ async function register(){
   if(error)return setAM(error.message,'err');
   setAM('Nalog napravljen! Prijavi se.','ok');
 }
-async function logout(){await sb.auth.signOut();window.location.reload();}
+async function logout(){
+  // Clear auth from localStorage directly since sb.auth.signOut() may be blocked
+  try{await sb.auth.signOut();}catch(e){}
+  localStorage.removeItem('sb-uygjcopyohzslvrzvrmv-auth-token');
+  sessionStorage.removeItem('schoolYearId');
+  window.location.reload();
+}
 
 let _appInitDone=false;
 async function initApp(user){
@@ -2049,28 +2055,28 @@ function renderHome(){
   // upcoming events
   const upEl=document.getElementById('hup');
   const upcomingAll=calEvents.filter(e=>e.date>=toISO(new Date())).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
-  if(!upcomingAll.length){upEl.innerHTML='<div class="empty">Nema predstojecih obaveza 🎉</div>';return;}
-  upEl.innerHTML=upcomingAll.map(e=>`<div class="cev">
+  if(!upcomingAll.length){upEl.innerHTML='<div class="empty">Nema predstojecih obaveza 🎉</div>';}
+  else{upEl.innerHTML=upcomingAll.map(e=>`<div class="cev">
     <div class="ced">${fmtShort(e.date)}</div>
     <div class="cei">
       <div class="cet">${e.subjects?esc(e.subjects.name):'—'}</div>
       <div class="ces"><span class="ct ct-${e.type}">${CAL_LABELS[e.type]||e.type}</span>${e.note?` · ${esc(e.note)}`:''}</div>
     </div>
-  </div>`).join('');
+  </div>`).join('');}
 
   // today's lessons
   const td=toISO(new Date());
   const tdl=lessons.filter(l=>l.date===td).sort((a,b)=>a.period-b.period);
   const tlEl=document.getElementById('htoday');
-  if(!tdl.length){tlEl.innerHTML='<div class="empty">Nema upisanih časova za danas</div>';return;}
-  tlEl.innerHTML=tdl.map(l=>`<div class="lesson">
+  if(!tdl.length){tlEl.innerHTML='<div class="empty">Nema upisanih časova za danas</div>';}
+  else{tlEl.innerHTML=tdl.map(l=>`<div class="lesson">
     <div class="lper">${l.period}</div>
     <div class="linfo">
       <div class="ltitle">${esc(l.subjects?.name||'—')}</div>
       <div class="lmeta">${esc(l.title)}</div>
       ${l.types&&l.types.length?`<div class="ltypes">${l.types.map(t=>`<span class="ltype">${esc(t)}</span>`).join('')}</div>`:''}
     </div>
-  </div>`).join('');
+  </div>`).join('');}
 }
 
 // ===== POPULATE SELECTS =====
