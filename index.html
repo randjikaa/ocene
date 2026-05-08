@@ -557,6 +557,43 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
     </div>
   </div>
 
+  <div class="mo" id="absEditMo" style="display:none" onclick="if(event.target===this)closeMo('absEditMo')">
+    <div class="modal">
+      <h3>Izmeni izostanak</h3>
+      <div class="ff" style="margin-bottom:11px"><label>Status</label>
+        <select id="aeStatus" onchange="toggleAEType()">
+          <option value="false">Neopravdan</option>
+          <option value="true">Opravdan</option>
+        </select>
+      </div>
+      <div id="aeKindRow" style="display:none;margin-bottom:11px">
+        <div class="ff"><label>Vrsta opravdanog</label>
+          <select id="aeKind">
+            <option value="">— Izaberi —</option>
+            <option>Administrativni postupci</option>
+            <option>Bolest - opravdao roditelj</option>
+            <option>Bolest - opravdao staratelj/hranitelj</option>
+            <option>Bolest - potvrda lekara</option>
+            <option>Dozvola</option>
+            <option>Ispit</option>
+            <option>Nastup</option>
+            <option>Odlazak na specijalistički tretman</option>
+            <option>Opravdan - ostalo</option>
+            <option>Pregled</option>
+            <option>Saobraćaj</option>
+            <option>Sportsko odsustvo</option>
+            <option>Takmičenje</option>
+          </select>
+        </div>
+      </div>
+      <div class="ff"><label>Beleška (opciono)</label><input type="text" id="aeNote" placeholder="Napomena..."/></div>
+      <div class="mfoot">
+        <button class="btn-sm" onclick="closeMo('absEditMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveEditAbsence()">Sačuvaj</button>
+      </div>
+    </div>
+  </div>
+
   <div class="mo" id="dayMo" style="display:none" onclick="if(event.target===this)closeMo('dayMo')">
     <div class="modal">
       <h3 id="dayMoT">Podesi dan</h3>
@@ -666,7 +703,10 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
         <div class="ff"><label>Polugodište</label>
           <select id="gradeSem"><option value="1">1. Polugodište</option><option value="2">2. Polugodište</option></select>
         </div>
-        <div class="ff"><label>Datum</label><input type="date" id="gradeDate"/></div>
+      </div>
+      <div class="ff" style="margin-bottom:10px;display:none" id="gradeDateRow">
+        <label>Datum (iz obaveze)</label>
+        <input type="date" id="gradeDate" readonly style="opacity:.6"/>
       </div>
       <div class="ff" style="margin-bottom:10px"><label>Tip ocene</label>
         <select id="gradeType">
@@ -884,9 +924,10 @@ function renderSCard(s){
 }
 
 function openAddGrade(sid){
-  gradeModalSubjectId=sid;editGradeId=null;selectedGradeVal=1;
+  gradeModalSubjectId=sid;editGradeId=null;selectedGradeVal=1;gradeModalCalEventId=null;
   document.getElementById('gradeMoT').textContent='Dodaj ocenu';
   document.getElementById('gradeDate').value=toISO(new Date());
+  document.getElementById('gradeDateRow').style.display='none';
   document.getElementById('gradeSem').value='1';
   document.getElementById('gradeType').value='';
   document.getElementById('gradeNote').value='';
@@ -900,9 +941,10 @@ function openAddGrade(sid){
 }
 function openEditGrade(gid,sid){
   const g=subjects.find(s=>s.id===sid)?.grades?.find(x=>x.id===gid);if(!g)return;
-  gradeModalSubjectId=sid;editGradeId=gid;selectedGradeVal=g.value;
+  gradeModalSubjectId=sid;editGradeId=gid;selectedGradeVal=g.value;gradeModalCalEventId=null;
   document.getElementById('gradeMoT').textContent='Izmeni ocenu';
   document.getElementById('gradeDate').value=g.date||toISO(new Date());
+  document.getElementById('gradeDateRow').style.display=g.date?'':'none';
   document.getElementById('gradeSem').value=g.semester||1;
   document.getElementById('gradeType').value=g.type||'';
   document.getElementById('gradeNote').value=g.note||'';
@@ -984,13 +1026,50 @@ function renderAbsences(){
   document.getElementById('hsa').textContent=tot;
   const el=document.getElementById('al');
   if(!absences.length){el.innerHTML='<div class="empty">Nema izostanaka 🎉</div>';return;}
-  el.innerHTML=`<div class="tw"><table><thead><tr><th>Datum</th><th>Časova</th><th>Tip</th><th>Vrsta</th><th>Beleška</th><th></th></tr></thead><tbody>${absences.map(a=>`<tr>
-    <td>${fmt(a.date)}</td><td>${a.hours}</td>
-    <td><span class="badge ${a.justified?'b-opr':'b-neopr'}">${a.justified?'Opravdan':'Neopravdan'}</span></td>
-    <td style="font-size:.7rem;color:var(--muted)">${a.absence_type||'—'}</td>
-    <td style="font-size:.7rem;color:var(--muted)">${a.note||'—'}</td>
-    <td><button class="btn-del" onclick="removeAbsence('${a.id}')">×</button></td>
-  </tr>`).join('')}</tbody></table></div>`;
+
+  // Group by date
+  const byDate={};
+  absences.forEach(a=>{
+    if(!byDate[a.date])byDate[a.date]=[];
+    byDate[a.date].push(a);
+  });
+
+  // Sort dates descending
+  const dates=Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
+
+  let html='';
+  dates.forEach(date=>{
+    const list=byDate[date];
+    const dt=new Date(date+'T00:00:00');
+    const dayNames=['ned','pon','uto','sre','čet','pet','sub'];
+    const dayName=dayNames[dt.getDay()];
+    html+=`<div style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="font-family:Syne,sans-serif;font-weight:800;font-size:.9rem">${fmt(date)}</div>
+        <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase">${dayName}</div>
+      </div>`;
+    list.forEach(a=>{
+      // Find lesson for this absence
+      const lesson=a.lesson_id?lessons.find(l=>l.id===a.lesson_id):null;
+      const subjName=lesson?.subjects?.name||'—';
+      const period=lesson?.period!=null?lesson.period:null;
+      html+=`<div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid ${a.justified?'rgba(106,247,184,.2)':'rgba(247,106,106,.2)'};border-radius:9px;padding:10px 14px;margin-bottom:5px">
+        ${period!=null?`<div style="font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem;color:var(--accent);min-width:22px">${period}</div>`:''}
+        <div style="flex:1">
+          <div style="font-size:.84rem;font-weight:700">${esc(subjName)}</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap">
+            <span class="badge ${a.justified?'b-opr':'b-neopr'}">${a.justified?'Opravdan':'Neopravdan'}</span>
+            ${a.absence_type?`<span style="font-size:.68rem;color:var(--muted)">${esc(a.absence_type)}</span>`:''}
+            ${a.note?`<span style="font-size:.68rem;color:var(--muted)">· ${esc(a.note)}</span>`:''}
+          </div>
+        </div>
+        <button class="btn-sm" onclick="openEditAbsence('${a.id}')">✏️</button>
+        <button class="btn-del" onclick="removeAbsence('${a.id}')">×</button>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  el.innerHTML=html;
 }
 async function addAbsence(){
   const d=document.getElementById('ad').value,h=parseInt(document.getElementById('ah').value)||1;
@@ -1002,6 +1081,30 @@ async function addAbsence(){
   await loadAbsences();
 }
 async function removeAbsence(id){await sb.from('absences').delete().eq('id',id);await loadAbsences();}
+
+let editAbsenceId=null;
+function toggleAEType(){
+  const v=document.getElementById('aeStatus').value==='true';
+  document.getElementById('aeKindRow').style.display=v?'':'none';
+}
+function openEditAbsence(id){
+  editAbsenceId=id;
+  const a=absences.find(x=>x.id===id);if(!a)return;
+  document.getElementById('aeStatus').value=a.justified?'true':'false';
+  document.getElementById('aeKindRow').style.display=a.justified?'':'none';
+  document.getElementById('aeKind').value=a.absence_type||'';
+  document.getElementById('aeNote').value=a.note||'';
+  document.getElementById('absEditMo').style.display='flex';
+}
+async function saveEditAbsence(){
+  if(!editAbsenceId)return;
+  const justified=document.getElementById('aeStatus').value==='true';
+  const absence_type=justified?(document.getElementById('aeKind').value||null):null;
+  const note=document.getElementById('aeNote').value.trim()||null;
+  await sb.from('absences').update({justified,absence_type,note}).eq('id',editAbsenceId);
+  closeMo('absEditMo');await loadAbsences();
+  if(selectedDay)renderDayDetail(selectedDay);
+}
 
 // ===== BEHAVIOR GRADES =====
 async function loadBG(){
@@ -1200,12 +1303,15 @@ function renderDayDetail(ds){
     html+=`<div class="empty" style="padding:16px 0">Nema upisanih časova</div>`;
   } else {
     dayLessons.forEach(l=>{
-      html+=`<div class="lesson">
-        <div class="lper">${l.period}</div>
+      const isAbs=absences.find(a=>a.lesson_id===l.id);
+      const absBadge=isAbs?`<span class="badge ${isAbs.justified?'b-opr':'b-neopr'}" style="font-size:.62rem">${isAbs.justified?'Opravdan':'Neopravdan'}${isAbs.absence_type?' · '+esc(isAbs.absence_type):''}</span>`:'';
+      html+=`<div class="lesson" style="${isAbs?'border-color:rgba(247,106,106,.4);background:rgba(247,106,106,.06)':''}">
+        <div class="lper" style="${isAbs?'color:var(--danger)':''}">${l.period}</div>
         <div class="linfo">
           <div class="ltitle">${esc(l.subjects?.name||'—')}</div>
-          <div class="lmeta">${esc(l.title)}</div>
+          ${l.title&&l.title!=='—'?`<div class="lmeta">${esc(l.title)}</div>`:''}
           ${l.types&&l.types.length?`<div class="ltypes">${l.types.map(t=>`<span class="ltype">${esc(t)}</span>`).join('')}</div>`:''}
+          ${absBadge?`<div style="margin-top:4px">${absBadge}${isAbs?.note?`<span style="font-size:.66rem;color:var(--muted);margin-left:5px">${esc(isAbs.note)}</span>`:''}</div>`:''}
         </div>
         <div style="display:flex;gap:5px">
           <button class="btn-sm" onclick="openEditLesson('${l.id}','${ds}')">✏️</button>
@@ -1265,9 +1371,8 @@ function toggleLessonAbsType(){
 async function saveLesson(){
   const sid=document.getElementById('lss').value||null;
   const per=parseInt(document.getElementById('lsp').value)||0;
-  const title=document.getElementById('lst').value.trim();
+  const title=document.getElementById('lst').value.trim()||'—';
   const types=[...document.querySelectorAll('#ltypes input[type=checkbox]:checked')].map(cb=>cb.value);
-  if(!title)return;
   let lessonId=editLessonId;
   if(editLessonId){
     await sb.from('lessons').update({subject_id:sid,period:per,title,types}).eq('id',editLessonId);
@@ -1293,12 +1398,15 @@ async function saveLesson(){
 }
 async function deleteLesson(){
   if(!editLessonId)return;
+  await sb.from('absences').delete().eq('lesson_id',editLessonId).eq('user_id',U.id);
   await sb.from('lessons').delete().eq('id',editLessonId);
-  closeMo('lessonMo');await loadLessons();renderDayDetail(currentLessonDate);renderCasoviWeek();
+  closeMo('lessonMo');await loadLessons();await loadAbsences();renderDayDetail(currentLessonDate);renderCasoviWeek();
 }
 async function deleteLessonById(id,ds){
+  // Also delete linked absence
+  await sb.from('absences').delete().eq('lesson_id',id).eq('user_id',U.id);
   await sb.from('lessons').delete().eq('id',id);
-  await loadLessons();renderDayDetail(ds);renderCasoviWeek();
+  await loadLessons();await loadAbsences();renderDayDetail(ds);renderCasoviWeek();
 }
 
 // ===== DAY MODAL =====
@@ -1389,14 +1497,13 @@ function renderCalWeek(){
 // ===== GRADE FROM CALENDAR =====
 function openAddGradeFromCal(calEventId){
   const e=calEvents.find(x=>x.id===calEventId);if(!e)return;
-  // Find subject
   gradeModalSubjectId=e.subject_id;
   editGradeId=null;
   selectedGradeVal=1;
-  // Store cal event id for linking
   gradeModalCalEventId=calEventId;
   document.getElementById('gradeMoT').textContent='Dodaj ocenu — '+esc(e.subjects?.name||'');
   document.getElementById('gradeDate').value=e.date||toISO(new Date());
+  document.getElementById('gradeDateRow').style.display='';
   document.getElementById('gradeSem').value='1';
   document.getElementById('gradeType').value=CAL_LABELS[e.type]||'';
   document.getElementById('gradeNote').value='';
@@ -1416,6 +1523,7 @@ function openEditGradeFromCal(calEventId){
   selectedGradeVal=e.grades.value;
   document.getElementById('gradeMoT').textContent='Izmeni ocenu — '+esc(e.subjects?.name||'');
   document.getElementById('gradeDate').value=e.grades.date||e.date||toISO(new Date());
+  document.getElementById('gradeDateRow').style.display='';
   document.getElementById('gradeSem').value=e.grades.semester||1;
   document.getElementById('gradeType').value=e.grades.type||'';
   document.getElementById('gradeNote').value=e.grades.note||'';
