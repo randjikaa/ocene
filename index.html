@@ -901,19 +901,17 @@ let selectedDay=null,editLessonId=null;
 async function loadSchoolYears(){
   const{data}=await sb.from('school_years').select('*').eq('user_id',U.id).order('start_date',{ascending:false});
   schoolYears=data||[];
-  renderSchoolYearSelector();
-  renderSchoolYearInfo();
-  // If no years exist, create default 2025/2026
-  if(!schoolYears.length){
+  // Set active year or most recent — always, not just when currentYearId is null
+  const active=schoolYears.find(y=>y.is_active)||schoolYears[0];
+  if(active){
+    currentYearId=active.id;
+  } else if(!schoolYears.length){
+    // Only create default if truly no years exist
     await createDefaultYear();
     return;
   }
-  // Set active year or most recent
-  const active=schoolYears.find(y=>y.is_active)||schoolYears[0];
-  if(active&&!currentYearId){
-    currentYearId=active.id;
-    document.getElementById('schoolYearSel').value=active.id;
-  }
+  renderSchoolYearSelector();
+  renderSchoolYearInfo();
 }
 async function createDefaultYear(){
   const{data}=await sb.from('school_years').insert({
