@@ -339,12 +339,12 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
     <!-- OCENE -->
     <div class="section" id="sec-ocene">
       <div class="sec-title">📊 Ocene</div>
-      <div class="gp-grid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="gp-grid">
         <div class="gp-box"><div class="gp-lbl">Generalni prosek — 1. pol.</div><div class="gp-val a0" id="gp1">—</div><div style="font-size:.6rem;color:var(--muted);margin-top:4px">sa vladanjem</div></div>
         <div class="gp-box"><div class="gp-lbl">Generalni prosek — 2. pol.</div><div class="gp-val a0" id="gp2">—</div><div style="font-size:.6rem;color:var(--muted);margin-top:4px">sa vladanjem</div></div>
-        <div class="gp-box"><div class="gp-lbl">Vladanje — 1. pol.</div><div class="gp-val a0" id="gpv1">—</div></div>
-        <div class="gp-box"><div class="gp-lbl">Vladanje — 2. pol.</div><div class="gp-val a0" id="gpv2">—</div></div>
       </div>
+      <!-- hidden elements needed for renderGP -->
+      <span id="gpv1" style="display:none"></span><span id="gpv2" style="display:none"></span>
       <div class="card">
         <div class="ch"><h2>➕ Dodaj predmet</h2></div>
         <div class="cb">
@@ -1729,13 +1729,17 @@ function renderHome(){
   const upcoming=calEvents.filter(e=>e.date>=toISO(new Date())).slice(0,10);
   document.getElementById('hse').textContent=upcoming.length;
 
-  // prosek
-  [1,2].forEach(s=>{
-    const finals=subjects.map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade).filter(Boolean);
-    const el=document.getElementById('hs'+s);
-    if(!finals.length){el.textContent='—';el.className='hv a0';return;}
-    const avg=finals.reduce((a,b)=>a+b,0)/finals.length;
-    el.textContent=avg.toFixed(2);el.className='hv '+avgClass(avg);
+  // prosek (sa vladanjem)
+  sb.from('behavior').select('grade,semester').eq('user_id',U.id).eq('is_final',true).then(({data:bdata})=>{
+    [1,2].forEach(s=>{
+      const finals=subjects.map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade).filter(Boolean);
+      const beh=(bdata||[]).find(r=>r.semester===s)?.grade||null;
+      const all=[...finals,...(beh?[beh]:[])];
+      const el=document.getElementById('hs'+s);
+      if(!all.length){el.textContent='—';el.className='hv a0';return;}
+      const avg=all.reduce((a,b)=>a+b,0)/all.length;
+      el.textContent=avg.toFixed(2);el.className='hv '+avgClass(avg);
+    });
   });
 
   // quick cards
