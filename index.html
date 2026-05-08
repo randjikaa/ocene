@@ -339,9 +339,9 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
     <!-- OCENE -->
     <div class="section" id="sec-ocene">
       <div class="sec-title">📊 Ocene</div>
-      <div class="gp-grid" style="grid-template-columns:1fr 1fr 1fr 1fr">
-        <div class="gp-box"><div class="gp-lbl">Prosek predmeta — 1. pol.</div><div class="gp-val a0" id="gp1">—</div></div>
-        <div class="gp-box"><div class="gp-lbl">Prosek predmeta — 2. pol.</div><div class="gp-val a0" id="gp2">—</div></div>
+      <div class="gp-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="gp-box"><div class="gp-lbl">Generalni prosek — 1. pol.</div><div class="gp-val a0" id="gp1">—</div><div style="font-size:.6rem;color:var(--muted);margin-top:4px">sa vladanjem</div></div>
+        <div class="gp-box"><div class="gp-lbl">Generalni prosek — 2. pol.</div><div class="gp-val a0" id="gp2">—</div><div style="font-size:.6rem;color:var(--muted);margin-top:4px">sa vladanjem</div></div>
         <div class="gp-box"><div class="gp-lbl">Vladanje — 1. pol.</div><div class="gp-val a0" id="gpv1">—</div></div>
         <div class="gp-box"><div class="gp-lbl">Vladanje — 2. pol.</div><div class="gp-val a0" id="gpv2">—</div></div>
       </div>
@@ -902,27 +902,26 @@ async function loadSubjects(){
   renderSubjects();renderGP();populateSubjectSelects();
 }
 function renderGP(){
-  [1,2].forEach(s=>{
-    // Subject finals average
-    const finals=subjects.map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade).filter(Boolean);
-    const el=document.getElementById('gp'+s);
-    if(!finals.length){el.textContent='—';el.className='gp-val a0';}
-    else{const avg=finals.reduce((a,b)=>a+b,0)/finals.length;el.textContent=avg.toFixed(2);el.className='gp-val '+avgClass(avg);}
-  });
-  // Refresh behavior finals display in prosek boxes
-  renderGPBehavior();
-}
-function renderGPBehavior(){
-  // Get behavior finals from DB
   sb.from('behavior').select('grade,semester').eq('user_id',U.id).eq('is_final',true).then(({data})=>{
     [1,2].forEach(s=>{
-      const rec=(data||[]).find(r=>r.semester===s);
-      const el=document.getElementById('gpv'+s);
-      if(rec){el.textContent=rec.grade;el.className='gp-val '+avgClass(rec.grade);}
-      else{el.textContent='—';el.className='gp-val a0';}
+      // Subject finals
+      const finals=subjects.map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade).filter(Boolean);
+      // Behavior final for this semester
+      const beh=(data||[]).find(r=>r.semester===s);
+      const behGrade=beh?.grade||null;
+      // Display behavior box
+      const bel=document.getElementById('gpv'+s);
+      if(behGrade){bel.textContent=behGrade;bel.className='gp-val '+avgClass(behGrade);}
+      else{bel.textContent='—';bel.className='gp-val a0';}
+      // Combined average (subjects + vladanje)
+      const all=[...finals,...(behGrade?[behGrade]:[])];
+      const el=document.getElementById('gp'+s);
+      if(!all.length){el.textContent='—';el.className='gp-val a0';}
+      else{const avg=all.reduce((a,b)=>a+b,0)/all.length;el.textContent=avg.toFixed(2);el.className='gp-val '+avgClass(avg);}
     });
   });
 }
+function renderGPBehavior(){renderGP();}
 function calcAvg(g){if(!g||!g.length)return 0;return g.reduce((a,b)=>a+b.value,0)/g.length;}
 function renderSubjects(){
   const el=document.getElementById('sl');
