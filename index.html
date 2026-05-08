@@ -557,6 +557,55 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
     </div>
   </div>
 
+  <!-- EDIT BEHAVIOR GRADE MODAL -->
+  <div class="mo" id="bgEditMo" style="display:none" onclick="if(event.target===this)closeMo('bgEditMo')">
+    <div class="modal">
+      <h3>Izmeni ocenu vladanja</h3>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px" id="bgEditValBtns">
+        <button onclick="selectBGVal(1)" class="btn-sm" id="bgvb1" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">1</button>
+        <button onclick="selectBGVal(2)" class="btn-sm" id="bgvb2" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">2</button>
+        <button onclick="selectBGVal(3)" class="btn-sm" id="bgvb3" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">3</button>
+        <button onclick="selectBGVal(4)" class="btn-sm" id="bgvb4" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">4</button>
+        <button onclick="selectBGVal(5)" class="btn-sm" id="bgvb5" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">5</button>
+      </div>
+      <div class="ff" style="margin-bottom:11px"><label>Datum</label><input type="date" id="bgEditDate"/></div>
+      <div class="ff"><label>Beleška (opciono)</label><input type="text" id="bgEditNote" placeholder="npr. Pohvala na času..."/></div>
+      <div class="mfoot">
+        <button class="btn-sm" onclick="closeMo('bgEditMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveEditBG()">Sačuvaj</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT MEASURE MODAL -->
+  <div class="mo" id="measureEditMo" style="display:none" onclick="if(event.target===this)closeMo('measureEditMo')">
+    <div class="modal">
+      <h3>Izmeni meru / pohvalu</h3>
+      <div class="ff" style="margin-bottom:11px"><label>Datum</label><input type="date" id="meEditDate"/></div>
+      <div class="ff"><label>Beleška (opciono)</label><input type="text" id="meEditNote" placeholder="Dodatne informacije..."/></div>
+      <div class="mfoot">
+        <button class="btn-sm" onclick="closeMo('measureEditMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveEditMeasure()">Sačuvaj</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT NOTE MODAL -->
+  <div class="mo" id="noteEditMo" style="display:none" onclick="if(event.target===this)closeMo('noteEditMo')">
+    <div class="modal">
+      <h3>Izmeni upisivanje</h3>
+      <div class="form-row" style="margin-bottom:11px">
+        <div class="ff"><label>Predmet</label><select id="neEditSubject"></select></div>
+        <div class="ff"><label>Datum</label><input type="date" id="neEditDate"/></div>
+      </div>
+      <div class="ff"><label>Razlog upisa</label><textarea id="neEditNote" placeholder="Upiši razlog..."></textarea></div>
+      <div class="mfoot">
+        <button class="btn-sm" onclick="closeMo('noteEditMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveEditNote()">Sačuvaj</button>
+      </div>
+    </div>
+  </div>
+
   <div class="mo" id="absEditMo" style="display:none" onclick="if(event.target===this)closeMo('absEditMo')">
     <div class="modal">
       <h3>Izmeni izostanak</h3>
@@ -1027,11 +1076,18 @@ function renderAbsences(){
   const el=document.getElementById('al');
   if(!absences.length){el.innerHTML='<div class="empty">Nema izostanaka 🎉</div>';return;}
 
-  // Group by date
+  // Group by date, expand hours for manual absences (no lesson_id)
   const byDate={};
   absences.forEach(a=>{
     if(!byDate[a.date])byDate[a.date]=[];
-    byDate[a.date].push(a);
+    if(!a.lesson_id && a.hours>1){
+      // expand into multiple rows
+      for(let i=0;i<a.hours;i++){
+        byDate[a.date].push({...a,_expanded:true,_hour:i+1});
+      }
+    } else {
+      byDate[a.date].push(a);
+    }
   });
 
   // Sort dates descending
@@ -1051,8 +1107,8 @@ function renderAbsences(){
     list.forEach(a=>{
       // Find lesson for this absence
       const lesson=a.lesson_id?lessons.find(l=>l.id===a.lesson_id):null;
-      const subjName=lesson?.subjects?.name||'—';
-      const period=lesson?.period!=null?lesson.period:null;
+      const subjName=lesson?.subjects?.name||(a._expanded?`Čas ${a._hour}`:'Manuelni unos');
+      const period=lesson?.period!=null?lesson.period:(a._expanded?a._hour:null);
       html+=`<div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid ${a.justified?'rgba(106,247,184,.2)':'rgba(247,106,106,.2)'};border-radius:9px;padding:10px 14px;margin-bottom:5px">
         ${period!=null?`<div style="font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem;color:var(--accent);min-width:22px">${period}</div>`:''}
         <div style="flex:1">
@@ -1063,8 +1119,8 @@ function renderAbsences(){
             ${a.note?`<span style="font-size:.68rem;color:var(--muted)">· ${esc(a.note)}</span>`:''}
           </div>
         </div>
-        <button class="btn-sm" onclick="openEditAbsence('${a.id}')">✏️</button>
-        <button class="btn-del" onclick="removeAbsence('${a.id}')">×</button>
+        ${!a._expanded?`<button class="btn-sm" onclick="openEditAbsence('${a.id}')">✏️</button>`:''}
+        ${!a._expanded?`<button class="btn-del" onclick="removeAbsence('${a.id}')">×</button>`:''}
       </div>`;
     });
     html+=`</div>`;
@@ -1107,11 +1163,56 @@ async function saveEditAbsence(){
 }
 
 // ===== BEHAVIOR GRADES =====
+let editBGId=null,editBGVal=5;
 async function loadBG(){
   const{data}=await sb.from('behavior').select('*').eq('user_id',U.id).eq('is_final',false).order('date',{ascending:false});
   const list=data||[],el=document.getElementById('bgl');
   if(!list.length){el.innerHTML='<div class="empty">Nema pojedinačnih ocena</div>';return;}
-  el.innerHTML=list.map(g=>`<li><div><span class="bgn ${avgClass(g.grade)}">${g.grade}</span><div class="bg-meta">${fmt(g.date)||''}</div>${g.note?`<div class="bg-note">${esc(g.note)}</div>`:''}</div><button class="btn-del" onclick="removeBG('${g.id}')">×</button></li>`).join('');
+  el.innerHTML=list.map(g=>`<li>
+    <div>
+      <span class="bgn ${avgClass(g.grade)}">${g.grade}</span>
+      <div class="bg-meta">${fmt(g.date)||''}</div>
+      ${g.note?`<div class="bg-note">${esc(g.note)}</div>`:''}
+    </div>
+    <div style="display:flex;gap:5px;align-items:center">
+      <button class="btn-sm" onclick="openEditBG('${g.id}')">✏️</button>
+      <button class="btn-del" onclick="removeBG('${g.id}')">×</button>
+    </div>
+  </li>`).join('');
+}
+function selectBGVal(v){
+  editBGVal=v;
+  [1,2,3,4,5].forEach(x=>{
+    const b=document.getElementById('bgvb'+x);
+    b.style.background=x===v?'var(--accent)':'';
+    b.style.color=x===v?'#fff':'';
+  });
+}
+function openEditBG(id){
+  editBGId=id;
+  const g=document.querySelector(`#bgl li [onclick="openEditBG('${id}')"]`)?.closest('li');
+  // find from DOM or refetch — use stored data
+  const allBG=Array.from(document.querySelectorAll('#bgl li'));
+  // re-fetch via supabase won't work here, so we open modal with defaults and reload
+  sb.from('behavior').select('*').eq('id',id).single().then(({data})=>{
+    if(!data)return;
+    editBGVal=data.grade;
+    document.getElementById('bgEditDate').value=data.date||'';
+    document.getElementById('bgEditNote').value=data.note||'';
+    [1,2,3,4,5].forEach(x=>{
+      const b=document.getElementById('bgvb'+x);
+      b.style.background=x===data.grade?'var(--accent)':'';
+      b.style.color=x===data.grade?'#fff':'';
+    });
+    document.getElementById('bgEditMo').style.display='flex';
+  });
+}
+async function saveEditBG(){
+  if(!editBGId)return;
+  const date=document.getElementById('bgEditDate').value||null;
+  const note=document.getElementById('bgEditNote').value.trim()||null;
+  await sb.from('behavior').update({grade:editBGVal,date,note}).eq('id',editBGId);
+  editBGId=null;closeMo('bgEditMo');await loadBG();
 }
 async function addBG(){
   const v=parseInt(document.getElementById('bgv').value),d=document.getElementById('bgd').value,n=document.getElementById('bgn').value.trim()||null;
@@ -1139,11 +1240,34 @@ async function saveBF(s){
 }
 
 // ===== MEASURES =====
+let editMeasureId=null;
 async function loadMeasures(){
   const{data}=await sb.from('measures').select('*').eq('user_id',U.id).order('created_at');
   const list=data||[],el=document.getElementById('ml');
   if(!list.length){el.innerHTML='<div class="empty">Nema mera ni pohvala</div>';return;}
-  el.innerHTML=`<div class="tw"><table><thead><tr><th>Tip</th><th>Naziv</th><th>Datum</th><th>Beleška</th><th></th></tr></thead><tbody>${list.map(m=>`<tr><td><span class="badge b-${m.type}">${m.type==='mere'?'Mera':'Pohvala'}</span></td><td>${esc(m.name)}</td><td>${fmt(m.date)||'—'}</td><td style="color:var(--muted)">${m.note?esc(m.note):'—'}</td><td><button class="btn-del" onclick="removeMeasure('${m.id}')">×</button></td></tr>`).join('')}</tbody></table></div>`;
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>Tip</th><th>Naziv</th><th>Datum</th><th>Beleška</th><th></th></tr></thead><tbody>${list.map(m=>`<tr>
+    <td><span class="badge b-${m.type}">${m.type==='mere'?'Mera':'Pohvala'}</span></td>
+    <td>${esc(m.name)}</td>
+    <td>${fmt(m.date)||'—'}</td>
+    <td style="color:var(--muted)">${m.note?esc(m.note):'—'}</td>
+    <td style="display:flex;gap:4px">
+      <button class="btn-sm" onclick="openEditMeasure('${m.id}','${(m.date||'')}','${esc(m.note||'')}')">✏️</button>
+      <button class="btn-del" onclick="removeMeasure('${m.id}')">×</button>
+    </td>
+  </tr>`).join('')}</tbody></table></div>`;
+}
+function openEditMeasure(id,date,note){
+  editMeasureId=id;
+  document.getElementById('meEditDate').value=date||'';
+  document.getElementById('meEditNote').value=note||'';
+  document.getElementById('measureEditMo').style.display='flex';
+}
+async function saveEditMeasure(){
+  if(!editMeasureId)return;
+  const date=document.getElementById('meEditDate').value||null;
+  const note=document.getElementById('meEditNote').value.trim()||null;
+  await sb.from('measures').update({date,note}).eq('id',editMeasureId);
+  editMeasureId=null;closeMo('measureEditMo');await loadMeasures();
 }
 async function addMeasure(){
   const raw=document.getElementById('mt').value,[type,name]=raw.split('|');
@@ -1154,11 +1278,38 @@ async function addMeasure(){
 async function removeMeasure(id){await sb.from('measures').delete().eq('id',id);await loadMeasures();}
 
 // ===== NOTES =====
+let editNoteId=null;
 async function loadNotes(){
   const{data}=await sb.from('behavior_notes').select('*,subjects(name)').eq('user_id',U.id).order('date',{ascending:false});
   const list=data||[],el=document.getElementById('ntl');
   if(!list.length){el.innerHTML='<div class="empty">Nema upisa</div>';return;}
-  el.innerHTML=list.map(n=>`<li><div class="nmeta">${fmt(n.date)}${n.subjects?' · '+esc(n.subjects.name):''} <button class="btn-del" onclick="removeNote('${n.id}')">×</button></div><div class="ntext">${esc(n.note)}</div></li>`).join('');
+  el.innerHTML=list.map(n=>`<li>
+    <div class="nmeta">${fmt(n.date)}${n.subjects?' · '+esc(n.subjects.name):''}</div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+      <div class="ntext">${esc(n.note)}</div>
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        <button class="btn-sm" onclick="openEditNote('${n.id}','${n.subject_id||''}','${n.date||''}',\`${esc(n.note)}\`)">✏️</button>
+        <button class="btn-del" onclick="removeNote('${n.id}')">×</button>
+      </div>
+    </div>
+  </li>`).join('');
+}
+function openEditNote(id,subjectId,date,note){
+  editNoteId=id;
+  const sel=document.getElementById('neEditSubject');
+  sel.innerHTML='<option value="">— Izaberi —</option>'+subjects.map(s=>`<option value="${s.id}"${s.id===subjectId?' selected':''}>${esc(s.name)}</option>`).join('');
+  document.getElementById('neEditDate').value=date||'';
+  document.getElementById('neEditNote').value=note||'';
+  document.getElementById('noteEditMo').style.display='flex';
+}
+async function saveEditNote(){
+  if(!editNoteId)return;
+  const subject_id=document.getElementById('neEditSubject').value||null;
+  const date=document.getElementById('neEditDate').value;
+  const note=document.getElementById('neEditNote').value.trim();
+  if(!note)return;
+  await sb.from('behavior_notes').update({subject_id,date,note}).eq('id',editNoteId);
+  editNoteId=null;closeMo('noteEditMo');await loadNotes();
 }
 async function addNote(){
   const s=document.getElementById('nts').value||null,d=document.getElementById('ntd').value,n=document.getElementById('ntt').value.trim();
