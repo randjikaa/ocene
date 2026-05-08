@@ -127,7 +127,7 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .fbox button:hover{background:var(--accent);color:#fff;}
 
 /* PROSEK */
-.gp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.gp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}@media(max-width:640px){.gp-grid{grid-template-columns:1fr 1fr;}}
 .gp-box{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:16px;text-align:center;position:relative;overflow:hidden;}
 .gp-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent3));}
 .gp-lbl{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
@@ -339,9 +339,11 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
     <!-- OCENE -->
     <div class="section" id="sec-ocene">
       <div class="sec-title">📊 Ocene</div>
-      <div class="gp-grid">
-        <div class="gp-box"><div class="gp-lbl">Generalni prosek — 1. polugodište</div><div class="gp-val a0" id="gp1">—</div></div>
-        <div class="gp-box"><div class="gp-lbl">Generalni prosek — 2. polugodište</div><div class="gp-val a0" id="gp2">—</div></div>
+      <div class="gp-grid" style="grid-template-columns:1fr 1fr 1fr 1fr">
+        <div class="gp-box"><div class="gp-lbl">Prosek predmeta — 1. pol.</div><div class="gp-val a0" id="gp1">—</div></div>
+        <div class="gp-box"><div class="gp-lbl">Prosek predmeta — 2. pol.</div><div class="gp-val a0" id="gp2">—</div></div>
+        <div class="gp-box"><div class="gp-lbl">Vladanje — 1. pol.</div><div class="gp-val a0" id="gpv1">—</div></div>
+        <div class="gp-box"><div class="gp-lbl">Vladanje — 2. pol.</div><div class="gp-val a0" id="gpv2">—</div></div>
       </div>
       <div class="card">
         <div class="ch"><h2>➕ Dodaj predmet</h2></div>
@@ -901,11 +903,24 @@ async function loadSubjects(){
 }
 function renderGP(){
   [1,2].forEach(s=>{
+    // Subject finals average
     const finals=subjects.map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade).filter(Boolean);
     const el=document.getElementById('gp'+s);
-    if(!finals.length){el.textContent='—';el.className='gp-val a0';return;}
-    const avg=finals.reduce((a,b)=>a+b,0)/finals.length;
-    el.textContent=avg.toFixed(2);el.className='gp-val '+avgClass(avg);
+    if(!finals.length){el.textContent='—';el.className='gp-val a0';}
+    else{const avg=finals.reduce((a,b)=>a+b,0)/finals.length;el.textContent=avg.toFixed(2);el.className='gp-val '+avgClass(avg);}
+  });
+  // Refresh behavior finals display in prosek boxes
+  renderGPBehavior();
+}
+function renderGPBehavior(){
+  // Get behavior finals from DB
+  sb.from('behavior').select('grade,semester').eq('user_id',U.id).eq('is_final',true).then(({data})=>{
+    [1,2].forEach(s=>{
+      const rec=(data||[]).find(r=>r.semester===s);
+      const el=document.getElementById('gpv'+s);
+      if(rec){el.textContent=rec.grade;el.className='gp-val '+avgClass(rec.grade);}
+      else{el.textContent='—';el.className='gp-val a0';}
+    });
   });
 }
 function calcAvg(g){if(!g||!g.length)return 0;return g.reduce((a,b)=>a+b.value,0)/g.length;}
@@ -1015,7 +1030,9 @@ function selectGradeVal(v){
 }
 async function saveGrade(){
   const sem=parseInt(document.getElementById('gradeSem').value);
-  const date=document.getElementById('gradeDate').value||null;
+  // Only save date if it's visible (i.e. added from calendar event)
+  const dateRowVisible=document.getElementById('gradeDateRow').style.display!=='none';
+  const date=dateRowVisible?(document.getElementById('gradeDate').value||null):null;
   const type=document.getElementById('gradeType').value||null;
   const note=document.getElementById('gradeNote').value.trim()||null;
   let gradeId=editGradeId;
@@ -1230,7 +1247,7 @@ async function saveBF(s){
   const v=document.getElementById('bfs'+s).value;if(!v)return;
   await sb.from('behavior').delete().eq('user_id',U.id).eq('is_final',true).eq('semester',s);
   await sb.from('behavior').insert({user_id:U.id,grade:parseInt(v),is_final:true,semester:s});
-  await loadBF();
+  await loadBF();renderGPBehavior();
 }
 
 // ===== MEASURES =====
