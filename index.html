@@ -1069,11 +1069,22 @@ async function initApp(user){
   document.getElementById('sec-home').classList.add('active');
   document.querySelector('.nav-tab').classList.add('active');
   initDates();
-  console.log('Before loadSchoolYears, currentYearId=',currentYearId);
+  // Use direct REST API to avoid Supabase lock bug on refresh
+  const stored=localStorage.getItem('sb-uygjcopyohzslvrzvrmv-auth-token');
+  const token=stored?JSON.parse(stored)?.access_token:null;
+  if(!token){console.error('No token!');return;}
+  
+  // Force reinitialize Supabase with fresh session
+  try{
+    await sb.auth.setSession({
+      access_token:token,
+      refresh_token:JSON.parse(stored)?.refresh_token
+    });
+  }catch(e){console.log('setSession error (ok):',e);}
+  
   await loadSchoolYears();
-  console.log('After loadSchoolYears, currentYearId=',currentYearId,'schoolYears=',schoolYears.length);
+  console.log('After loadSchoolYears, currentYearId=',currentYearId);
   if(currentYearId) await loadAll();
-  else console.log('No currentYearId after loadSchoolYears!');
 }
 
 function showAuth(){
