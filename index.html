@@ -1188,23 +1188,7 @@ async function loadSubjects(){
   renderSubjects();renderGP();populateSubjectSelects();
 }
 function renderGP(){
-  sb.from('behavior').select('grade,semester').eq('user_id',U.id).eq('is_final',true).then(({data})=>{
-    [1,2].forEach(s=>{
-      // Subject finals
-      const finals=subjects.map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade).filter(Boolean);
-      // Behavior final for this semester
-      const beh=(data||[]).find(r=>r.semester===s);
-      const behGrade=beh?.grade||null;
-      // Display behavior box
-      const bel=document.getElementById('gpv'+s);
-      if(behGrade){bel.textContent=behGrade;bel.className='gp-val '+avgClass(behGrade);}
-      else{bel.textContent='—';bel.className='gp-val a0';}
-      // Combined average (subjects + vladanje)
-      const all=[...finals,...(behGrade?[behGrade]:[])];
-      const el=document.getElementById('gp'+s);
-      if(!all.length){el.textContent='—';el.className='gp-val a0';}
-      else{const avg=all.reduce((a,b)=>a+b,0)/all.length;el.textContent=avg.toFixed(2);el.className='gp-val '+avgClass(avg);}
-    });
+
   });
 }
 function renderGPBehavior(){renderGP();}
@@ -1660,7 +1644,7 @@ async function clearSchedCell(){
 // ===== DAYS/WEEKS =====
 async function loadDays(){const data=await sbQuery('school_days','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId);schoolDays=Array.isArray(data)?data:[];}
 async function loadWeeks(){const data=await sbQuery('school_weeks','select=*&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId);schoolWeeks=Array.isArray(data)?data:[];}
-async function loadLessons(){const{data}=await sb.from('lessons').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date').order('period');lessons=Array.isArray(data)?data:[];}
+async function loadLessons(){const data=await sbQuery('lessons','select=*,subjects(name)&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&order=date,period');lessons=Array.isArray(data)?data:[];}
 async function loadCalEvents(){
   // Load calendar events without grades join first to avoid issues
   const data=await sbQuery('calendar_events','select=*,subjects(name)&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&order=date');
@@ -2033,13 +2017,14 @@ function renderHome(){
   const upcoming=calEvents.filter(e=>e.date>=toISO(new Date())).slice(0,10);
   document.getElementById('hse').textContent=upcoming.length;
 
-  // prosek (sa vladanjem)
-  sb.from('behavior').select('grade,semester').eq('user_id',U.id).eq('is_final',true).then(({data:bdata})=>{
+  // prosek (sa vladanjem) - using cached behavior data
+  sbQuery('behavior','select=grade,semester&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&is_final=eq.true').then(bdata=>{
     [1,2].forEach(s=>{
       const finals=subjects.map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade).filter(Boolean);
-      const beh=(bdata||[]).find(r=>r.semester===s)?.grade||null;
+      const beh=Array.isArray(bdata)?bdata.find(r=>r.semester===s)?.grade||null:null;
       const all=[...finals,...(beh?[beh]:[])];
       const el=document.getElementById('hs'+s);
+      if(!el)return;
       if(!all.length){el.textContent='—';el.className='hv a0';return;}
       const avg=all.reduce((a,b)=>a+b,0)/all.length;
       el.textContent=avg.toFixed(2);el.className='hv '+avgClass(avg);
