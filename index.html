@@ -1053,10 +1053,16 @@ async function register(){
 }
 async function logout(){await sb.auth.signOut();window.location.reload();}
 
+// Track if we already initialized
+let appInitialized=false;
+
 sb.auth.onAuthStateChange(async (ev,sess)=>{
   if(sess?.user){
+    // Avoid double init on TOKEN_REFRESHED etc
+    const isNewLogin=(ev==='SIGNED_IN'||ev==='INITIAL_SESSION');
+    if(appInitialized&&!isNewLogin)return;
+    appInitialized=true;
     subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;schoolYears=[];
-    // Restore saved year if exists
     currentYearId=sessionStorage.getItem('schoolYearId')||null;
     U=sess.user;
     document.getElementById('authScreen').style.display='none';
@@ -1070,12 +1076,12 @@ sb.auth.onAuthStateChange(async (ev,sess)=>{
     await loadSchoolYears();
     if(currentYearId) await loadAll();
   } else if(ev==='SIGNED_OUT'){
+    appInitialized=false;
     subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;schoolYears=[];currentYearId=null;
     sessionStorage.removeItem('schoolYearId');
     U=null;
     document.getElementById('authScreen').style.display='flex';
     document.getElementById('app').style.display='none';
-    window.location.reload();
   }
 });
 
