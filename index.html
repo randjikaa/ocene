@@ -1053,7 +1053,10 @@ async function register(){
 }
 async function logout(){await sb.auth.signOut();window.location.reload();}
 
+let _appInitDone=false;
 async function initApp(user){
+  if(_appInitDone){console.log('initApp skipped - already done');return;}
+  _appInitDone=true;
   console.log('initApp called for:', user?.email);
   subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;schoolYears=[];
   currentYearId=sessionStorage.getItem('schoolYearId')||null;
@@ -1071,6 +1074,7 @@ async function initApp(user){
 }
 
 function showAuth(){
+  _appInitDone=false;
   subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;schoolYears=[];currentYearId=null;
   U=null;
   document.getElementById('authScreen').style.display='flex';
@@ -1103,7 +1107,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   }
 });
 
-// Handle sign in/out events
+// Handle sign in/out events - only for actual new logins, not refreshes
 sb.auth.onAuthStateChange(async (ev,sess)=>{
   if(ev==='SIGNED_IN'&&sess?.user&&!U){
     await initApp(sess.user);
@@ -1111,6 +1115,7 @@ sb.auth.onAuthStateChange(async (ev,sess)=>{
     sessionStorage.removeItem('schoolYearId');
     showAuth();
   }
+  // Ignore TOKEN_REFRESHED, INITIAL_SESSION etc when already initialized
 });
 
 function initDates(){
