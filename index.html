@@ -1363,7 +1363,21 @@ async function clearSchedCell(){
 async function loadDays(){const{data}=await sb.from('school_days').select('*').eq('user_id',U.id);schoolDays=data||[];}
 async function loadWeeks(){const{data}=await sb.from('school_weeks').select('*').eq('user_id',U.id);schoolWeeks=data||[];}
 async function loadLessons(){const{data}=await sb.from('lessons').select('*,subjects(name)').eq('user_id',U.id).order('date').order('period');lessons=data||[];}
-async function loadCalEvents(){const{data}=await sb.from('calendar_events').select('*,subjects(name),grades(id,value,type,date,note,semester)').eq('user_id',U.id).order('date');calEvents=data||[];}
+async function loadCalEvents(){
+  // Load calendar events without grades join first to avoid issues
+  const{data}=await sb.from('calendar_events').select('*,subjects(name)').eq('user_id',U.id).order('date');
+  calEvents=data||[];
+  // Then try to load linked grades separately
+  if(calEvents.length){
+    const gradeIds=calEvents.map(e=>e.grade_id).filter(Boolean);
+    if(gradeIds.length){
+      const{data:gdata}=await sb.from('grades').select('id,value,type,date,note,semester').in('id',gradeIds);
+      if(gdata){
+        calEvents=calEvents.map(e=>({...e,grades:gdata.find(g=>g.id===e.grade_id)||null}));
+      }
+    }
+  }
+}
 
 // ===== WEEK NAVIGATION =====
 function wMove(type,dir){
