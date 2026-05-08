@@ -1053,35 +1053,46 @@ async function register(){
 }
 async function logout(){await sb.auth.signOut();window.location.reload();}
 
-// Track if we already initialized
-let appInitialized=false;
+async function initApp(user){
+  subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;schoolYears=[];
+  currentYearId=sessionStorage.getItem('schoolYearId')||null;
+  U=user;
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('tu').textContent=U.email;
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-home').classList.add('active');
+  document.querySelector('.nav-tab').classList.add('active');
+  initDates();
+  await loadSchoolYears();
+  if(currentYearId) await loadAll();
+}
 
+function showAuth(){
+  subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;schoolYears=[];currentYearId=null;
+  U=null;
+  document.getElementById('authScreen').style.display='flex';
+  document.getElementById('app').style.display='none';
+}
+
+// On page load, check session first
+document.addEventListener('DOMContentLoaded', async ()=>{
+  const{data:{session}}=await sb.auth.getSession();
+  if(session?.user){
+    await initApp(session.user);
+  } else {
+    showAuth();
+  }
+});
+
+// Only handle actual sign in/out events after initial load
 sb.auth.onAuthStateChange(async (ev,sess)=>{
-  if(sess?.user){
-    // Avoid double init on TOKEN_REFRESHED etc
-    const isNewLogin=(ev==='SIGNED_IN'||ev==='INITIAL_SESSION');
-    if(appInitialized&&!isNewLogin)return;
-    appInitialized=true;
-    subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;schoolYears=[];
-    currentYearId=sessionStorage.getItem('schoolYearId')||null;
-    U=sess.user;
-    document.getElementById('authScreen').style.display='none';
-    document.getElementById('app').style.display='block';
-    document.getElementById('tu').textContent=U.email;
-    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-    document.getElementById('sec-home').classList.add('active');
-    document.querySelector('.nav-tab').classList.add('active');
-    initDates();
-    await loadSchoolYears();
-    if(currentYearId) await loadAll();
+  if(ev==='SIGNED_IN'&&sess?.user&&!U){
+    await initApp(sess.user);
   } else if(ev==='SIGNED_OUT'){
-    appInitialized=false;
-    subjects=[];absences=[];lessons=[];calEvents=[];schoolDays=[];schoolWeeks=[];schedule=[];selectedDay=null;schoolYears=[];currentYearId=null;
     sessionStorage.removeItem('schoolYearId');
-    U=null;
-    document.getElementById('authScreen').style.display='flex';
-    document.getElementById('app').style.display='none';
+    showAuth();
   }
 });
 
