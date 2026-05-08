@@ -1076,17 +1076,32 @@ function showAuth(){
   document.getElementById('app').style.display='none';
 }
 
-// On page load, check session first
+// On page load, check session from localStorage directly
 document.addEventListener('DOMContentLoaded', async ()=>{
-  const{data:{session}}=await sb.auth.getSession();
-  if(session?.user){
-    await initApp(session.user);
+  // Try to get session from localStorage first (instant, no network)
+  const storageKey='sb-uygjcopyohzslvrzvrmv-auth-token';
+  let user=null;
+  try{
+    const stored=localStorage.getItem(storageKey);
+    if(stored){
+      const parsed=JSON.parse(stored);
+      user=parsed?.user||parsed?.currentSession?.user||null;
+    }
+  }catch(e){}
+
+  if(user){
+    await initApp(user);
   } else {
-    showAuth();
+    // Fallback to getSession
+    try{
+      const{data:{session}}=await sb.auth.getSession();
+      if(session?.user) await initApp(session.user);
+      else showAuth();
+    }catch(e){ showAuth(); }
   }
 });
 
-// Only handle actual sign in/out events after initial load
+// Handle sign in/out events
 sb.auth.onAuthStateChange(async (ev,sess)=>{
   if(ev==='SIGNED_IN'&&sess?.user&&!U){
     await initApp(sess.user);
