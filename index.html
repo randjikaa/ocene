@@ -1252,25 +1252,37 @@ async function loadSubjects(){
   renderSubjects();renderGP();populateSubjectSelects();
 }
 async function renderGP(){
-  [1,2].forEach(s=>{
-    const finals=subjects
-      .filter(sub=>!sub.grading_type||sub.grading_type==='brojcano')
-      .map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade)
-      .filter(Boolean);
-    const avg=finals.length?finals.reduce((a,b)=>a+b,0)/finals.length:0;
-    // Update ocene section
-    const el=document.getElementById('gp'+s);
-    if(el){
-      if(!avg){el.textContent='—';el.className='gp-val a0';}
-      else{el.textContent=avg.toFixed(2);el.className='gp-val '+avgClass(avg);}
-    }
-    // Update home screen
-    const hel=document.getElementById('hs'+s);
-    if(hel){
-      if(!avg){hel.textContent='—';hel.className='hv a0';}
-      else{hel.textContent=avg.toFixed(2);hel.className='hv '+avgClass(avg);}
-    }
-  });
+  try{
+    // Fetch behavior finals via fetch to avoid Supabase lock
+    const stored=localStorage.getItem('sb-uygjcopyohzslvrzvrmv-auth-token');
+    const token=stored?JSON.parse(stored)?.access_token:null;
+    const SURL='https://uygjcopyohzslvrzvrmv.supabase.co';
+    const SKEY='sb_publishable_obcXHm5fjOYYpjVZt44u2w_aBT01gEC';
+    const h={'apikey':SKEY,'Authorization':'Bearer '+(token||SKEY)};
+    const r=await fetch(SURL+'/rest/v1/behavior?select=grade,semester&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&is_final=eq.true',{headers:h});
+    const bdata=await r.json();
+    [1,2].forEach(s=>{
+      const finals=subjects
+        .filter(sub=>!sub.grading_type||sub.grading_type==='brojcano')
+        .map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade)
+        .filter(Boolean);
+      const beh=Array.isArray(bdata)?bdata.find(r=>r.semester===s)?.grade||null:null;
+      const all=[...finals,...(beh?[beh]:[])];
+      const avg=all.length?all.reduce((a,b)=>a+b,0)/all.length:0;
+      // Update ocene section
+      const el=document.getElementById('gp'+s);
+      if(el){
+        if(!avg){el.textContent='—';el.className='gp-val a0';}
+        else{el.textContent=avg.toFixed(2);el.className='gp-val '+avgClass(avg);}
+      }
+      // Update home screen
+      const hel=document.getElementById('hs'+s);
+      if(hel){
+        if(!avg){hel.textContent='—';hel.className='hv a0';}
+        else{hel.textContent=avg.toFixed(2);hel.className='hv '+avgClass(avg);}
+      }
+    });
+  }catch(e){console.error('renderGP error:',e);}
 }
 function renderGPBehavior(){renderGP();}
 function calcAvg(g){if(!g||!g.length)return 0;return g.reduce((a,b)=>a+b.value,0)/g.length;}
