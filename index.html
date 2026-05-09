@@ -894,6 +894,27 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
     </div>
   </div>
 
+      <!-- STATISTIKA -->
+      <div class="section" id="sec-statistika">
+        <div class="card">
+          <div class="ch"><h2>📊 Statistika ocena</h2></div>
+          <div class="cb">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+              <button class="btn-sm" id="stat-all-btn" onclick="statFilter='sve';renderStat()">Sve</button>
+              <button class="btn-sm" id="stat-m-btn" onclick="statFilter='mesec';renderStat()">Ovaj mesec</button>
+              <select id="stat-subj-sel" onchange="statFilter='predmet';statSubjId=this.value;renderStat()" style="background:var(--surface2);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-size:.75rem;padding:5px 10px">
+                <option value="">— Po predmetu —</option>
+              </select>
+            </div>
+            <div id="stat-content"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <div class="ch"><h2>📊 Statistika izostanaka</h2></div>
+          <div class="cb" id="stat-abs-content"></div>
+        </div>
+      </div>
+
   <footer>Made by <span>Dušan Ranđelović</span></footer>
 </div>
 
