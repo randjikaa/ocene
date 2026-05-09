@@ -2319,11 +2319,14 @@ async function saveBulkDays(){
 let statFilter='sve', statSubjId='';
 
 function renderStat(){
+  if(!subjects.length){document.getElementById('stat-content').innerHTML='<div class="empty">Podaci se učitavaju...</div>';setTimeout(renderStat,500);return;}
   // Update filter buttons
-  document.getElementById('stat-all-btn').style.background=statFilter==='sve'?'var(--accent)':'';
-  document.getElementById('stat-all-btn').style.color=statFilter==='sve'?'#fff':'';
-  document.getElementById('stat-m-btn').style.background=statFilter==='mesec'?'var(--accent)':'';
-  document.getElementById('stat-m-btn').style.color=statFilter==='mesec'?'#fff':'';
+  ['stat-all-btn','stat-m-btn'].forEach(id=>{
+    document.getElementById(id).style.background='';
+    document.getElementById(id).style.color='';
+  });
+  if(statFilter==='sve'){document.getElementById('stat-all-btn').style.background='var(--accent)';document.getElementById('stat-all-btn').style.color='#fff';}
+  if(statFilter==='mesec'){document.getElementById('stat-m-btn').style.background='var(--accent)';document.getElementById('stat-m-btn').style.color='#fff';}
 
   // Populate subject select
   const sel=document.getElementById('stat-subj-sel');
@@ -2375,14 +2378,14 @@ function renderStat(){
 
   el.innerHTML=`
     <div class="slbl" style="margin-bottom:8px">Prosek po mesecu</div>
-    <div style="display:flex;align-items:flex-end;gap:6px;height:100px;margin-bottom:16px;padding-bottom:4px;border-bottom:1px solid var(--border)">
+    <div style="display:flex;align-items:flex-end;gap:4px;height:120px;margin-bottom:16px;padding-bottom:4px;border-bottom:1px solid var(--border);overflow-x:auto">
       ${monthAvgs.map(x=>{
-        const h=Math.round((x.avg/5)*90);
+        const h=Math.round((x.avg/5)*80);
         const mn=x.m.slice(5);
-        return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1">
-          <div style="font-size:.6rem;color:var(--accent)">${x.avg.toFixed(1)}</div>
-          <div style="width:100%;height:${h}px;background:var(--accent);border-radius:4px 4px 0 0;min-height:4px"></div>
-          <div style="font-size:.6rem;color:var(--muted)">${mn}</div>
+        return`<div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:40px;max-width:60px;flex:1">
+          <div style="font-size:.58rem;color:var(--accent);margin-bottom:2px">${x.avg.toFixed(1)}</div>
+          <div style="width:70%;height:${h}px;background:var(--accent);border-radius:4px 4px 0 0;min-height:4px"></div>
+          <div style="font-size:.58rem;color:var(--muted);margin-top:2px">${mn}</div>
         </div>`;
       }).join('')}
     </div>
@@ -2458,15 +2461,15 @@ function renderStatAbs(){
 
   el.innerHTML=`
     <div class="slbl" style="margin-bottom:8px">Izostanci po mesecu</div>
-    <div style="display:flex;align-items:flex-end;gap:6px;height:100px;margin-bottom:16px;padding-bottom:4px;border-bottom:1px solid var(--border)">
+    <div style="display:flex;align-items:flex-end;gap:4px;height:120px;margin-bottom:16px;padding-bottom:4px;border-bottom:1px solid var(--border);overflow-x:auto">
       ${months.map(m=>{
         const d=byMonth[m];
         const tot=d.opravdan+d.neopravdan+d.neregulisan;
-        const h=Math.round((tot/maxCnt)*90);
-        return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1">
-          <div style="font-size:.6rem;color:var(--muted)">${tot}</div>
-          <div style="width:100%;height:${h}px;background:var(--danger);border-radius:4px 4px 0 0;opacity:.7;min-height:4px"></div>
-          <div style="font-size:.6rem;color:var(--muted)">${m.slice(5)}</div>
+        const h=Math.round((tot/maxCnt)*80);
+        return`<div style="display:flex;flex-direction:column;align-items:center;gap:2px;min-width:40px;max-width:60px;flex:1">
+          <div style="font-size:.58rem;color:var(--muted);margin-bottom:2px">${tot}</div>
+          <div style="width:70%;height:${h}px;background:var(--danger);border-radius:4px 4px 0 0;opacity:.7;min-height:4px"></div>
+          <div style="font-size:.58rem;color:var(--muted);margin-top:2px">${m.slice(5)}</div>
         </div>`;
       }).join('')}
     </div>
