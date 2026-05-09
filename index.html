@@ -362,6 +362,13 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
         <div class="cb">
           <div class="form-row">
             <div class="ff" style="flex:2"><label>Naziv predmeta</label><input type="text" id="nsn" placeholder="npr. Matematika" maxlength="60"/></div>
+            <div class="ff" style="max-width:200px"><label>Način ocenjivanja</label>
+              <select id="nsg">
+                <option value="brojcano">Brojčano</option>
+                <option value="istice_dobar_zadovoljava">Ističe se / Dobar / Zadovoljava</option>
+                <option value="neocenjuje">Ne ocenjuje se</option>
+              </select>
+            </div>
             <button class="btn-add" onclick="addSubject()">+ Dodaj</button>
           </div>
         </div>
@@ -845,12 +852,12 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
   <div class="mo" id="gradeMo" style="display:none" onclick="if(event.target===this)closeMo('gradeMo')">
     <div class="modal">
       <h3 id="gradeMoT">Dodaj ocenu</h3>
-      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px" id="gradeValBtns">
-        <button onclick="selectGradeVal(1)" class="btn-sm" id="gvb1" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">1</button>
-        <button onclick="selectGradeVal(2)" class="btn-sm" id="gvb2" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">2</button>
-        <button onclick="selectGradeVal(3)" class="btn-sm" id="gvb3" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">3</button>
-        <button onclick="selectGradeVal(4)" class="btn-sm" id="gvb4" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">4</button>
-        <button onclick="selectGradeVal(5)" class="btn-sm" id="gvb5" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">5</button>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px;flex-wrap:wrap" id="gradeValBtns">
+        <button onclick="selectGradeVal(1)" class="btn-sm" id="gvb1" style="min-width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1rem;padding:0 8px"></button>
+        <button onclick="selectGradeVal(2)" class="btn-sm" id="gvb2" style="min-width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1rem;padding:0 8px"></button>
+        <button onclick="selectGradeVal(3)" class="btn-sm" id="gvb3" style="min-width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1rem;padding:0 8px"></button>
+        <button onclick="selectGradeVal(4)" class="btn-sm" id="gvb4" style="min-width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1rem;padding:0 8px"></button>
+        <button onclick="selectGradeVal(5)" class="btn-sm" id="gvb5" style="min-width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1rem;padding:0 8px"></button>
       </div>
       <div class="form-row" style="margin-bottom:10px">
         <div class="ff"><label>Polugodište</label>
@@ -1256,6 +1263,8 @@ function renderSubjects(){
 let gradeModalSubjectId=null,editGradeId=null,selectedGradeVal=1,gradeModalCalEventId=null;
 
 function renderSCard(s){
+  const gt=s.grading_type||'brojcano';
+  const gtLabels={'brojcano':'Brojčano','istice_dobar_zadovoljava':'Ističe se / Dobar / Zadovoljava','neocenjuje':'Ne ocenjuje se'};
   const grades1=(s.grades||[]).filter(g=>g.semester===1||!g.semester).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   const grades2=(s.grades||[]).filter(g=>g.semester===2).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   const avg1=grades1.length?grades1.reduce((a,b)=>a+b.value,0)/grades1.length:0;
@@ -1267,14 +1276,16 @@ function renderSCard(s){
     return`<div class="nc-card g${t}"><div class="tg">${t}</div>${lbl}</div>`;
   }).join('');
   const finals=s.subject_finals||[],f1=finals.find(f=>f.semester===1),f2=finals.find(f=>f.semester===2);
-  const renderGrades=(glist)=>glist.length?glist.map(g=>`
-    <div class="grade-item c${g.value}" onclick="openEditGrade('${g.id}','${s.id}')">
+  const renderGrades=(glist,gradingType)=>glist.length?glist.map(g=>{
+    const dispVal=gradingType==='istice_dobar_zadovoljava'?(g.value===5?'Ističe se':g.value===4?'Dobar':g.value===3?'Zadovoljava':'—'):g.value;
+    const cls=gradingType==='brojcano'?`c${g.value}`:'';
+    return`<div class="grade-item ${cls}" onclick="openEditGrade('${g.id}','${s.id}')">
       <div>
-        <div class="gval ${avgClass(g.value)}">${g.value}</div>
+        <div class="gval ${gradingType==='brojcano'?avgClass(g.value):''}" style="font-size:${gradingType==='istice_dobar_zadovoljava'?'.65rem':'1.2rem'}">${dispVal}</div>
         ${g.type?`<div class="gtype">${esc(g.type)}</div>`:''}
         ${g.date?`<div class="gdate">${fmtShort(g.date)}</div>`:''}
       </div>
-    </div>`).join(''):`<span style="color:var(--muted);font-size:.75rem">Nema ocena</span>`;
+    </div>`;}).join(''):`<span style="color:var(--muted);font-size:.75rem">Nema ocena</span>`;
   const finHtml=`<div class="finals-row">
     <div class="fbox"><div class="fl">Zaključna — 1. pol.</div><div class="fv ${f1?avgClass(f1.grade):'a0'}">${f1?f1.grade:'—'}</div>
       <select id="fs1-${s.id}">${[5,4,3,2,1].map(v=>`<option value="${v}"${f1&&f1.grade===v?' selected':''}>${v}</option>`).join('')}</select>
@@ -1285,10 +1296,13 @@ function renderSCard(s){
   </div>`;
   return`<div class="subj-card">
     <div class="shead">
-      <span class="sname">${esc(s.name)}</span>
+      <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+        <span class="sname">${esc(s.name)}</span>
+        <span style="font-size:.62rem;padding:1px 7px;border-radius:100px;background:rgba(124,106,247,.12);color:var(--accent)">${gtLabels[gt]||gt}</span>
+      </div>
       <div style="display:flex;align-items:center;gap:7px">
-        <span class="avg-b ${avgClass(avgAll)}">${avgAll?avgAll.toFixed(2):'—'}</span>
-        <button class="btn-add" onclick="openAddGrade('${s.id}')">+ Ocena</button>
+        ${gt==='brojcano'?`<span class="avg-b ${avgClass(avgAll)}">${avgAll?avgAll.toFixed(2):'—'}</span>`:''}
+        ${gt!=='neocenjuje'?`<button class="btn-add" onclick="openAddGrade('${s.id}','${gt}')">+ Ocena</button>`:''}
         <button class="btn-del" style="font-size:1rem" onclick="removeSubject('${s.id}')">🗑</button>
       </div>
     </div>
@@ -1311,19 +1325,28 @@ function renderSCard(s){
   </div>`;
 }
 
-function openAddGrade(sid){
-  gradeModalSubjectId=sid;editGradeId=null;selectedGradeVal=1;gradeModalCalEventId=null;
+let currentGradingType='brojcano';
+function setGradeButtons(gt,selected){
+  currentGradingType=gt;
+  const labels=gt==='istice_dobar_zadovoljava'?{1:'',2:'',3:'Zadovoljava',4:'Dobar',5:'Ističe se'}:{1:'1',2:'2',3:'3',4:'4',5:'5'};
+  [1,2,3,4,5].forEach(v=>{
+    const b=document.getElementById('gvb'+v);
+    b.textContent=labels[v]||v;
+    b.style.display=(gt==='istice_dobar_zadovoljava'&&v<3)?'none':'';
+    b.style.background=v===selected?'var(--accent)':'';
+    b.style.color=v===selected?'#fff':'';
+  });
+}
+function openAddGrade(sid,gt){
+  gt=gt||'brojcano';
+  gradeModalSubjectId=sid;editGradeId=null;selectedGradeVal=gt==='istice_dobar_zadovoljava'?5:1;gradeModalCalEventId=null;
   document.getElementById('gradeMoT').textContent='Dodaj ocenu';
   document.getElementById('gradeDate').value=toISO(new Date());
   document.getElementById('gradeSem').value='1';
   document.getElementById('gradeType').value='';
   document.getElementById('gradeNote').value='';
   document.getElementById('gradeDeleteBtn').style.display='none';
-  [1,2,3,4,5].forEach(v=>{
-    const b=document.getElementById('gvb'+v);
-    b.style.background=v===1?'var(--accent)':'';
-    b.style.color=v===1?'#fff':'';
-  });
+  setGradeButtons(gt,selectedGradeVal);
   document.getElementById('gradeMo').style.display='flex';
 }
 function openEditGrade(gid,sid){
@@ -1344,11 +1367,7 @@ function openEditGrade(gid,sid){
 }
 function selectGradeVal(v){
   selectedGradeVal=v;
-  [1,2,3,4,5].forEach(x=>{
-    const b=document.getElementById('gvb'+x);
-    b.style.background=x===v?'var(--accent)':'';
-    b.style.color=x===v?'#fff':'';
-  });
+  setGradeButtons(currentGradingType,v);
 }
 async function saveGrade(){
   const sem=parseInt(document.getElementById('gradeSem').value);
@@ -1386,7 +1405,12 @@ async function deleteGrade(){
   renderHome();
 }
 
-async function addSubject(){const i=document.getElementById('nsn'),n=i.value.trim();if(!n)return i.focus();await sb.from('subjects').insert({name:n,user_id:U.id,school_year_id:currentYearId});i.value='';await loadSubjects();renderHome();}
+async function addSubject(){
+  const i=document.getElementById('nsn'),n=i.value.trim();if(!n)return i.focus();
+  const gt=document.getElementById('nsg')?.value||'brojcano';
+  await sb.from('subjects').insert({name:n,user_id:U.id,school_year_id:currentYearId,grading_type:gt});
+  i.value='';await loadSubjects();renderHome();
+}
 async function removeSubject(id){if(!confirm('Obrisati predmet i sve ocene?'))return;await sb.from('subjects').delete().eq('id',id);await loadSubjects();renderHome();}
 async function removeGrade(id){await sb.from('grades').delete().eq('id',id);await loadSubjects();renderHome();}
 async function saveFinal(sid,sem){
@@ -1786,10 +1810,12 @@ function renderDayDetail(ds){
   if(dayEvents.length){
     html+=`<div style="margin-bottom:12px"><div class="slbl">Obaveze za ovaj dan</div>`;
     dayEvents.forEach(e=>{
-      html+=`<div style="display:flex;align-items:center;gap:7px;background:rgba(247,106,176,.06);border:1px solid rgba(247,106,176,.2);border-radius:8px;padding:7px 11px;margin-bottom:5px;font-size:.76rem">
+      const done=e.completed===true;
+      html+=`<div style="display:flex;align-items:center;gap:7px;background:rgba(247,106,176,.06);border:1px solid ${done?'rgba(106,247,184,.3)':'rgba(247,106,176,.2)'};border-radius:8px;padding:7px 11px;margin-bottom:5px;font-size:.76rem;${done?'opacity:.7':''}">
         <span class="ct ct-${e.type}">${CAL_LABELS[e.type]||e.type}</span>
-        <span>${e.subjects?esc(e.subjects.name):'—'}</span>
+        <span style="${done?'text-decoration:line-through':''}"> ${e.subjects?esc(e.subjects.name):'—'}</span>
         ${e.note?`<span style="color:var(--muted)">· ${esc(e.note)}</span>`:''}
+        ${done?'<span style="color:var(--accent3);margin-left:auto">✅ Završeno</span>':''}
       </div>`;
     });
     html+=`</div>`;
@@ -1977,6 +2003,11 @@ async function saveEditCalEvent(){
   closeMo('calEditMo');
   await loadCalEvents();renderCalWeek();renderHome();
 }
+async function toggleCalComplete(id,completed){
+  await sb.from('calendar_events').update({completed}).eq('id',id);
+  await loadCalEvents();renderCalWeek();renderHome();
+  if(selectedDay)renderDayDetail(selectedDay);
+}
 async function removeCalEvent(id){
   await sb.from('calendar_events').delete().eq('id',id);
   await loadCalEvents();renderCalWeek();renderHome();
@@ -1997,13 +2028,17 @@ function renderCalWeek(){
       const g=e.grades;
       const gradeHtml=g?`<span class="avg-b ${avgClass(g.value)}" style="font-size:1.1rem;cursor:pointer" onclick="openEditGradeFromCal('${e.id}')">${g.value}</span>`
         :`<button class="btn-sm" style="font-size:.66rem;padding:3px 8px" onclick="openAddGradeFromCal('${e.id}')">+ Ocena</button>`;
-      html+=`<div class="cev">
-        <div class="ced">${d.getDate()}</div>
+      const isCompleted=e.completed===true;
+      html+=`<div class="cev" style="${isCompleted?'opacity:.6;':''}">
+        <div class="ced" style="${isCompleted?'text-decoration:line-through;color:var(--accent3)':''}">${d.getDate()}</div>
         <div class="cei">
-          <div class="cet">${e.subjects?esc(e.subjects.name):'—'}</div>
+          <div class="cet" style="${isCompleted?'text-decoration:line-through':''}">
+            ${isCompleted?'✅ ':''} ${e.subjects?esc(e.subjects.name):'—'}
+          </div>
           <div class="ces"><span class="ct ct-${e.type}">${CAL_LABELS[e.type]||e.type}</span>${e.note?` · ${esc(e.note)}`:''}</div>
         </div>
         ${gradeHtml}
+        <button class="btn-sm" onclick="toggleCalComplete('${e.id}',${!isCompleted})" style="font-size:.7rem;padding:4px 8px" title="${isCompleted?'Označi kao nezavršeno':'Označi kao završeno'}">${isCompleted?'↩️':'✅'}</button>
         <button class="btn-sm" onclick="openEditCalEvent('${e.id}')" style="font-size:.7rem;padding:4px 8px">✏️</button>
         <button class="btn-del" onclick="removeCalEvent('${e.id}')">×</button>
       </div>`;
