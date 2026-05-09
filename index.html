@@ -1277,11 +1277,11 @@ function renderSCard(s){
   }).join('');
   const finals=s.subject_finals||[],f1=finals.find(f=>f.semester===1),f2=finals.find(f=>f.semester===2);
   const renderGrades=(glist,gradingType)=>glist.length?glist.map(g=>{
+    const isBr=!gradingType||gradingType==='brojcano';
     const dispVal=gradingType==='istice_dobar_zadovoljava'?(g.value===5?'Ističe se':g.value===4?'Dobar':g.value===3?'Zadovoljava':'—'):g.value;
-    const cls=gradingType==='brojcano'?`c${g.value}`:'';
-    return`<div class="grade-item ${cls}" onclick="openEditGrade('${g.id}','${s.id}')">
+    return`<div class="grade-item ${isBr?`c${g.value}`:''}" onclick="openEditGrade('${g.id}','${s.id}')">
       <div>
-        <div class="gval ${gradingType==='brojcano'?avgClass(g.value):''}" style="font-size:${gradingType==='istice_dobar_zadovoljava'?'.65rem':'1.2rem'}">${dispVal}</div>
+        <div class="gval ${isBr?avgClass(g.value):''}" style="${!isBr?'font-size:.68rem;color:var(--accent3)':''}">${dispVal}</div>
         ${g.type?`<div class="gtype">${esc(g.type)}</div>`:''}
         ${g.date?`<div class="gdate">${fmtShort(g.date)}</div>`:''}
       </div>
