@@ -1908,7 +1908,7 @@ async function saveLesson(){
     const note=document.getElementById('labsNote').value.trim()||null;
     // Remove old absence for this lesson if editing
     if(editLessonId)await sb.from('absences').delete().eq('lesson_id',editLessonId).eq('user_id',U.id);
-    await sb.from('absences').insert({user_id:U.id,date:currentLessonDate,hours:1,justified,absence_type,note,lesson_id:lessonId});
+    await sb.from('absences').insert({user_id:U.id,date:currentLessonDate,hours:1,justified,absence_type,note,lesson_id:lessonId,school_year_id:currentYearId});
     await loadAbsences();
   } else if(editLessonId){
     await sb.from('absences').delete().eq('lesson_id',editLessonId).eq('user_id',U.id);
