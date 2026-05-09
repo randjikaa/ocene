@@ -1350,7 +1350,9 @@ function openAddGrade(sid,gt){
   document.getElementById('gradeMo').style.display='flex';
 }
 function openEditGrade(gid,sid){
-  const g=subjects.find(s=>s.id===sid)?.grades?.find(x=>x.id===gid);if(!g)return;
+  const subj=subjects.find(s=>s.id===sid);
+  const g=subj?.grades?.find(x=>x.id===gid);if(!g)return;
+  const gt=subj?.grading_type||'brojcano';
   gradeModalSubjectId=sid;editGradeId=gid;selectedGradeVal=g.value;gradeModalCalEventId=null;
   document.getElementById('gradeMoT').textContent='Izmeni ocenu';
   document.getElementById('gradeDate').value=g.date||toISO(new Date());
@@ -1358,11 +1360,7 @@ function openEditGrade(gid,sid){
   document.getElementById('gradeType').value=g.type||'';
   document.getElementById('gradeNote').value=g.note||'';
   document.getElementById('gradeDeleteBtn').style.display='';
-  [1,2,3,4,5].forEach(v=>{
-    const b=document.getElementById('gvb'+v);
-    b.style.background=v===g.value?'var(--accent)':'';
-    b.style.color=v===g.value?'#fff':'';
-  });
+  setGradeButtons(gt,g.value);
   document.getElementById('gradeMo').style.display='flex';
 }
 function selectGradeVal(v){
