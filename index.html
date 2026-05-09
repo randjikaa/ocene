@@ -2108,7 +2108,10 @@ function renderHome(){
   // prosek (sa vladanjem) - using cached behavior data
   sb.from('behavior').select('grade,semester').eq('user_id',U.id).eq('school_year_id',currentYearId).eq('is_final',true).then(({data:bdata})=>{
     [1,2].forEach(s=>{
-      const finals=subjects.map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade).filter(Boolean);
+      const finals=subjects
+        .filter(sub=>!sub.grading_type||sub.grading_type==='brojcano')
+        .map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade)
+        .filter(Boolean);
       const beh=Array.isArray(bdata)?bdata.find(r=>r.semester===s)?.grade||null:null;
       const all=[...finals,...(beh?[beh]:[])];
       const el=document.getElementById('hs'+s);
