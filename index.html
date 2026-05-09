@@ -1257,21 +1257,19 @@ async function renderGP(){
       .filter(sub=>!sub.grading_type||sub.grading_type==='brojcano')
       .map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade)
       .filter(Boolean);
+    const avg=finals.length?finals.reduce((a,b)=>a+b,0)/finals.length:0;
+    // Update ocene section
     const el=document.getElementById('gp'+s);
-    if(!el)return;
-    if(!finals.length){el.textContent='—';el.className='gp-val a0';}
-    else{const avg=finals.reduce((a,b)=>a+b,0)/finals.length;el.textContent=avg.toFixed(2);el.className='gp-val '+avgClass(avg);}
-  });
-  // Also update home screen stats
-  [1,2].forEach(s=>{
-    const finals=subjects
-      .filter(sub=>!sub.grading_type||sub.grading_type==='brojcano')
-      .map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade)
-      .filter(Boolean);
-    const el=document.getElementById('hs'+s);
-    if(!el)return;
-    if(!finals.length){el.textContent='—';el.className='hv a0';}
-    else{const avg=finals.reduce((a,b)=>a+b,0)/finals.length;el.textContent=avg.toFixed(2);el.className='hv '+avgClass(avg);}
+    if(el){
+      if(!avg){el.textContent='—';el.className='gp-val a0';}
+      else{el.textContent=avg.toFixed(2);el.className='gp-val '+avgClass(avg);}
+    }
+    // Update home screen
+    const hel=document.getElementById('hs'+s);
+    if(hel){
+      if(!avg){hel.textContent='—';hel.className='hv a0';}
+      else{hel.textContent=avg.toFixed(2);hel.className='hv '+avgClass(avg);}
+    }
   });
 }
 function renderGPBehavior(){renderGP();}
