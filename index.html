@@ -896,7 +896,7 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
   </div>
 
       <!-- STATISTIKA -->
-      <div class="section" id="sec-statistika">
+      <div class="section" id="sec-statistika" style="max-width:800px;margin:0 auto">
         <div class="card">
           <div class="ch"><h2>📊 Statistika ocena</h2></div>
           <div class="cb">
@@ -915,7 +915,7 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
           <div class="cb" id="stat-abs-content"></div>
         </div>
         <!-- STATISTIKA -->
-    <div class="section" id="sec-statistika">
+    <div class="section" id="sec-statistika" style="max-width:800px;margin:0 auto">
       <div class="card">
         <div class="ch"><h2>📊 Statistika ocena</h2></div>
         <div class="cb">
@@ -2337,7 +2337,7 @@ function renderStat(){
   // Collect all grades
   let allGrades=[];
   subjects.filter(s=>!s.grading_type||s.grading_type==='brojcano').forEach(s=>{
-    (s.grades||[]).forEach(g=>allGrades.push({...g,subjectName:s.name}));
+    (s.grades||[]).forEach(g=>allGrades.push({...g,subjectName:s.name,subject_id:s.id}));
   });
 
   // Apply filter
