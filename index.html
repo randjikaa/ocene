@@ -365,7 +365,6 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
             <div class="ff" style="max-width:200px"><label>Način ocenjivanja</label>
               <select id="nsg">
                 <option value="brojcano">Brojčano</option>
-                <option value="istice_dobar_zadovoljava">Ističe se / Dobar / Zadovoljava</option>
                 <option value="neocenjuje">Ne ocenjuje se</option>
               </select>
             </div>
@@ -1265,7 +1264,7 @@ async function renderGP(){
       const finals=subjects
         .filter(sub=>!sub.grading_type||sub.grading_type==='brojcano')
         .map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade)
-        .filter(Boolean);
+        .filter(g=>g&&g>=1&&g<=5);
       const beh=Array.isArray(bdata)?bdata.find(r=>r.semester===s)?.grade||null:null;
       const all=[...finals,...(beh?[beh]:[])];
       const avg=all.length?all.reduce((a,b)=>a+b,0)/all.length:0;
@@ -1295,7 +1294,7 @@ let gradeModalSubjectId=null,editGradeId=null,selectedGradeVal=1,gradeModalCalEv
 
 function renderSCard(s){
   const gt=s.grading_type||'brojcano';
-  const gtLabels={'brojcano':'Brojčano','istice_dobar_zadovoljava':'Ističe se / Dobar / Zadovoljava','neocenjuje':'Ne ocenjuje se'};
+  const gtLabels={'brojcano':'Brojčano','neocenjuje':'Ne ocenjuje se'};
   const grades1=(s.grades||[]).filter(g=>g.semester===1||!g.semester).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   const grades2=(s.grades||[]).filter(g=>g.semester===2).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   const avg1=grades1.length?grades1.reduce((a,b)=>a+b.value,0)/grades1.length:0;
@@ -1307,21 +1306,21 @@ function renderSCard(s){
     return`<div class="nc-card g${t}"><div class="tg">${t}</div>${lbl}</div>`;
   }).join('');
   const finals=s.subject_finals||[],f1=finals.find(f=>f.semester===1),f2=finals.find(f=>f.semester===2);
-  const renderGrades=(glist,gradingType)=>glist.length?glist.map(g=>{
-    const isBr=!gradingType||gradingType==='brojcano';
-    const dispVal=gradingType==='istice_dobar_zadovoljava'?(g.value===5?'Ističe se':g.value===4?'Dobar':g.value===3?'Zadovoljava':'—'):g.value;
-    return`<div class="grade-item ${isBr?`c${g.value}`:''}" onclick="openEditGrade('${g.id}','${s.id}')">
+  const renderGrades=(glist,gradingType)=>glist.length?glist.map(g=>`
+    <div class="grade-item c${g.value}" onclick="openEditGrade('${g.id}','${s.id}')">
       <div>
-        <div class="gval ${isBr?avgClass(g.value):''}" style="${!isBr?'font-size:.68rem;color:var(--accent3)':''}">${dispVal}</div>
+        <div class="gval ${avgClass(g.value)}">${g.value}</div>
         ${g.type?`<div class="gtype">${esc(g.type)}</div>`:''}
         ${g.date?`<div class="gdate">${fmtShort(g.date)}</div>`:''}
       </div>
-    </div>`;}).join(''):`<span style="color:var(--muted);font-size:.75rem">Nema ocena</span>`;
-  const finHtml=`<div class="finals-row">
-    <div class="fbox"><div class="fl">Zaključna — 1. pol.</div><div class="fv ${f1?avgClass(f1.grade):'a0'}">${f1?f1.grade:'—'}</div>
+    </div>`).join(''):`<span style="color:var(--muted);font-size:.75rem">Nema ocena</span>`;
+  const finHtml=(gt==='neocenjuje')?'':`<div class="finals-row">
+    <div class="fbox"><div class="fl">Zaključna — 1. pol.</div>
+      <div class="fv ${f1?avgClass(f1.grade):'a0'}">${f1?f1.grade:'—'}</div>
       <select id="fs1-${s.id}">${[5,4,3,2,1].map(v=>`<option value="${v}"${f1&&f1.grade===v?' selected':''}>${v}</option>`).join('')}</select>
       <button onclick="saveFinal('${s.id}',1)">Zaključi</button></div>
-    <div class="fbox"><div class="fl">Zaključna — 2. pol.</div><div class="fv ${f2?avgClass(f2.grade):'a0'}">${f2?f2.grade:'—'}</div>
+    <div class="fbox"><div class="fl">Zaključna — 2. pol.</div>
+      <div class="fv ${f2?avgClass(f2.grade):'a0'}">${f2?f2.grade:'—'}</div>
       <select id="fs2-${s.id}">${[5,4,3,2,1].map(v=>`<option value="${v}"${f2&&f2.grade===v?' selected':''}>${v}</option>`).join('')}</select>
       <button onclick="saveFinal('${s.id}',2)">Zaključi</button></div>
   </div>`;
@@ -1333,7 +1332,7 @@ function renderSCard(s){
       </div>
       <div style="display:flex;align-items:center;gap:7px">
         ${gt==='brojcano'?`<span class="avg-b ${avgClass(avgAll)}">${avgAll?avgAll.toFixed(2):'—'}</span>`:''}
-        ${gt!=='neocenjuje'?`<button class="btn-add" onclick="openAddGrade('${s.id}','${gt}')">+ Ocena</button>`:''}
+        ${gt!=='neocenjuje'?`<button class="btn-add" onclick="openAddGrade('${s.id}','${gt}')">+ Ocena</button>`:'<span style="font-size:.7rem;color:var(--muted)">Samo časovi</span>'}
         <button class="btn-del" style="font-size:1rem" onclick="removeSubject('${s.id}')">🗑</button>
       </div>
     </div>
@@ -1359,18 +1358,17 @@ function renderSCard(s){
 let currentGradingType='brojcano';
 function setGradeButtons(gt,selected){
   currentGradingType=gt;
-  const labels=gt==='istice_dobar_zadovoljava'?{1:'',2:'',3:'Zadovoljava',4:'Dobar',5:'Ističe se'}:{1:'1',2:'2',3:'3',4:'4',5:'5'};
   [1,2,3,4,5].forEach(v=>{
     const b=document.getElementById('gvb'+v);
-    b.textContent=labels[v]||v;
-    b.style.display=(gt==='istice_dobar_zadovoljava'&&v<3)?'none':'';
+    b.textContent=v;
+    b.style.display='';
     b.style.background=v===selected?'var(--accent)':'';
     b.style.color=v===selected?'#fff':'';
   });
 }
 function openAddGrade(sid,gt){
   gt=gt||'brojcano';
-  gradeModalSubjectId=sid;editGradeId=null;selectedGradeVal=gt==='istice_dobar_zadovoljava'?5:1;gradeModalCalEventId=null;
+  gradeModalSubjectId=sid;editGradeId=null;selectedGradeVal=1;gradeModalCalEventId=null;
   document.getElementById('gradeMoT').textContent='Dodaj ocenu';
   document.getElementById('gradeDate').value=toISO(new Date());
   document.getElementById('gradeSem').value='1';
@@ -2142,7 +2140,7 @@ function renderHome(){
       const finals=subjects
         .filter(sub=>!sub.grading_type||sub.grading_type==='brojcano')
         .map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade)
-        .filter(Boolean);
+        .filter(g=>g&&g>=1&&g<=5);
       const beh=Array.isArray(bdata)?bdata.find(r=>r.semester===s)?.grade||null:null;
       const all=[...finals,...(beh?[beh]:[])];
       const el=document.getElementById('hs'+s);
@@ -2272,6 +2270,178 @@ async function saveBulkDays(){
   await loadWeeks();
   renderCasoviWeek();
   alert(`Podešeno ${dayUpserts.length} dana${weekUpserts.length?' i '+weekUpserts.length+' nedelja':''} kao "${type}"!`);
+}
+
+// ===== STATISTIKA =====
+let statFilter='sve', statSubjId='';
+
+function renderStat(){
+  // Update filter buttons
+  document.getElementById('stat-all-btn').style.background=statFilter==='sve'?'var(--accent)':'';
+  document.getElementById('stat-all-btn').style.color=statFilter==='sve'?'#fff':'';
+  document.getElementById('stat-m-btn').style.background=statFilter==='mesec'?'var(--accent)':'';
+  document.getElementById('stat-m-btn').style.color=statFilter==='mesec'?'#fff':'';
+
+  // Populate subject select
+  const sel=document.getElementById('stat-subj-sel');
+  sel.innerHTML='<option value="">— Po predmetu —</option>'+
+    subjects.filter(s=>!s.grading_type||s.grading_type==='brojcano')
+    .map(s=>`<option value="${s.id}"${s.id===statSubjId?' selected':''}>${esc(s.name)}</option>`).join('');
+
+  // Collect all grades
+  let allGrades=[];
+  subjects.filter(s=>!s.grading_type||s.grading_type==='brojcano').forEach(s=>{
+    (s.grades||[]).forEach(g=>allGrades.push({...g,subjectName:s.name}));
+  });
+
+  // Apply filter
+  const now=new Date();
+  const thisMonth=toISO(now).slice(0,7);
+  if(statFilter==='mesec') allGrades=allGrades.filter(g=>g.date&&g.date.slice(0,7)===thisMonth);
+  if(statFilter==='predmet'&&statSubjId) allGrades=allGrades.filter(g=>g.subject_id===statSubjId);
+
+  const el=document.getElementById('stat-content');
+  if(!allGrades.length){el.innerHTML='<div class="empty">Nema ocena za prikaz</div>';renderStatAbs();return;}
+
+  // 1. Prosek po mesecu
+  const byMonth={};
+  allGrades.filter(g=>g.date).forEach(g=>{
+    const m=g.date.slice(0,7);
+    if(!byMonth[m])byMonth[m]=[];
+    byMonth[m].push(g.value);
+  });
+  const months=Object.keys(byMonth).sort();
+  const monthAvgs=months.map(m=>({m,avg:byMonth[m].reduce((a,b)=>a+b,0)/byMonth[m].length,cnt:byMonth[m].length}));
+
+  // 2. Distribucija ocena
+  const dist={1:0,2:0,3:0,4:0,5:0};
+  allGrades.forEach(g=>dist[g.value]=(dist[g.value]||0)+1);
+  const total=allGrades.length;
+
+  // 3. Ocene po tipu
+  const byType={};
+  allGrades.forEach(g=>{const t=g.type||'Ostalo';if(!byType[t])byType[t]=[];byType[t].push(g.value);});
+
+  // 4. Po predmetu (samo za "sve")
+  const bySubj={};
+  if(statFilter!=='predmet'){
+    allGrades.forEach(g=>{if(!bySubj[g.subjectName])bySubj[g.subjectName]=[];bySubj[g.subjectName].push(g.value);});
+  }
+
+  const maxAvg=Math.max(...monthAvgs.map(x=>x.avg),5);
+
+  el.innerHTML=`
+    <div class="slbl" style="margin-bottom:8px">Prosek po mesecu</div>
+    <div style="display:flex;align-items:flex-end;gap:6px;height:100px;margin-bottom:16px;padding-bottom:4px;border-bottom:1px solid var(--border)">
+      ${monthAvgs.map(x=>{
+        const h=Math.round((x.avg/5)*90);
+        const mn=x.m.slice(5);
+        return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1">
+          <div style="font-size:.6rem;color:var(--accent)">${x.avg.toFixed(1)}</div>
+          <div style="width:100%;height:${h}px;background:var(--accent);border-radius:4px 4px 0 0;min-height:4px"></div>
+          <div style="font-size:.6rem;color:var(--muted)">${mn}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="slbl" style="margin-bottom:8px">Distribucija ocena</div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+      ${[5,4,3,2,1].map(v=>{
+        const cnt=dist[v]||0;
+        const pct=total?Math.round(cnt/total*100):0;
+        return`<div style="flex:1;text-align:center">
+          <div class="avg-b ${avgClass(v)}" style="margin:0 auto 4px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:.9rem">${v}</div>
+          <div style="font-size:.75rem;font-weight:700">${cnt}</div>
+          <div style="font-size:.6rem;color:var(--muted)">${pct}%</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="slbl" style="margin-bottom:8px">Ocene po tipu</div>
+    <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+      ${Object.entries(byType).sort((a,b)=>b[1].length-a[1].length).map(([t,gs])=>{
+        const avg=gs.reduce((a,b)=>a+b,0)/gs.length;
+        const w=Math.round(gs.length/total*100);
+        return`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <div style="font-size:.72rem;width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t)}</div>
+          <div style="flex:1;background:var(--surface2);border-radius:4px;height:16px;overflow:hidden">
+            <div style="width:${w}%;height:100%;background:var(--accent);opacity:.7"></div>
+          </div>
+          <div style="font-size:.7rem;color:var(--muted);width:50px;text-align:right">${gs.length}× avg ${avg.toFixed(1)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    ${statFilter!=='predmet'?`<div class="slbl" style="margin-bottom:8px">Prosek po predmetu</div>
+    <div>${Object.entries(bySubj).sort((a,b)=>{
+      const aa=a[1].reduce((x,y)=>x+y,0)/a[1].length;
+      const ba=b[1].reduce((x,y)=>x+y,0)/b[1].length;
+      return ba-aa;
+    }).map(([name,gs])=>{
+      const avg=gs.reduce((a,b)=>a+b,0)/gs.length;
+      return`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="font-size:.72rem;flex:1">${esc(name)}</div>
+        <div style="display:flex;gap:3px">${gs.slice().sort().map(v=>`<span class="avg-b ${avgClass(v)}" style="width:20px;height:20px;font-size:.65rem;display:inline-flex;align-items:center;justify-content:center">${v}</span>`).join('')}</div>
+        <div class="avg-b ${avgClass(Math.round(avg))}" style="width:36px;height:24px;font-size:.75rem;display:inline-flex;align-items:center;justify-content:center">${avg.toFixed(2)}</div>
+      </div>`;
+    }).join('')}</div>`:''}
+  `;
+  renderStatAbs();
+}
+
+function renderStatAbs(){
+  const el=document.getElementById('stat-abs-content');
+  if(!absences.length){el.innerHTML='<div class="empty">Nema izostanaka</div>';return;}
+
+  // By month
+  const byMonth={};
+  absences.filter(a=>a.date).forEach(a=>{
+    const m=a.date.slice(0,7);
+    if(!byMonth[m])byMonth[m]={opravdan:0,neopravdan:0,neregulisan:0};
+    const key=a.justified===true?'opravdan':a.justified===false?'neopravdan':'neregulisan';
+    byMonth[m][key]++;
+  });
+  const months=Object.keys(byMonth).sort();
+  const maxCnt=Math.max(...months.map(m=>byMonth[m].opravdan+byMonth[m].neopravdan+byMonth[m].neregulisan),1);
+
+  // By subject
+  const bySubj={};
+  absences.forEach(a=>{
+    const sub=subjects.find(s=>lessons.find(l=>l.id===a.lesson_id&&l.subject_id===s.id));
+    const name=sub?.name||'Nepoznato';
+    if(!bySubj[name])bySubj[name]=0;
+    bySubj[name]++;
+  });
+
+  el.innerHTML=`
+    <div class="slbl" style="margin-bottom:8px">Izostanci po mesecu</div>
+    <div style="display:flex;align-items:flex-end;gap:6px;height:100px;margin-bottom:16px;padding-bottom:4px;border-bottom:1px solid var(--border)">
+      ${months.map(m=>{
+        const d=byMonth[m];
+        const tot=d.opravdan+d.neopravdan+d.neregulisan;
+        const h=Math.round((tot/maxCnt)*90);
+        return`<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1">
+          <div style="font-size:.6rem;color:var(--muted)">${tot}</div>
+          <div style="width:100%;height:${h}px;background:var(--danger);border-radius:4px 4px 0 0;opacity:.7;min-height:4px"></div>
+          <div style="font-size:.6rem;color:var(--muted)">${m.slice(5)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="slbl" style="margin-bottom:8px">Izostanci po predmetu</div>
+    <div>
+      ${Object.entries(bySubj).sort((a,b)=>b[1]-a[1]).map(([name,cnt])=>{
+        const pct=Math.round(cnt/absences.length*100);
+        return`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <div style="font-size:.72rem;width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(name)}</div>
+          <div style="flex:1;background:var(--surface2);border-radius:4px;height:16px;overflow:hidden">
+            <div style="width:${pct}%;height:100%;background:var(--danger);opacity:.7"></div>
+          </div>
+          <div style="font-size:.7rem;color:var(--muted);width:40px;text-align:right">${cnt}×</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
 }
 
 // ===== MODAL HELPERS =====
