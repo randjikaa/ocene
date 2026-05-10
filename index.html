@@ -280,6 +280,20 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
 <body>
 
 <!-- AUTH -->
+<!-- FORGOT PASSWORD MODAL (outside app) -->
+<div class="mo" id="forgotMo" style="display:none;z-index:999" onclick="if(event.target===this)closeMo('forgotMo')">
+  <div class="modal">
+    <h3>Resetuj lozinku</h3>
+    <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px">Unesite email adresu i poslaćemo vam link za resetovanje lozinke.</p>
+    <div class="ff" style="margin-bottom:12px"><label>Email</label><input type="email" id="forgotEmail" placeholder="vas@email.com"/></div>
+    <div id="forgotMsg" style="font-size:.75rem;margin-bottom:8px"></div>
+    <div class="mfoot">
+      <button class="btn-sm" onclick="closeMo('forgotMo')">Otkaži</button>
+      <button class="btn-add" onclick="sendForgotPassword()">Pošalji link</button>
+    </div>
+  </div>
+</div>
+
 <div id="authScreen">
   <div class="auth-box">
     <div class="auth-logo"><div class="auth-icon">📚</div><h1>ŠKOLSKI DNEVNIK</h1></div>
@@ -292,8 +306,8 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
       <div class="fg"><label>Email</label><input type="email" id="le" placeholder="tvoj@email.com"/></div>
       <div class="fg"><label>Lozinka</label><input type="password" id="lp" placeholder="••••••••"/></div>
       <button class="btn-primary" onclick="login()">Prijavi se</button>
-      <div style="text-align:center;margin-top:10px;font-size:.75rem">
-        <span style="color:var(--muted);cursor:pointer;text-decoration:underline" onclick="showForgotPassword()">Zaboravili ste lozinku?</span>
+      <div style="text-align:center;margin-top:12px">
+        <span style="color:var(--accent);cursor:pointer;font-size:.82rem;opacity:.8" onclick="showForgotPassword()">Zaboravili ste lozinku?</span>
       </div>
     </div>
     <div id="rf" style="display:none">
@@ -764,20 +778,6 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
         <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" id="ldb" onclick="deleteLesson()">Obriši</button>
         <button class="btn-sm" onclick="closeMo('lessonMo')">Otkaži</button>
         <button class="btn-add" onclick="saveLesson()">Sačuvaj</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- FORGOT PASSWORD MODAL -->
-  <div class="mo" id="forgotMo" style="display:none" onclick="if(event.target===this)closeMo('forgotMo')">
-    <div class="modal">
-      <h3>Resetuj lozinku</h3>
-      <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px">Unesite email adresu i poslaćemo vam link za resetovanje lozinke.</p>
-      <div class="ff" style="margin-bottom:12px"><label>Email</label><input type="email" id="forgotEmail" placeholder="vas@email.com"/></div>
-      <div id="forgotMsg" style="font-size:.75rem;margin-bottom:8px"></div>
-      <div class="mfoot">
-        <button class="btn-sm" onclick="closeMo('forgotMo')">Otkaži</button>
-        <button class="btn-add" onclick="sendForgotPassword()">Pošalji link</button>
       </div>
     </div>
   </div>
