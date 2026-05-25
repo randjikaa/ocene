@@ -1364,11 +1364,15 @@ function renderSCard(s){
     <div class="fbox"><div class="fl">Zaključna — 1. pol.</div>
       <div class="fv ${f1?avgClass(f1.grade):'a0'}">${f1?f1.grade:'—'}</div>
       <select id="fs1-${s.id}">${[5,4,3,2,1].map(v=>`<option value="${v}"${f1&&f1.grade===v?' selected':''}>${v}</option>`).join('')}</select>
-      <button onclick="saveFinal('${s.id}',1)">Zaključi</button></div>
+      <button onclick="saveFinal('${s.id}',1)">Zaključi</button>
+      ${f1?`<button onclick="unlockFinal('${s.id}',1)" style="background:none;border:1px solid var(--danger);color:var(--danger);border-radius:5px;padding:4px 9px;font-family:Syne,sans-serif;font-weight:700;font-size:.68rem;cursor:pointer;margin-top:4px;width:100%">🔓 Otključaj</button>`:''}
+    </div>
     <div class="fbox"><div class="fl">Zaključna — 2. pol.</div>
       <div class="fv ${f2?avgClass(f2.grade):'a0'}">${f2?f2.grade:'—'}</div>
       <select id="fs2-${s.id}">${[5,4,3,2,1].map(v=>`<option value="${v}"${f2&&f2.grade===v?' selected':''}>${v}</option>`).join('')}</select>
-      <button onclick="saveFinal('${s.id}',2)">Zaključi</button></div>
+      <button onclick="saveFinal('${s.id}',2)">Zaključi</button>
+      ${f2?`<button onclick="unlockFinal('${s.id}',2)" style="background:none;border:1px solid var(--danger);color:var(--danger);border-radius:5px;padding:4px 9px;font-family:Syne,sans-serif;font-weight:700;font-size:.68rem;cursor:pointer;margin-top:4px;width:100%">🔓 Otključaj</button>`:''}
+    </div>
   </div>`;
   return`<div class="subj-card">
     <div class="shead">
@@ -1503,6 +1507,11 @@ async function addSubject(){
 }
 async function removeSubject(id){if(!confirm('Obrisati predmet i sve ocene?'))return;await sb.from('subjects').delete().eq('id',id);await loadSubjects();renderHome();}
 async function removeGrade(id){await sb.from('grades').delete().eq('id',id);await loadSubjects();renderHome();}
+async function unlockFinal(sid,sem){
+  if(!confirm('Otključati zaključnu ocenu za '+sem+'. polugodište? Ocena će biti obrisana.'))return;
+  await sb.from('subject_finals').delete().eq('subject_id',sid).eq('semester',sem);
+  await loadSubjects();renderHome();
+}
 async function saveFinal(sid,sem){
   const v=document.getElementById(`fs${sem}-${sid}`).value;if(!v)return;
   await sb.from('subject_finals').upsert({subject_id:sid,user_id:U.id,semester:sem,grade:parseInt(v)},{onConflict:'subject_id,semester'});
@@ -2437,6 +2446,23 @@ function renderStat(){
         </div>`;
       }).join('')}
     </div>
+
+    ${statFilter==='predmet'&&statSubjId?(()=>{
+      const sn=subjects.find(s=>s.id===statSubjId)?.name||'';
+      const sl=lessons.filter(l=>l.subject_id===statSubjId).sort((a,b)=>b.date.localeCompare(a.date)||a.period-b.period);
+      return`<div class="slbl" style="margin-bottom:8px">Časovi — ${esc(sn)}</div>
+      <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+        ${!sl.length?'<div class="empty">Nema upisanih časova za ovaj predmet</div>':
+        sl.map(l=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div style="font-family:Syne,sans-serif;font-weight:800;font-size:.95rem;color:var(--accent);min-width:22px">${l.period}</div>
+          <div style="flex:1">
+            <div style="font-size:.72rem;color:var(--muted)">${fmt(l.date)}</div>
+            <div style="font-size:.82rem;font-weight:700;margin-top:1px">${esc(l.title||'—')}</div>
+            ${l.types&&l.types.length?`<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:3px">${l.types.map(t=>`<span style="background:rgba(124,106,247,.1);color:var(--accent);border-radius:100px;padding:1px 7px;font-size:.63rem">${esc(t)}</span>`).join('')}</div>`:''}
+          </div>
+        </div>`).join('')}
+      </div>`;
+    })():''}
 
     ${statFilter!=='predmet'?`<div class="slbl" style="margin-bottom:8px">Prosek po predmetu</div>
     <div>${Object.entries(bySubj).sort((a,b)=>{
