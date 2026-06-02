@@ -324,7 +324,6 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
     <button class="nav-tab" onclick="showSec('casovi',this)">📝 Časovi</button>
     <button class="nav-tab" onclick="showSec('kalendar',this)">📆 Kalendar</button>
     <button class="nav-tab" onclick="showSec('statistika',this);renderStat()">📊 Statistika</button>
-    <button class="nav-tab" onclick="showSec('nastavnici',this);renderTeachers()">👩‍🏫 Nastavnici</button>
   </div>
   <div class="container">
 
@@ -416,9 +415,6 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
           </div>
           <div class="form-row" style="margin-top:7px">
             <div class="ff"><label>Beleška (opciono)</label><input type="text" id="absNote" placeholder="Napomena..."/></div>
-          <div class="form-row" style="margin-top:7px">
-            <div class="ff"><label>Nastavnik koji je evidentirao (opciono)</label><select id="absTeacher"><option value="">— Izaberi nastavnika —</option></select></div>
-          </div>
             <button class="btn-add" onclick="addAbsence()">+ Dodaj</button>
           </div>
         </div>
@@ -455,9 +451,6 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
           </div>
           <div class="form-row" style="margin-top:7px">
             <div class="ff"><label>Beleška (opciono)</label><input type="text" id="bgn" placeholder="npr. Pohvala na času..."/></div>
-          <div class="form-row" style="margin-top:7px">
-            <div class="ff"><label>Nastavnik koji je evidentirao (opciono)</label><select id="bgTeacher"><option value="">— Izaberi nastavnika —</option></select></div>
-          </div>
             <button class="btn-add" onclick="addBG()">+ Dodaj</button>
           </div>
           <ul class="bgl" id="bgl" style="margin-top:13px"><div class="ld">Učitavam...</div></ul>
@@ -490,9 +483,6 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
           </div>
           <div class="form-row" style="margin-top:7px">
             <div class="ff"><label>Beleška (opciono)</label><input type="text" id="mn" placeholder="Dodatne informacije..."/></div>
-          <div class="form-row" style="margin-top:7px">
-            <div class="ff"><label>Nastavnik koji je evidentirao (opciono)</label><select id="measTeacher"><option value="">— Izaberi nastavnika —</option></select></div>
-          </div>
             <button class="btn-add" onclick="addMeasure()">+ Dodaj</button>
           </div>
           <div id="ml" style="margin-top:13px"><div class="ld">Učitavam...</div></div>
@@ -509,9 +499,6 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
             <div class="ff"><label>Razlog upisa</label><textarea id="ntt" placeholder="Upiši razlog..."></textarea></div>
           </div>
           <div style="margin-top:7px"><button class="btn-add" onclick="addNote()">+ Dodaj upis</button></div>
-          <div class="form-row" style="margin-top:7px">
-            <div class="ff"><label>Nastavnik koji je evidentirao (opciono)</label><select id="noteTeacher"><option value="">— Izaberi nastavnika —</option></select></div>
-          </div>
           <ul class="nl" id="ntl" style="margin-top:13px"><div class="ld">Učitavam...</div></ul>
         </div>
       </div>
@@ -722,7 +709,6 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
         <div class="ff" style="max-width:85px"><label>Čas (0-7)</label><input type="number" id="lsp" min="0" max="7" value="1"/></div>
       </div>
       <div class="ff" style="margin-bottom:11px"><label>Nastavna jedinica</label><input type="text" id="lst" placeholder="npr. Kvadratne jednačine..."/></div>
-      <div class="ff" style="margin-bottom:11px"><label>Nastavnik koji je održao čas (opciono)</label><select id="lessonTeacher"><option value="">— Izaberi nastavnika —</option></select></div>
       <div class="ff" style="margin-bottom:11px"><label>Tip časa (možeš izabrati više)</label>
         <div class="msel" id="ltypes">
           <label class="mopt"><input type="checkbox" value="Vežbanje"> Vežbanje</label>
@@ -923,7 +909,6 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
         </select>
       </div>
       <div class="ff"><label>Beleška (opciono)</label><input type="text" id="gradeNote" placeholder="Napomena..."/></div>
-      <div class="ff" style="margin-top:10px"><label>Nastavnik koji je evidentirao (opciono)</label><select id="gradeTeacher"><option value="">— Izaberi nastavnika —</option></select></div>
       <div class="mfoot">
         <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" id="gradeDeleteBtn" onclick="deleteGrade()" style="display:none">Obriši</button>
         <button class="btn-sm" onclick="closeMo('gradeMo')">Otkaži</button>
@@ -953,56 +938,8 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
         </div>
         </div>
 
-    <!-- NASTAVNICI -->
-    <div class="section" id="sec-nastavnici" style="max-width:800px;margin:0 auto">
-      <div class="sec-title">👩‍🏫 Nastavnici</div>
-      <div class="card">
-        <div class="ch"><h2>➕ Dodaj nastavnika</h2></div>
-        <div class="cb">
-          <div class="form-row">
-            <div class="ff"><label>Ime i prezime</label><input type="text" id="tnName" placeholder="npr. Marija Petrović"/></div>
-            <div class="ff"><label>Email (opciono)</label><input type="text" id="tnEmail" placeholder="npr. m.petrovic@..."/></div>
-          </div>
-          <div class="form-row" style="margin-top:7px">
-            <div class="ff"><label>Napomena (opciono)</label><input type="text" id="tnNote" placeholder="Napomena..."/></div>
-            <button class="btn-add" onclick="addTeacher()">+ Dodaj</button>
-          </div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:14px">
-        <div class="ch"><h2>Lista nastavnika i predmeta</h2></div>
-        <div class="cb" id="teacherList"><div class="ld">Učitavam...</div></div>
-      </div>
-    </div>
-
   </div>
 
-
-  <!-- TEACHER EDIT MODAL -->
-  <div class="mo" id="teacherEditMo" style="display:none" onclick="if(event.target===this)closeMo('teacherEditMo')">
-    <div class="modal">
-      <h3>Izmeni nastavnika</h3>
-      <div class="ff" style="margin-bottom:10px"><label>Ime i prezime</label><input type="text" id="teEditName"/></div>
-      <div class="ff" style="margin-bottom:10px"><label>Email (opciono)</label><input type="text" id="teEditEmail"/></div>
-      <div class="ff" style="margin-bottom:10px"><label>Napomena (opciono)</label><input type="text" id="teEditNote"/></div>
-      <div class="mfoot">
-        <button class="btn-sm" onclick="closeMo('teacherEditMo')">Otkaži</button>
-        <button class="btn-add" onclick="saveEditTeacher()">Sačuvaj</button>
-      </div>
-    </div>
-  </div>
-  <!-- TEACHER SUBJECTS MODAL -->
-  <div class="mo" id="teacherSubjMo" style="display:none" onclick="if(event.target===this)closeMo('teacherSubjMo')">
-    <div class="modal" style="max-width:500px">
-      <h3 id="tsmoT">Predmeti nastavnika</h3>
-      <p style="color:var(--muted);font-size:.8rem;margin-bottom:12px">Označi predmete koje ovaj nastavnik predaje:</p>
-      <div id="tsmoList" style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;margin-bottom:14px"></div>
-      <div class="mfoot">
-        <button class="btn-sm" onclick="closeMo('teacherSubjMo')">Otkaži</button>
-        <button class="btn-add" onclick="saveTeacherSubjects()">Sačuvaj</button>
-      </div>
-    </div>
-  </div>
   <footer>Made by <span>Dušan Ranđelović</span></footer>
 </div>
 
@@ -1012,7 +949,6 @@ const SB_URL='https://uygjcopyohzslvrzvrmv.supabase.co';
 const SB_KEY='sb_publishable_obcXHm5fjOYYpjVZt44u2w_aBT01gEC';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 let U=null,subjects=[],schedule=[],absences=[],lessons=[],calEvents=[],schoolDays=[],schoolWeeks=[],schoolYears=[],currentYearId=null;
-let teachers=[],subjectTeachers=[];
 let schedCell={dow:null,per:null};
 let casoviWeek=getMonday(new Date());
 let calWeek=getMonday(new Date());
@@ -1295,9 +1231,9 @@ async function loadAllViaFetch(){
   const uid=U.id, yid=currentYearId;
   const q=(t,s)=>fetch(SURL+'/rest/v1/'+t+'?'+s,{headers:h}).then(r=>r.json()).then(d=>Array.isArray(d)?d:[]);
 
-  // Load all in parallel via fetch (including teachers)
-  const [subs,abs,bg,bf,meas,notes,sched,days,weeks,less,cal,tchs,stchs]=await Promise.all([
-    q('subjects','select=*,grades(id,value,semester,date,type,note,teacher_id,calendar_event_id),subject_finals(*)&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&order=created_at'),
+  // Load all in parallel via fetch
+  const [subs,abs,bg,bf,meas,notes,sched,days,weeks,less,cal]=await Promise.all([
+    q('subjects','select=*,grades(id,value,semester,date,type,note,calendar_event_id),subject_finals(*)&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&order=created_at'),
     q('absences','select=*&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&order=date.desc'),
     q('behavior','select=*&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&is_final=eq.false&order=date.desc'),
     q('behavior','select=*&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&is_final=eq.true'),
@@ -1308,30 +1244,26 @@ async function loadAllViaFetch(){
     q('school_weeks','select=*&user_id=eq.'+uid+'&school_year_id=eq.'+yid),
     q('lessons','select=*,subjects(name)&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&order=date,period'),
     q('calendar_events','select=*,subjects(name)&user_id=eq.'+uid+'&school_year_id=eq.'+yid+'&order=date'),
-    q('teachers','select=*&user_id=eq.'+uid+'&order=name'),
-    q('subject_teachers','select=*&user_id=eq.'+uid),
   ]);
 
   subjects=subs; absences=abs; schedule=sched; schoolDays=days; schoolWeeks=weeks; lessons=less; calEvents=cal;
-  teachers=tchs; subjectTeachers=stchs;
-  // Render behavior (with teacher)
+  
+  // Render behavior
   const bgl=document.getElementById('bgl');
-  if(bgl){if(!bg.length){bgl.innerHTML='<div class="empty">Nema pojedinačnih ocena</div>';}else{bgl.innerHTML=bg.map(g=>{const tch=teachers.find(x=>x.id===g.teacher_id);return`<li><div><span class="bgn ${avgClass(g.grade)}">${g.grade}</span><div class="bg-meta">${fmt(g.date)||''}</div>${g.note?`<div class="bg-note">${esc(g.note)}</div>`:''} ${tch?`<div style="font-size:.66rem;color:var(--muted);margin-top:2px">👤 ${esc(tch.name)}</div>`:''}</div><div style="display:flex;gap:5px;align-items:center"><button class="btn-sm" onclick="openEditBG('${g.id}')">✏️</button><button class="btn-del" onclick="removeBG('${g.id}')">×</button></div></li>`;}).join('');}}
+  if(bgl){const list=bg;if(!list.length){bgl.innerHTML='<div class="empty">Nema pojedinačnih ocena</div>';}else{bgl.innerHTML=list.map(g=>`<li><div><span class="bgn ${avgClass(g.grade)}">${g.grade}</span><div class="bg-meta">${fmt(g.date)||''}</div>${g.note?`<div class="bg-note">${esc(g.note)}</div>`:''}</div><div style="display:flex;gap:5px;align-items:center"><button class="btn-sm" onclick="openEditBG('${g.id}')">✏️</button><button class="btn-del" onclick="removeBG('${g.id}')">×</button></div></li>`).join('');}}
   
   // BF
   [1,2].forEach(s=>{const r=bf.find(x=>x.semester===s),el=document.getElementById('bf'+s);if(r){el.textContent=r.grade;el.className='fv '+avgClass(r.grade);document.getElementById('bfs'+s).value=r.grade;}else{el.textContent='—';el.className='fv a0';}});
   
-  // Measures (with teacher)
+  // Measures
   const ml=document.getElementById('ml');
-  if(ml){if(!meas.length){ml.innerHTML='<div class="empty">Nema mera ni pohvala</div>';}else{ml.innerHTML=`<div class="tw"><table><thead><tr><th>Tip</th><th>Naziv</th><th>Datum</th><th>Beleška</th><th>Nastavnik</th><th></th></tr></thead><tbody>${meas.map(m=>{const tch=teachers.find(x=>x.id===m.teacher_id);return`<tr><td><span class="badge b-${m.type}">${m.type==='mere'?'Mera':'Pohvala'}</span></td><td>${esc(m.name)}</td><td>${fmt(m.date)||'—'}</td><td style="color:var(--muted)">${m.note?esc(m.note):'—'}</td><td style="color:var(--muted);font-size:.75rem">${tch?'👤 '+esc(tch.name):'—'}</td><td style="display:flex;gap:4px"><button class="btn-sm" onclick="openEditMeasure('${m.id}','${m.date||''}','${esc(m.note||'')}')">✏️</button><button class="btn-del" onclick="removeMeasure('${m.id}')">×</button></td></tr>`;}).join('')}</tbody></table></div>`;}}
+  if(ml){if(!meas.length){ml.innerHTML='<div class="empty">Nema mera ni pohvala</div>';}else{ml.innerHTML=`<div class="tw"><table><thead><tr><th>Tip</th><th>Naziv</th><th>Datum</th><th>Beleška</th><th></th></tr></thead><tbody>${meas.map(m=>`<tr><td><span class="badge b-${m.type}">${m.type==='mere'?'Mera':'Pohvala'}</span></td><td>${esc(m.name)}</td><td>${fmt(m.date)||'—'}</td><td style="color:var(--muted)">${m.note?esc(m.note):'—'}</td><td style="display:flex;gap:4px"><button class="btn-sm" onclick="openEditMeasure('${m.id}','${m.date||''}','${esc(m.note||'')}')">✏️</button><button class="btn-del" onclick="removeMeasure('${m.id}')">×</button></td></tr>`).join('')}</tbody></table></div>`;}}
   
-  // Notes (with teacher)
+  // Notes
   const ntl=document.getElementById('ntl');
-  if(ntl){if(!notes.length){ntl.innerHTML='<div class="empty">Nema upisa</div>';}else{ntl.innerHTML=notes.map(n=>{const tch=teachers.find(x=>x.id===n.teacher_id);return`<li><div class="nmeta">${fmt(n.date)}${n.subjects?' · '+esc(n.subjects.name):''}${tch?' · 👤 '+esc(tch.name):''}</div><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px"><div class="ntext">${esc(n.note)}</div><div style="display:flex;gap:4px;flex-shrink:0"><button class="btn-sm" onclick="openEditNote('${n.id}','${n.subject_id||''}','${n.date||''}',\`${esc(n.note)}\`)">✏️</button><button class="btn-del" onclick="removeNote('${n.id}')">×</button></div></div></li>`;}).join('');}}
+  if(ntl){if(!notes.length){ntl.innerHTML='<div class="empty">Nema upisa</div>';}else{ntl.innerHTML=notes.map(n=>`<li><div class="nmeta">${fmt(n.date)}${n.subjects?' · '+esc(n.subjects.name):''}</div><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px"><div class="ntext">${esc(n.note)}</div><div style="display:flex;gap:4px;flex-shrink:0"><button class="btn-sm" onclick="openEditNote('${n.id}','${n.subject_id||''}','${n.date||''}',\`${esc(n.note)}\`)">✏️</button><button class="btn-del" onclick="removeNote('${n.id}')">×</button></div></div></li>`).join('');}}
   
   populateSubjectSelects();
-  populateTeacherSelects();
-  renderSubjects();
   renderSubjects();
   renderGP();
   renderAbsences();
@@ -1354,13 +1286,13 @@ async function sbQuery(table, query=''){
 
 async function loadAll(){
   if(!currentYearId)return;
-  await Promise.all([loadSubjects(),loadAbsences(),loadBG(),loadBF(),loadMeasures(),loadNotes(),loadSchedule(),loadDays(),loadWeeks(),loadLessons(),loadCalEvents(),loadTeachers()]);
+  await Promise.all([loadSubjects(),loadAbsences(),loadBG(),loadBF(),loadMeasures(),loadNotes(),loadSchedule(),loadDays(),loadWeeks(),loadLessons(),loadCalEvents()]);
   renderHome();
 }
 
 // ===== SUBJECTS =====
 async function loadSubjects(){
-  const{data}=await sb.from('subjects').select('*,grades(id,value,semester,date,type,note,teacher_id,calendar_event_id),subject_finals(*),subject_emojis(id,emoji,date,note)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('created_at');
+  const{data}=await sb.from('subjects').select('*,grades(id,value,semester,date,type,note,calendar_event_id),subject_finals(*),subject_emojis(id,emoji,date,note)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('created_at');
   subjects=data||[];
   renderSubjects();renderGP();populateSubjectSelects();
 }
@@ -1420,17 +1352,14 @@ function renderSCard(s){
     return`<div class="nc-card g${t}"><div class="tg">${t}</div>${lbl}</div>`;
   }).join('');
   const finals=s.subject_finals||[],f1=finals.find(f=>f.semester===1),f2=finals.find(f=>f.semester===2);
-  const renderGrades=(glist,gradingType)=>glist.length?glist.map(g=>{
-    const tch=teachers.find(x=>x.id===g.teacher_id);
-    return`<div class="grade-item c${g.value}" onclick="openEditGrade('${g.id}','${s.id}')">
+  const renderGrades=(glist,gradingType)=>glist.length?glist.map(g=>`
+    <div class="grade-item c${g.value}" onclick="openEditGrade('${g.id}','${s.id}')">
       <div>
         <div class="gval ${avgClass(g.value)}">${g.value}</div>
         ${g.type?`<div class="gtype">${esc(g.type)}</div>`:''}
         ${g.date?`<div class="gdate">${fmtShort(g.date)}</div>`:''}
-        ${tch?`<div style="font-size:.6rem;color:var(--muted);margin-top:2px">👤 ${esc(tch.name)}</div>`:''}
       </div>
-    </div>`;
-  }).join(''):`<span style="color:var(--muted);font-size:.75rem">Nema ocena</span>`;
+    </div>`).join(''):`<span style="color:var(--muted);font-size:.75rem">Nema ocena</span>`;
   const finHtml=(gt==='neocenjuje')?'':`<div class="finals-row">
     <div class="fbox"><div class="fl">Zaključna — 1. pol.</div>
       <div class="fv ${f1?avgClass(f1.grade):'a0'}">${f1?f1.grade:'—'}</div>
@@ -1513,7 +1442,6 @@ function openAddGrade(sid,gt){
   document.getElementById('gradeType').value='';
   document.getElementById('gradeNote').value='';
   document.getElementById('gradeDeleteBtn').style.display='none';
-  populateTeacherSelectForSubject('gradeTeacher',sid);
   setGradeButtons(gt,selectedGradeVal);
   document.getElementById('gradeMo').style.display='flex';
 }
@@ -1528,8 +1456,6 @@ function openEditGrade(gid,sid){
   document.getElementById('gradeType').value=g.type||'';
   document.getElementById('gradeNote').value=g.note||'';
   document.getElementById('gradeDeleteBtn').style.display='';
-  populateTeacherSelectForSubject('gradeTeacher',sid);
-  if(g.teacher_id)document.getElementById('gradeTeacher').value=g.teacher_id;
   setGradeButtons(gt,g.value);
   document.getElementById('gradeMo').style.display='flex';
 }
@@ -1542,12 +1468,11 @@ async function saveGrade(){
   const date=document.getElementById('gradeDate').value||null;
   const type=document.getElementById('gradeType').value||null;
   const note=document.getElementById('gradeNote').value.trim()||null;
-  const teacher_id=document.getElementById('gradeTeacher')?.value||null;
   let gradeId=editGradeId;
   if(editGradeId){
-    await sb.from('grades').update({value:selectedGradeVal,semester:sem,date,type,note,teacher_id}).eq('id',editGradeId);
+    await sb.from('grades').update({value:selectedGradeVal,semester:sem,date,type,note}).eq('id',editGradeId);
   } else {
-    const{data}=await sb.from('grades').insert({subject_id:gradeModalSubjectId,user_id:U.id,value:selectedGradeVal,semester:sem,date,type,note,teacher_id,calendar_event_id:gradeModalCalEventId,school_year_id:currentYearId}).select();
+    const{data}=await sb.from('grades').insert({subject_id:gradeModalSubjectId,user_id:U.id,value:selectedGradeVal,semester:sem,date,type,note,calendar_event_id:gradeModalCalEventId,school_year_id:currentYearId}).select();
     gradeId=data?.[0]?.id;
     // Link calendar event to grade
     if(gradeModalCalEventId&&gradeId){
@@ -1646,7 +1571,6 @@ function renderAbsences(){
             <span class="badge ${a.justified?'b-opr':'b-neopr'}">${a.justified?'Opravdan':'Neopravdan'}</span>
             ${a.absence_type?`<span style="font-size:.68rem;color:var(--muted)">${esc(a.absence_type)}</span>`:''}
             ${a.note?`<span style="font-size:.68rem;color:var(--muted)">· ${esc(a.note)}</span>`:''}
-            ${(()=>{const t=teachers.find(x=>x.id===a.teacher_id);return t?`<span style="font-size:.68rem;color:var(--muted)">· 👤 ${esc(t.name)}</span>`:''})()}
           </div>
         </div>
         <button class="btn-sm" onclick="openEditAbsence('${a.id}')">✏️</button>
@@ -1662,9 +1586,8 @@ async function addAbsence(){
   const j=document.getElementById('atp').value==='true';
   const absence_type=j?(document.getElementById('absKind').value||null):null;
   const note=document.getElementById('absNote').value.trim()||null;
-  const teacher_id=document.getElementById('absTeacher')?.value||null;
   if(!d)return;
-  await sb.from('absences').insert({user_id:U.id,date:d,hours:h,justified:j,absence_type,note,teacher_id,school_year_id:currentYearId});
+  await sb.from('absences').insert({user_id:U.id,date:d,hours:h,justified:j,absence_type,note,school_year_id:currentYearId});
   await loadAbsences();
 }
 async function removeAbsence(id){await sb.from('absences').delete().eq('id',id);await loadAbsences();}
@@ -1699,21 +1622,17 @@ async function loadBG(){
   const{data}=await sb.from('behavior').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).eq('is_final',false).order('date',{ascending:false});
   const list=data||[],el=document.getElementById('bgl');
   if(!list.length){el.innerHTML='<div class="empty">Nema pojedinačnih ocena</div>';return;}
-  el.innerHTML=list.map(g=>{
-    const tch=teachers.find(x=>x.id===g.teacher_id);
-    return`<li>
+  el.innerHTML=list.map(g=>`<li>
     <div>
       <span class="bgn ${avgClass(g.grade)}">${g.grade}</span>
       <div class="bg-meta">${fmt(g.date)||''}</div>
       ${g.note?`<div class="bg-note">${esc(g.note)}</div>`:''}
-      ${tch?`<div style="font-size:.66rem;color:var(--muted);margin-top:2px">👤 ${esc(tch.name)}</div>`:''}
     </div>
     <div style="display:flex;gap:5px;align-items:center">
       <button class="btn-sm" onclick="openEditBG('${g.id}')">✏️</button>
       <button class="btn-del" onclick="removeBG('${g.id}')">×</button>
     </div>
-  </li>`;
-  }).join('');
+  </li>`).join('');
 }
 function selectBGVal(v){
   editBGVal=v;
@@ -1751,9 +1670,8 @@ async function saveEditBG(){
 }
 async function addBG(){
   const v=parseInt(document.getElementById('bgv').value),d=document.getElementById('bgd').value,n=document.getElementById('bgn').value.trim()||null;
-  const teacher_id=document.getElementById('bgTeacher')?.value||null;
   if(!d)return;
-  await sb.from('behavior').insert({user_id:U.id,grade:v,date:d,note:n,teacher_id,is_final:false,school_year_id:currentYearId});
+  await sb.from('behavior').insert({user_id:U.id,grade:v,date:d,note:n,is_final:false,school_year_id:currentYearId});
   document.getElementById('bgn').value='';await loadBG();
 }
 async function removeBG(id){await sb.from('behavior').delete().eq('id',id);await loadBG();}
@@ -1781,20 +1699,16 @@ async function loadMeasures(){
   const{data}=await sb.from('measures').select('*').eq('user_id',U.id).eq('school_year_id',currentYearId).order('created_at');
   const list=data||[],el=document.getElementById('ml');
   if(!list.length){el.innerHTML='<div class="empty">Nema mera ni pohvala</div>';return;}
-  el.innerHTML=`<div class="tw"><table><thead><tr><th>Tip</th><th>Naziv</th><th>Datum</th><th>Beleška</th><th>Nastavnik</th><th></th></tr></thead><tbody>${list.map(m=>{
-    const tch=teachers.find(x=>x.id===m.teacher_id);
-    return`<tr>
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>Tip</th><th>Naziv</th><th>Datum</th><th>Beleška</th><th></th></tr></thead><tbody>${list.map(m=>`<tr>
     <td><span class="badge b-${m.type}">${m.type==='mere'?'Mera':'Pohvala'}</span></td>
     <td>${esc(m.name)}</td>
     <td>${fmt(m.date)||'—'}</td>
     <td style="color:var(--muted)">${m.note?esc(m.note):'—'}</td>
-    <td style="color:var(--muted);font-size:.75rem">${tch?'👤 '+esc(tch.name):'—'}</td>
     <td style="display:flex;gap:4px">
       <button class="btn-sm" onclick="openEditMeasure('${m.id}','${(m.date||'')}','${esc(m.note||'')}')">✏️</button>
       <button class="btn-del" onclick="removeMeasure('${m.id}')">×</button>
     </td>
-  </tr>`;
-  }).join('')}</tbody></table></div>`;
+  </tr>`).join('')}</tbody></table></div>`;
 }
 function openEditMeasure(id,date,note){
   editMeasureId=id;
@@ -1812,8 +1726,7 @@ async function saveEditMeasure(){
 async function addMeasure(){
   const raw=document.getElementById('mt').value,[type,name]=raw.split('|');
   const d=document.getElementById('md').value||null,n=document.getElementById('mn').value.trim()||null;
-  const teacher_id=document.getElementById('measTeacher')?.value||null;
-  await sb.from('measures').insert({user_id:U.id,type,name,date:d,note:n,teacher_id,school_year_id:currentYearId});
+  await sb.from('measures').insert({user_id:U.id,type,name,date:d,note:n,school_year_id:currentYearId});
   document.getElementById('mn').value='';await loadMeasures();
 }
 async function removeMeasure(id){await sb.from('measures').delete().eq('id',id);await loadMeasures();}
@@ -1824,10 +1737,8 @@ async function loadNotes(){
   const{data}=await sb.from('behavior_notes').select('*,subjects(name)').eq('user_id',U.id).eq('school_year_id',currentYearId).order('date',{ascending:false});
   const list=data||[],el=document.getElementById('ntl');
   if(!list.length){el.innerHTML='<div class="empty">Nema upisa</div>';return;}
-  el.innerHTML=list.map(n=>{
-    const tch=teachers.find(x=>x.id===n.teacher_id);
-    return`<li>
-    <div class="nmeta">${fmt(n.date)}${n.subjects?' · '+esc(n.subjects.name):''}${tch?' · 👤 '+esc(tch.name):''}</div>
+  el.innerHTML=list.map(n=>`<li>
+    <div class="nmeta">${fmt(n.date)}${n.subjects?' · '+esc(n.subjects.name):''}</div>
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
       <div class="ntext">${esc(n.note)}</div>
       <div style="display:flex;gap:4px;flex-shrink:0">
@@ -1835,8 +1746,7 @@ async function loadNotes(){
         <button class="btn-del" onclick="removeNote('${n.id}')">×</button>
       </div>
     </div>
-  </li>`;
-  }).join('');
+  </li>`).join('');
 }
 function openEditNote(id,subjectId,date,note){
   editNoteId=id;
@@ -1857,9 +1767,8 @@ async function saveEditNote(){
 }
 async function addNote(){
   const s=document.getElementById('nts').value||null,d=document.getElementById('ntd').value,n=document.getElementById('ntt').value.trim();
-  const teacher_id=document.getElementById('noteTeacher')?.value||null;
   if(!d||!n)return;
-  await sb.from('behavior_notes').insert({user_id:U.id,subject_id:s,date:d,note:n,teacher_id,school_year_id:currentYearId});
+  await sb.from('behavior_notes').insert({user_id:U.id,subject_id:s,date:d,note:n,school_year_id:currentYearId});
   document.getElementById('ntt').value='';await loadNotes();
 }
 async function removeNote(id){await sb.from('behavior_notes').delete().eq('id',id);await loadNotes();}
@@ -2023,7 +1932,6 @@ function renderDayDetail(ds){
           <div class="ltitle">${esc(l.subjects?.name||'—')}</div>
           ${l.title&&l.title!=='—'?`<div class="lmeta">${esc(l.title)}</div>`:''}
           ${l.types&&l.types.length?`<div class="ltypes">${l.types.map(t=>`<span class="ltype">${esc(t)}</span>`).join('')}</div>`:''}
-          ${(()=>{const t=teachers.find(x=>x.id===l.teacher_id);return t?`<div style="font-size:.66rem;color:var(--muted);margin-top:2px">👤 ${esc(t.name)}</div>`:''})()}
           ${absBadge?`<div style="margin-top:4px">${absBadge}${isAbs?.note?`<span style="font-size:.66rem;color:var(--muted);margin-left:5px">${esc(isAbs.note)}</span>`:''}</div>`:''}
         </div>
         <div style="display:flex;gap:5px">
@@ -2052,9 +1960,6 @@ function openLessonModal(ds){
   document.querySelectorAll('#ltypes input[type=checkbox]').forEach(cb=>cb.checked=false);
   const sel=document.getElementById('lss');
   sel.innerHTML='<option value="">— Izaberi —</option>'+subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
-  // Popuni teacher select sa svim nastavnicima (predmet još nije izabran)
-  populateTeacherSelectForSubject('lessonTeacher',null);
-  sel.onchange=()=>populateTeacherSelectForSubject('lessonTeacher',sel.value||null);
   document.getElementById('ldb').style.display='none';
   resetAbsFields();
   document.getElementById('lessonMo').style.display='flex';
@@ -2070,10 +1975,6 @@ function openEditLesson(id,ds){
   document.getElementById('lst').value=l.title;
   document.querySelectorAll('#ltypes input[type=checkbox]').forEach(cb=>{cb.checked=(l.types||[]).includes(cb.value);});
   document.getElementById('ldb').style.display='';
-  // Popuni teacher select filtriran po predmetu
-  populateTeacherSelectForSubject('lessonTeacher',l.subject_id||null);
-  if(l.teacher_id)document.getElementById('lessonTeacher').value=l.teacher_id;
-  sel.onchange=()=>populateTeacherSelectForSubject('lessonTeacher',sel.value||null);
   // Check if there's an existing absence for this lesson
   const existingAbs=absences.find(a=>a.lesson_id===id);
   if(existingAbs){
@@ -2093,12 +1994,11 @@ async function saveLesson(){
   const per=parseInt(document.getElementById('lsp').value)||0;
   const title=document.getElementById('lst').value.trim()||'—';
   const types=[...document.querySelectorAll('#ltypes input[type=checkbox]:checked')].map(cb=>cb.value);
-  const teacher_id=document.getElementById('lessonTeacher')?.value||null;
   let lessonId=editLessonId;
   if(editLessonId){
-    await sb.from('lessons').update({subject_id:sid,period:per,title,types,teacher_id}).eq('id',editLessonId);
+    await sb.from('lessons').update({subject_id:sid,period:per,title,types}).eq('id',editLessonId);
   } else {
-    const{data}=await sb.from('lessons').insert({user_id:U.id,subject_id:sid,date:currentLessonDate,period:per,title,types,teacher_id,school_year_id:currentYearId}).select();
+    const{data}=await sb.from('lessons').insert({user_id:U.id,subject_id:sid,date:currentLessonDate,period:per,title,types,school_year_id:currentYearId}).select();
     lessonId=data?.[0]?.id;
   }
   // Handle absence
@@ -2691,139 +2591,6 @@ async function deleteEmoji(){
 
 // ===== MODAL HELPERS =====
 function closeMo(id){document.getElementById(id).style.display='none';}
-
-// ===== TEACHERS =====
-async function loadTeachers(){
-  if(!U)return;
-  const [{data:t},{data:st}]=await Promise.all([
-    sb.from('teachers').select('*').eq('user_id',U.id).order('name'),
-    sb.from('subject_teachers').select('*').eq('user_id',U.id)
-  ]);
-  teachers=t||[];
-  subjectTeachers=st||[];
-  populateTeacherSelects();
-}
-
-function populateTeacherSelects(){
-  // Helper: popuni sve teacher selecte sa svim nastavnicima
-  const allOpts='<option value="">— Izaberi nastavnika —</option>'+teachers.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');
-  ['gradeTeacher','absTeacher','bgTeacher','measTeacher','lessonTeacher','noteTeacher'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el)el.innerHTML=allOpts;
-  });
-}
-
-function populateTeacherSelectForSubject(selectId, subjectId){
-  const el=document.getElementById(selectId);
-  if(!el)return;
-  if(!subjectId){
-    el.innerHTML='<option value="">— Izaberi nastavnika —</option>'+teachers.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');
-    return;
-  }
-  // Filtriraj po predmetu
-  const assigned=subjectTeachers.filter(st=>st.subject_id===subjectId).map(st=>st.teacher_id);
-  const filtered=teachers.filter(t=>assigned.includes(t.id));
-  const opts=filtered.length
-    ? filtered.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('')
-    : teachers.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');
-  el.innerHTML='<option value="">— Izaberi nastavnika —</option>'+opts;
-}
-
-function renderTeachers(){
-  const el=document.getElementById('teacherList');
-  if(!el)return;
-  if(!teachers.length){el.innerHTML='<div class="empty">Nema unetih nastavnika</div>';return;}
-  el.innerHTML=teachers.map(t=>{
-    const assigned=subjectTeachers.filter(st=>st.teacher_id===t.id);
-    const subjNames=assigned.map(st=>{
-      const s=subjects.find(x=>x.id===st.subject_id);
-      return s?`<span style="background:var(--surface3);border:1px solid var(--border);border-radius:5px;padding:2px 8px;font-size:.72rem;color:var(--accent3)">${esc(s.name)}</span>`:'';
-    }).filter(Boolean).join(' ');
-    return `<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
-      <div>
-        <div style="font-weight:700;color:var(--text);font-size:.92rem">${esc(t.name)}</div>
-        ${t.email?`<div style="color:var(--muted);font-size:.75rem;margin-top:2px">${esc(t.email)}</div>`:''}
-        ${t.note?`<div style="color:var(--muted);font-size:.75rem;font-style:italic;margin-top:2px">${esc(t.note)}</div>`:''}
-        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:7px">${subjNames||'<span style="color:var(--muted);font-size:.72rem">Nema dodeljenih predmeta</span>'}</div>
-      </div>
-      <div style="display:flex;gap:5px;flex-shrink:0">
-        <button class="btn-sm" onclick="openTeacherSubjModal('${t.id}','${esc(t.name)}')">📚 Predmeti</button>
-        <button class="btn-sm" onclick="openEditTeacher('${t.id}')">✏️</button>
-        <button class="btn-del" onclick="removeTeacher('${t.id}')">×</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-async function addTeacher(){
-  const name=document.getElementById('tnName').value.trim();
-  if(!name)return document.getElementById('tnName').focus();
-  const email=document.getElementById('tnEmail').value.trim()||null;
-  const note=document.getElementById('tnNote').value.trim()||null;
-  await sb.from('teachers').insert({user_id:U.id,name,email,note});
-  document.getElementById('tnName').value='';
-  document.getElementById('tnEmail').value='';
-  document.getElementById('tnNote').value='';
-  await loadTeachers();
-  renderTeachers();
-}
-
-let editTeacherId=null;
-function openEditTeacher(id){
-  editTeacherId=id;
-  const t=teachers.find(x=>x.id===id);if(!t)return;
-  document.getElementById('teEditName').value=t.name;
-  document.getElementById('teEditEmail').value=t.email||'';
-  document.getElementById('teEditNote').value=t.note||'';
-  document.getElementById('teacherEditMo').style.display='flex';
-}
-
-async function saveEditTeacher(){
-  if(!editTeacherId)return;
-  const name=document.getElementById('teEditName').value.trim();if(!name)return;
-  const email=document.getElementById('teEditEmail').value.trim()||null;
-  const note=document.getElementById('teEditNote').value.trim()||null;
-  await sb.from('teachers').update({name,email,note}).eq('id',editTeacherId);
-  editTeacherId=null;closeMo('teacherEditMo');
-  await loadTeachers();renderTeachers();
-}
-
-async function removeTeacher(id){
-  if(!confirm('Obrisati nastavnika? Svi zapisi gde je evidentiran ostaće sačuvani.'))return;
-  await sb.from('subject_teachers').delete().eq('teacher_id',id);
-  await sb.from('teachers').delete().eq('id',id);
-  await loadTeachers();renderTeachers();
-}
-
-let tsmoTeacherId=null;
-function openTeacherSubjModal(tid,tname){
-  tsmoTeacherId=tid;
-  document.getElementById('tsmoT').textContent='Predmeti: '+tname;
-  const assigned=subjectTeachers.filter(st=>st.teacher_id===tid).map(st=>st.subject_id);
-  const el=document.getElementById('tsmoList');
-  if(!subjects.length){el.innerHTML='<div class="empty">Nema predmeta — dodaj predmete u Ocene sekciji</div>';}
-  else{
-    el.innerHTML=subjects.map(s=>`
-      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 10px;background:var(--surface2);border-radius:7px;border:1px solid var(--border)">
-        <input type="checkbox" value="${s.id}" ${assigned.includes(s.id)?'checked':''} style="accent-color:var(--accent3);width:16px;height:16px">
-        <span style="font-size:.85rem;color:var(--text)">${esc(s.name)}</span>
-      </label>`).join('');
-  }
-  document.getElementById('teacherSubjMo').style.display='flex';
-}
-
-async function saveTeacherSubjects(){
-  if(!tsmoTeacherId)return;
-  const checked=[...document.querySelectorAll('#tsmoList input[type=checkbox]:checked')].map(cb=>cb.value);
-  // Obriši sve stare veze za ovog nastavnika
-  await sb.from('subject_teachers').delete().eq('teacher_id',tsmoTeacherId).eq('user_id',U.id);
-  // Dodaj nove
-  if(checked.length){
-    await sb.from('subject_teachers').insert(checked.map(sid=>({user_id:U.id,teacher_id:tsmoTeacherId,subject_id:sid})));
-  }
-  closeMo('teacherSubjMo');
-  await loadTeachers();renderTeachers();
-}
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded',()=>{
