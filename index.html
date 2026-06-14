@@ -9,272 +9,396 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-J6KHR971ST');</script>
 <style>
 :root{
-  --bg:#09090f;--surface:#111118;--surface2:#181824;--surface3:#20202e;
-  --border:#26263a;--border2:#32324a;
-  --accent:#7c6af7;--accent2:#f7a26a;--accent3:#6af7b8;--accent4:#f76ab0;
-  --text:#e8e8f4;--muted:#5a5a7a;
-  --danger:#f76a6a;--warn:#f7c96a;
-  --g5:#6af7b8;--g4:#7c6af7;--g3:#f7a26a;--g2:#f76a6a;
+  /* esDnevnik light palette */
+  --bg:#f4f6f9;
+  --surface:#ffffff;
+  --surface2:#f0f2f5;
+  --surface3:#e8eaf0;
+  --border:#dde1eb;
+  --border2:#c8cfe0;
+  /* Primary blue */
+  --blue:#1a4c76;
+  --blue2:#1e5a8e;
+  --blue3:#2468a0;
+  --blue-light:#e8f0f8;
+  --blue-lighter:#f0f5fb;
+  /* Accent colors */
+  --green:#28a745;
+  --green-light:#e8f5ea;
+  --red:#dc3545;
+  --red-light:#fdecea;
+  --orange:#fd7e14;
+  --orange-light:#fff3e8;
+  --purple:#6f42c1;
+  --purple-light:#f0ebfa;
+  --teal:#20c997;
+  --teal-light:#e8faf5;
+  /* Text */
+  --text:#1a2533;
+  --text2:#4a5568;
+  --muted:#8896a8;
+  --muted2:#aab5c2;
+  /* Grade colors */
+  --g5:#28a745;--g4:#1a4c76;--g3:#fd7e14;--g2:#dc3545;
+  /* Sidebar */
+  --sidebar-bg:#1a2e42;
+  --sidebar-active:#2468a0;
+  --sidebar-hover:rgba(255,255,255,.08);
+  --sidebar-text:rgba(255,255,255,.75);
+  --sidebar-w:220px;
+  /* Topbar */
+  --topbar-h:58px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'Space Mono',monospace;min-height:100vh;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 15% 0%,rgba(124,106,247,.09) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 85% 100%,rgba(106,247,184,.06) 0%,transparent 60%);pointer-events:none;z-index:0;}
-body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(38,38,58,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(38,38,58,.35) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden;font-size:14px;}
 
-/* AUTH */
-#authScreen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px;}#authScreen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 20% 30%,rgba(124,106,247,.18) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 80% 70%,rgba(106,247,184,.12) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 50% 10%,rgba(247,106,176,.1) 0%,transparent 60%);pointer-events:none;z-index:0;}#authScreen::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(40,40,58,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(40,40,58,.5) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;z-index:0;}
-.auth-box{background:var(--surface);border:1px solid var(--border2);border-radius:22px;padding:40px;width:100%;max-width:410px;position:relative;z-index:1;box-shadow:0 0 80px rgba(124,106,247,.15);}
-.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:5px;}
-.auth-icon{width:42px;height:42px;background:linear-gradient(135deg,var(--accent),var(--accent3));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
-.auth-logo h1{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.auth-sub{color:var(--muted);font-size:.74rem;margin-bottom:28px;padding-left:54px;letter-spacing:.04em;}
-.auth-tabs{display:flex;margin-bottom:22px;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
-.auth-tab{flex:1;padding:10px;background:transparent;border:none;color:var(--muted);font-family:'Syne',sans-serif;font-weight:700;font-size:.83rem;cursor:pointer;transition:all .2s;}
-.auth-tab.active{background:var(--accent);color:#fff;}
+/* ============ AUTH ============ */
+#authScreen{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a2e42 0%,#1a4c76 50%,#1e5a8e 100%);padding:20px;}
+.auth-box{background:#fff;border-radius:12px;padding:36px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.auth-icon{width:42px;height:42px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
+.auth-logo h1{font-weight:800;font-size:1.3rem;color:var(--blue);}
+.auth-sub{color:var(--muted);font-size:.78rem;margin-bottom:24px;padding-left:54px;}
+.auth-tabs{display:flex;margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.auth-tab{flex:1;padding:10px;background:transparent;border:none;color:var(--muted);font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .2s;}
+.auth-tab.active{background:var(--blue);color:#fff;}
 .fg{margin-bottom:14px;}
-.fg label{display:block;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
-.fg input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Space Mono',monospace;font-size:.88rem;padding:10px 13px;outline:none;transition:border-color .2s;}
-.fg input:focus{border-color:var(--accent);}
-.btn-primary{width:100%;background:linear-gradient(135deg,var(--accent),#5d52d0);color:#fff;border:none;border-radius:8px;padding:12px;font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:6px;}
-.btn-primary:hover{opacity:.87;transform:translateY(-1px);}
-.auth-msg{margin-top:11px;font-size:.76rem;text-align:center;min-height:18px;}
-.auth-msg.err{color:var(--danger);}.auth-msg.ok{color:var(--accent3);}
+.fg label{display:block;font-size:.75rem;font-weight:700;color:var(--text2);margin-bottom:5px;}
+.fg input{width:100%;background:#fff;border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:'Syne',sans-serif;font-size:.9rem;padding:10px 13px;outline:none;transition:border-color .2s;}
+.fg input:focus{border-color:var(--blue);}
+.btn-primary{width:100%;background:var(--blue);color:#fff;border:none;border-radius:8px;padding:12px;font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:background .15s;margin-top:4px;}
+.btn-primary:hover{background:var(--blue2);}
+.auth-msg{margin-top:10px;font-size:.78rem;text-align:center;min-height:18px;}
+.auth-msg.err{color:var(--red);}.auth-msg.ok{color:var(--green);}
 
-/* APP */
-#app{display:none;position:relative;z-index:1;}
-.topbar{position:sticky;top:0;z-index:100;background:rgba(9,9,15,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 22px;height:56px;gap:10px;}
-.tl{display:flex;align-items:center;gap:9px;}
-.t-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),var(--accent3));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
-.t-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.t-user{color:var(--muted);font-size:.7rem;}
-.btn-logout{background:transparent;border:1px solid var(--border2);color:var(--muted);border-radius:6px;padding:5px 11px;font-family:'Space Mono',monospace;font-size:.7rem;cursor:pointer;transition:all .15s;}
-.btn-logout:hover{border-color:var(--danger);color:var(--danger);}
-.nav-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto;scrollbar-width:none;}
-.nav-tabs::-webkit-scrollbar{display:none;}
-.nav-tab{padding:12px 16px;background:transparent;border:none;color:var(--muted);font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;transition:all .2s;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px;letter-spacing:.02em;}
-.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-.nav-tab:hover:not(.active){color:var(--text);}
-.container{max-width:940px;margin:0 auto;padding:26px 18px 80px;}
-.section{display:none;animation:fu .22s ease;}
-.section.active{display:block;}
-@keyframes fu{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:translateY(0);}}
-.sec-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:20px;display:flex;align-items:center;gap:9px;}
+/* ============ APP LAYOUT ============ */
+#app{display:none;}
 
-/* HERO */
-.hero{background:linear-gradient(135deg,rgba(124,106,247,.14) 0%,rgba(106,247,184,.07) 100%);border:1px solid rgba(124,106,247,.22);border-radius:18px;padding:26px 28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;top:-50px;right:-50px;width:220px;height:220px;background:radial-gradient(circle,rgba(124,106,247,.18) 0%,transparent 70%);pointer-events:none;}
-.hero::after{content:'';position:absolute;bottom:-30px;left:30%;width:180px;height:180px;background:radial-gradient(circle,rgba(106,247,184,.1) 0%,transparent 70%);pointer-events:none;}
-.hero-left{position:relative;z-index:1;}
-.hero-greet{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;margin-bottom:4px;}
-.hero-date{color:var(--muted);font-size:.73rem;letter-spacing:.04em;}
-.hero-stats{display:flex;gap:18px;flex-wrap:wrap;position:relative;z-index:1;}
-.hstat{text-align:center;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:10px;padding:10px 16px;}
-.hstat .hv{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;line-height:1;}
-.hstat .hl{font-size:.62rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:3px;}
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--topbar-h);background:var(--blue);display:flex;align-items:stretch;}
+.topbar-logo{display:flex;align-items:center;gap:10px;padding:0 16px;min-width:var(--sidebar-w);border-right:1px solid rgba(255,255,255,.12);flex-shrink:0;}
+.topbar-logo-icon{width:32px;height:32px;background:rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;}
+.topbar-logo-name{color:#fff;font-weight:800;font-size:1rem;letter-spacing:.01em;}
+.topbar-breadcrumbs{display:flex;align-items:stretch;flex:1;overflow:hidden;}
+.tb-crumb{display:flex;flex-direction:column;justify-content:center;padding:0 18px;cursor:pointer;border-right:1px solid rgba(255,255,255,.12);transition:background .15s;min-width:0;position:relative;}
+.tb-crumb:hover{background:rgba(255,255,255,.08);}
+.tb-crumb-title{color:rgba(255,255,255,.6);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1px;white-space:nowrap;}
+.tb-crumb-val{color:#fff;font-size:.85rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px;}
+.tb-crumb-val .caret{font-size:.7rem;opacity:.6;}
+.topbar-right{display:flex;align-items:center;gap:0;margin-left:auto;flex-shrink:0;}
+.tb-user{display:flex;flex-direction:column;justify-content:center;padding:0 16px;border-left:1px solid rgba(255,255,255,.12);cursor:pointer;}
+.tb-user-label{color:rgba(255,255,255,.6);font-size:.65rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:1px;}
+.tb-user-name{color:#fff;font-size:.82rem;font-weight:700;}
+.tb-user-avatar{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;margin-right:16px;flex-shrink:0;}
+.btn-logout-tb{background:transparent;border:none;color:rgba(255,255,255,.7);padding:0 14px;height:100%;cursor:pointer;font-size:1.2rem;transition:color .15s;border-left:1px solid rgba(255,255,255,.12);}
+.btn-logout-tb:hover{color:#fff;background:rgba(255,255,255,.08);}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:var(--topbar-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--sidebar-bg);z-index:150;overflow-y:auto;display:flex;flex-direction:column;}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);}
+.sidebar-section{padding:8px 0;}
+.sidebar-label{color:rgba(255,255,255,.35);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;padding:8px 16px 4px;}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 16px;color:var(--sidebar-text);cursor:pointer;transition:all .15s;border-left:3px solid transparent;font-size:.84rem;font-weight:600;}
+.sidebar-item:hover{background:var(--sidebar-hover);color:#fff;}
+.sidebar-item.active{background:var(--sidebar-active);color:#fff;border-left-color:rgba(255,255,255,.6);}
+.sidebar-item .si-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid rgba(255,255,255,.08);}
+.sidebar-year-sel{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:7px;color:#fff;font-family:'Syne',sans-serif;font-size:.78rem;padding:7px 10px;outline:none;cursor:pointer;}
+.sidebar-year-sel option{background:#1a2e42;color:#fff;}
+
+/* MAIN CONTENT */
+.main-content{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);min-height:calc(100vh - var(--topbar-h));padding:0;}
+.page-header{background:#fff;border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.page-title{font-size:1.1rem;font-weight:800;color:var(--text);}
+.page-subtitle{font-size:.75rem;color:var(--muted);margin-top:2px;}
+.page-body{padding:20px 24px 60px;}
+
+/* SECTIONS */
+.section{display:none;}
+.section.active{display:block;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
 
 /* CARDS */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:15px;margin-bottom:16px;overflow:hidden;}
-.ch{display:flex;align-items:center;justify-content:space-between;padding:13px 17px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:7px;}
-.ch h2{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;display:flex;align-items:center;gap:6px;}
-.cb{padding:17px;}
-.form-row{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end;}
-.ff{display:flex;flex-direction:column;gap:5px;flex:1;min-width:95px;}
-.ff label{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
-.ff input,.ff select,.ff textarea{background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Space Mono',monospace;font-size:.78rem;padding:7px 10px;outline:none;transition:border-color .2s;}
-.ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--accent);}
-.ff textarea{resize:vertical;min-height:58px;}
-.btn-add{background:var(--surface2);color:var(--accent);border:1px solid var(--accent);border-radius:7px;padding:7px 13px;font-family:'Syne',sans-serif;font-weight:700;font-size:.74rem;cursor:pointer;transition:all .15s;white-space:nowrap;align-self:flex-end;}
-.btn-add:hover{background:var(--accent);color:#fff;}
-.btn-sm{background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;cursor:pointer;transition:all .15s;}
-.btn-sm:hover{border-color:var(--accent);color:var(--accent);}
-.btn-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:2px 5px;transition:color .15s;line-height:1;}
-.btn-del:hover{color:var(--danger);}
+.card{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);background:#fff;flex-wrap:wrap;gap:8px;}
+.card-header h2{font-size:.88rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:7px;}
+.card-body{padding:16px;}
 
-/* CHIPS */
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
-.chip{display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:3px 8px 3px 11px;font-size:.78rem;}
-.c5{border-color:var(--g5);color:var(--g5);}.c4{border-color:var(--g4);color:var(--g4);}
-.c3{border-color:var(--g3);color:var(--g3);}.c2{border-color:var(--g2);color:var(--g2);}
-.c1{border-color:var(--danger);color:var(--danger);}
+/* HERO STATS */
+.hero-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+@media(max-width:700px){.hero-stats-grid{grid-template-columns:1fr 1fr;}}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.stat-card.blue::before{background:var(--blue);}
+.stat-card.green::before{background:var(--green);}
+.stat-card.red::before{background:var(--red);}
+.stat-card.orange::before{background:var(--orange);}
+.stat-val{font-size:2rem;font-weight:800;line-height:1;margin-bottom:5px;}
+.stat-val.blue{color:var(--blue);}
+.stat-val.green{color:var(--green);}
+.stat-val.red{color:var(--red);}
+.stat-val.orange{color:var(--orange);}
+.stat-val.muted{color:var(--muted);}
+.stat-label{font-size:.72rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;}
 
-/* SUBJECT CARD */
-.subj-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;margin-bottom:13px;overflow:hidden;animation:fu .25s ease;}
-.shead{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:7px;}
-.sname{font-family:'Syne',sans-serif;font-weight:700;font-size:.92rem;}
-.sbody{padding:13px 15px;}
-.avg-b{font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;min-width:42px;text-align:center;}
-.a5{color:var(--g5);}.a4{color:var(--g4);}.a3{color:var(--g3);}.a2{color:var(--g2);}.a0{color:var(--muted);}
+/* SUBJECT CARDS - esDnevnik style */
+.subj-card{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);animation:fadeIn .2s ease;}
+.subj-card-header{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;}
+.subj-left-stripe{width:4px;height:42px;border-radius:2px;flex-shrink:0;}
+.subj-name{font-size:.95rem;font-weight:700;color:var(--text);flex:1;}
+.subj-type-badge{font-size:.7rem;padding:2px 9px;border-radius:100px;font-weight:700;}
+.subj-type-brojcano{background:var(--blue-light);color:var(--blue);}
+.subj-type-neocenjuje{background:var(--surface2);color:var(--muted);}
+.subj-avg-big{font-size:1.6rem;font-weight:800;min-width:48px;text-align:center;}
+.subj-action-icons{display:flex;align-items:center;gap:6px;}
+.subj-body{padding:14px 16px;}
+.sem-label-es{font-size:.73rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.sem-avg-es{margin-left:auto;font-size:.82rem;font-weight:800;}
+.grades-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
+.grade-pill{display:inline-flex;flex-direction:column;align-items:center;background:var(--bg);border:1.5px solid var(--border2);border-radius:8px;padding:6px 10px;cursor:pointer;transition:all .15s;min-width:48px;}
+.grade-pill:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,.1);}
+.grade-pill .gv{font-size:1.1rem;font-weight:800;line-height:1;}
+.grade-pill .gt{font-size:.6rem;color:var(--muted);max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px;}
+.grade-pill .gd{font-size:.58rem;color:var(--muted2);}
+/* Grade colors */
+.gc5{border-color:#28a74540;background:#f0faf2;}.gc5 .gv{color:var(--g5);}
+.gc4{border-color:#1a4c7640;background:#f0f5fb;}.gc4 .gv{color:var(--g4);}
+.gc3{border-color:#fd7e1440;background:#fff8f0;}.gc3 .gv{color:var(--g3);}
+.gc2{border-color:#dc354540;background:#fdf0f0;}.gc2 .gv{color:var(--g2);}
+/* Avg colors */
+.avg5{color:var(--g5);}
+.avg4{color:var(--g4);}
+.avg3{color:var(--g3);}
+.avg2{color:var(--g2);}
+.avg0{color:var(--muted);}
 
-/* NEEDED */
-.ng{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px;}
-.nc-card{background:var(--surface2);border-radius:9px;padding:8px 10px;border:1px solid var(--border);position:relative;overflow:hidden;}
-.nc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.nc-card.g5::before{background:var(--g5);}.nc-card.g4::before{background:var(--g4);}
-.nc-card.g3::before{background:var(--g3);}.nc-card.g2::before{background:var(--g2);}
-.nc-card .tg{font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;line-height:1;margin-bottom:2px;}
-.nc-card.g5 .tg{color:var(--g5);}.nc-card.g4 .tg{color:var(--g4);}
-.nc-card.g3 .tg{color:var(--g3);}.nc-card.g2 .tg{color:var(--g2);}
-.nc{font-size:.66rem;color:var(--muted);line-height:1.3;}
-.nc.ok{color:var(--g5);font-weight:700;}.nc.imp{color:var(--danger);}
+/* NEEDED GRADES */
+.needed-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0;}
+@media(max-width:480px){.needed-grid{grid-template-columns:1fr 1fr;}}
+.nc-card-es{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 11px;position:relative;overflow:hidden;}
+.nc-card-es::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.nc-card-es.g5::before{background:var(--g5);}
+.nc-card-es.g4::before{background:var(--g4);}
+.nc-card-es.g3::before{background:var(--g3);}
+.nc-card-es.g2::before{background:var(--g2);}
+.nc-tg{font-size:1.1rem;font-weight:800;line-height:1;margin-bottom:2px;}
+.nc-card-es.g5 .nc-tg{color:var(--g5);}
+.nc-card-es.g4 .nc-tg{color:var(--g4);}
+.nc-card-es.g3 .nc-tg{color:var(--g3);}
+.nc-card-es.g2 .nc-tg{color:var(--g2);}
+.nc-info{font-size:.66rem;color:var(--muted);line-height:1.3;}
+.nc-info.ok{color:var(--green);font-weight:700;}
+.nc-info.imp{color:var(--red);}
 
 /* FINALS */
-.finals-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px;}
-.fbox{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px;}
-.fbox .fl{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
-.fbox .fv{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:6px;}
-.fbox select{background:var(--surface);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'Space Mono',monospace;font-size:.74rem;padding:4px 7px;outline:none;width:100%;margin-bottom:5px;}
-.fbox button{background:var(--surface);border:1px solid var(--accent);color:var(--accent);border-radius:5px;padding:4px 9px;font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;cursor:pointer;transition:all .15s;width:100%;}
-.fbox button:hover{background:var(--accent);color:#fff;}
+.finals-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.fbox{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;}
+.fbox .fl{font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px;}
+.fbox .fv{font-size:1.6rem;font-weight:800;margin-bottom:7px;}
+.fbox select{width:100%;background:#fff;border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:'Syne',sans-serif;font-size:.8rem;padding:6px 9px;outline:none;margin-bottom:6px;}
+.fbox button{width:100%;background:var(--blue);color:#fff;border:none;border-radius:6px;padding:6px;font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;transition:background .15s;}
+.fbox button:hover{background:var(--blue2);}
 
-/* PROSEK */
-.gp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}@media(max-width:640px){.gp-grid{grid-template-columns:1fr 1fr;}}
-.gp-box{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:16px;text-align:center;position:relative;overflow:hidden;}
-.gp-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent3));}
-.gp-lbl{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
-.gp-val{font-family:'Syne',sans-serif;font-weight:800;font-size:2.2rem;}
+/* GP grid */
+.gp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.gp-box-es{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px;text-align:center;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.gp-box-es::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue);}
+.gp-lbl{font-size:.72rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;}
+.gp-val{font-size:2.2rem;font-weight:800;}
 
-/* ABSENCES */
-.abs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:16px;}
-.abs-box{background:var(--surface);border-radius:11px;padding:13px;border:1px solid var(--border);text-align:center;position:relative;overflow:hidden;}
-.abs-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.abs-box.tot::before{background:var(--accent);}
-.abs-box.jus::before{background:var(--accent3);}
-.abs-box.unj::before{background:var(--danger);}
-.abs-num{font-family:'Syne',sans-serif;font-weight:800;font-size:1.7rem;}
-.abs-lbl{font-size:.63rem;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-top:3px;}
-.ca{color:var(--accent);}.cg{color:var(--accent3);}.cr{color:var(--danger);}
+/* ABS grid */
+.abs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.abs-box-es{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.abs-num{font-size:1.8rem;font-weight:800;}
+.abs-lbl{font-size:.7rem;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.05em;}
 
 /* TABLE */
 .tw{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;font-size:.76rem;}
-th{text-align:left;padding:7px 9px;color:var(--muted);font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;border-bottom:1px solid var(--border);}
-td{padding:8px 9px;border-bottom:1px solid var(--border);vertical-align:middle;}
+table{width:100%;border-collapse:collapse;font-size:.82rem;}
+th{text-align:left;padding:8px 11px;color:var(--muted);font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;border-bottom:2px solid var(--border);font-weight:700;}
+td{padding:9px 11px;border-bottom:1px solid var(--border);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
-tr:hover td{background:rgba(255,255,255,.018);}
-.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:.66rem;font-weight:700;}
-.b-opr{background:rgba(106,247,184,.1);color:var(--accent3);}
-.b-neopr{background:rgba(247,106,106,.1);color:var(--danger);}
-.b-mere{background:rgba(247,106,106,.1);color:var(--danger);}
-.b-pohvale{background:rgba(106,247,184,.1);color:var(--accent3);}
-.b-nastavni{background:rgba(106,247,184,.1);color:var(--accent3);}
-.b-neradni{background:rgba(247,106,106,.1);color:var(--danger);}
-.b-nenastavni{background:rgba(247,162,106,.1);color:var(--accent2);}
+tr:hover td{background:var(--blue-lighter);}
+.badge{display:inline-block;padding:2px 9px;border-radius:100px;font-size:.7rem;font-weight:700;}
+.b-opr{background:var(--green-light);color:var(--green);}
+.b-neopr{background:var(--red-light);color:var(--red);}
+.b-mere{background:var(--red-light);color:var(--red);}
+.b-pohvale{background:var(--green-light);color:var(--green);}
+.b-nastavni{background:var(--blue-light);color:var(--blue);}
+.b-neradni{background:var(--red-light);color:var(--red);}
+.b-nenastavni{background:var(--orange-light);color:var(--orange);}
+
+/* FORM CONTROLS */
+.form-row{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end;}
+.ff{display:flex;flex-direction:column;gap:4px;flex:1;min-width:95px;}
+.ff label{font-size:.73rem;font-weight:700;color:var(--text2);}
+.ff input,.ff select,.ff textarea{background:#fff;border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:'Syne',sans-serif;font-size:.85rem;padding:8px 11px;outline:none;transition:border-color .2s;}
+.ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(26,76,118,.08);}
+.ff textarea{resize:vertical;min-height:60px;}
+.btn-add{background:var(--blue);color:#fff;border:none;border-radius:7px;padding:8px 14px;font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer;transition:background .15s;white-space:nowrap;align-self:flex-end;}
+.btn-add:hover{background:var(--blue2);}
+.btn-sm{background:#fff;color:var(--text2);border:1px solid var(--border2);border-radius:7px;padding:6px 12px;font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;cursor:pointer;transition:all .15s;}
+.btn-sm:hover{border-color:var(--blue);color:var(--blue);}
+.btn-del{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:.95rem;padding:3px 6px;transition:color .15s;line-height:1;}
+.btn-del:hover{color:var(--red);}
+.btn-danger{background:var(--red);color:#fff;border:none;border-radius:7px;padding:6px 12px;font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;cursor:pointer;}
+.btn-outline-danger{background:transparent;color:var(--red);border:1px solid var(--red);border-radius:7px;padding:6px 12px;font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;cursor:pointer;transition:all .15s;}
+.btn-outline-danger:hover{background:var(--red);color:#fff;}
+
+/* EMOJI MARKS */
+.emoji-mark{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;transition:all .15s;}
+.emoji-mark:hover{border-color:var(--blue-light);background:var(--blue-lighter);}
 
 /* BEHAVIOR */
 .bgl{list-style:none;}
-.bgl li{display:flex;align-items:flex-start;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);gap:9px;}
+.bgl li{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:9px;}
 .bgl li:last-child{border-bottom:none;}
-.bgn{font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;min-width:24px;}
-.bg-meta{font-size:.68rem;color:var(--muted);margin-top:2px;}
-.bg-note{font-size:.78rem;margin-top:3px;}
-.bfrow{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.bgn{font-size:1.2rem;font-weight:800;min-width:26px;}
+.bg-meta{font-size:.7rem;color:var(--muted);margin-top:2px;}
+.bg-note{font-size:.8rem;margin-top:3px;}
+.bfrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .nl{list-style:none;}
-.nl li{padding:9px 0;border-bottom:1px solid var(--border);}
+.nl li{padding:10px 0;border-bottom:1px solid var(--border);}
 .nl li:last-child{border-bottom:none;}
-.nmeta{font-size:.66rem;color:var(--muted);margin-bottom:3px;}
-.ntext{font-size:.8rem;}
+.nmeta{font-size:.68rem;color:var(--muted);margin-bottom:3px;}
+.ntext{font-size:.82rem;}
 
-/* SCHEDULE */
-/* GRADE CARD */
-.grade-item{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 12px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:all .15s;position:relative;}
-.grade-item:hover{border-color:var(--accent);transform:translateY(-1px);}
-.grade-item .gval{font-family:Syne,sans-serif;font-weight:800;font-size:1.2rem;}
-.grade-item .gtype{font-size:.62rem;color:var(--muted);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.grade-item .gdate{font-size:.6rem;color:var(--muted);}
-.sem-section{margin-bottom:14px;}
-.sem-label{font-family:Syne,sans-serif;font-weight:700;font-size:.8rem;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-.sem-avg{font-family:Syne,sans-serif;font-weight:800;font-size:.9rem;margin-left:auto;}
-.grades-wrap{display:flex;flex-wrap:wrap;gap:6px;}
-/* ABSENCE TYPE */
-.abs-type-badge{font-size:.66rem;padding:1px 7px;border-radius:100px;background:rgba(106,247,184,.1);color:var(--accent3);margin-top:2px;display:inline-block;}
-.sg-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:11px;}.sg{display:grid;gap:1px;background:var(--border);border-radius:11px;overflow:hidden;font-size:.72rem;min-width:600px;}
-.sg-head{background:var(--surface2);padding:7px 5px;text-align:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;color:var(--muted);}
-.sg-per{background:var(--surface2);padding:7px 5px;text-align:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.66rem;color:var(--muted);}
-.sg-cell{background:var(--surface);padding:5px;min-height:42px;cursor:pointer;transition:background .13s;display:flex;align-items:center;justify-content:center;text-align:center;}
-.sg-cell:hover{background:var(--surface3);}
-.sg-cell.filled{background:rgba(124,106,247,.09);}
-.sg-cell .cn{font-size:.68rem;color:var(--accent);font-weight:700;line-height:1.3;}
+/* SCHEDULE GRID */
+.sg-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;}
+.sg{display:grid;gap:1px;background:var(--border);border-radius:8px;overflow:hidden;font-size:.78rem;}
+.sg-head{background:var(--blue-light);padding:8px 5px;text-align:center;font-weight:700;font-size:.72rem;color:var(--blue);}
+.sg-per{background:var(--surface2);padding:8px 5px;text-align:center;font-weight:700;font-size:.7rem;color:var(--muted);}
+.sg-cell{background:#fff;padding:6px;min-height:44px;cursor:pointer;transition:background .13s;display:flex;align-items:center;justify-content:center;text-align:center;}
+.sg-cell:hover{background:var(--blue-lighter);}
+.sg-cell.filled{background:var(--blue-light);}
+.sg-cell .cn{font-size:.72rem;color:var(--blue);font-weight:700;line-height:1.3;}
 
-/* WEEK */
+/* WEEK NAV */
 .wnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:9px;}
-.wlbl{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;}
-.wdays{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-bottom:14px;}
-.wday{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 6px;text-align:center;cursor:pointer;transition:all .18s;position:relative;}
-.wday:hover{border-color:var(--accent);transform:translateY(-2px);}
-.wday.sel{border-color:var(--accent);background:rgba(124,106,247,.09);}
-.wday.neradni{border-color:var(--danger);background:rgba(247,106,106,.05);}
-.wday.nenastavni{border-color:var(--accent2);background:rgba(247,162,106,.05);}
-.wday .wdn{font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;color:var(--muted);margin-bottom:3px;}
-.wday .wdd{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;}
+.wlbl{font-weight:700;font-size:.9rem;color:var(--text);}
+.wdays{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:14px;}
+@media(max-width:620px){.wdays{grid-template-columns:repeat(4,1fr);}}
+.wday{background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 6px;text-align:center;cursor:pointer;transition:all .18s;position:relative;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.wday:hover{border-color:var(--blue);transform:translateY(-1px);}
+.wday.sel{border-color:var(--blue);background:var(--blue-light);}
+.wday.neradni{border-color:var(--red);background:var(--red-light);}
+.wday.nenastavni{border-color:var(--orange);background:var(--orange-light);}
+.wday .wdn{font-weight:700;font-size:.7rem;color:var(--muted);margin-bottom:3px;}
+.wday .wdd{font-weight:800;font-size:1.1rem;color:var(--text);}
+.wday.sel .wdd{color:var(--blue);}
 .wday .wdb{font-size:.58rem;margin-top:3px;padding:1px 5px;border-radius:100px;}
-.wday .wdot{width:5px;height:5px;border-radius:50%;background:var(--accent4);margin:3px auto 0;}
-.wtbar{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:9px 13px;margin-bottom:12px;gap:10px;flex-wrap:wrap;}
-.wtlbl{font-size:.7rem;color:var(--muted);}
+.wday .wdot{width:6px;height:6px;border-radius:50%;background:var(--red);margin:3px auto 0;}
+.wtbar{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px;gap:10px;flex-wrap:wrap;}
+.wtlbl{font-size:.75rem;color:var(--muted);}
 
 /* DAY DETAIL */
-.ddetail{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:16px;animation:fu .18s ease;}
+.ddetail{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;animation:fadeIn .18s ease;box-shadow:0 1px 3px rgba(0,0,0,.04);}
 .dhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:7px;}
-.dtitle{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;}
-.lesson{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:7px;display:flex;align-items:flex-start;justify-content:space-between;gap:9px;}
-.lper{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;color:var(--accent);min-width:22px;}
+.dtitle{font-weight:800;font-size:1.05rem;}
+.lesson-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin-bottom:7px;display:flex;align-items:flex-start;gap:10px;}
+.lesson-item.abs{border-color:rgba(220,53,69,.3);background:var(--red-light);}
+.lper{font-weight:800;font-size:1.1rem;color:var(--blue);min-width:22px;}
+.lper.abs{color:var(--red);}
 .linfo{flex:1;}
-.ltitle{font-size:.82rem;font-weight:700;margin-bottom:2px;}
-.lmeta{font-size:.68rem;color:var(--muted);}
+.ltitle{font-size:.85rem;font-weight:700;margin-bottom:2px;}
+.lmeta{font-size:.7rem;color:var(--muted);}
 .ltypes{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;}
-.ltype{background:rgba(124,106,247,.1);color:var(--accent);border-radius:100px;padding:1px 7px;font-size:.63rem;}
-.lcal{background:rgba(247,106,176,.1);color:var(--accent4);border-radius:100px;padding:1px 7px;font-size:.63rem;margin-top:3px;}
+.ltype{background:var(--blue-light);color:var(--blue);border-radius:100px;padding:1px 8px;font-size:.65rem;font-weight:700;}
 
 /* CALENDAR */
-.cev{display:flex;align-items:center;gap:9px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:9px 13px;margin-bottom:5px;animation:fu .18s ease;}
-.ced{font-family:'Syne',sans-serif;font-weight:800;font-size:.85rem;color:var(--accent);min-width:34px;text-align:center;}
+.cev{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:6px;animation:fadeIn .18s ease;box-shadow:0 1px 2px rgba(0,0,0,.03);}
+.ced{font-weight:800;font-size:.88rem;color:var(--blue);min-width:34px;text-align:center;}
 .cei{flex:1;}
-.cet{font-size:.8rem;font-weight:700;}
-.ces{font-size:.67rem;color:var(--muted);margin-top:2px;}
-.ct{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:100px;}
-.ct-usmeno{background:rgba(124,106,247,.13);color:var(--accent);}
-.ct-kontrolni,.ct-pismeni{background:rgba(247,106,106,.13);color:var(--danger);}
-.ct-petnaestominutna{background:rgba(247,162,106,.13);color:var(--accent2);}
-.ct-nema_karta{background:rgba(247,201,106,.13);color:var(--warn);}
-.ct-prakticni{background:rgba(106,247,184,.13);color:var(--accent3);}
-.ct-prezentacija_pano,.ct-prezentacija_teza{background:rgba(106,184,247,.13);color:#6ab8f7;}
-.ct-likovni_rad{background:rgba(247,106,176,.13);color:var(--accent4);}
-.ct-pregledanje_sveske{background:rgba(184,247,106,.13);color:#b8f76a;}
-.ct-rad_racunar{background:rgba(106,247,220,.13);color:#6af7dc;}
-.ct-fizicke{background:rgba(247,184,106,.13);color:#f7b86a;}
-.ct-ostalo{background:rgba(90,90,122,.13);color:var(--muted);}
+.cet{font-size:.82rem;font-weight:700;}
+.ces{font-size:.68rem;color:var(--muted);margin-top:2px;}
+.ct{font-size:.68rem;font-weight:700;padding:2px 9px;border-radius:100px;}
+.ct-usmeno{background:var(--blue-light);color:var(--blue);}
+.ct-kontrolni,.ct-pismeni{background:var(--red-light);color:var(--red);}
+.ct-petnaestominutna{background:var(--orange-light);color:var(--orange);}
+.ct-nema_karta{background:#fff3cd;color:#856404;}
+.ct-prakticni{background:var(--green-light);color:var(--green);}
+.ct-prezentacija_pano,.ct-prezentacija_teza{background:#e8f4f8;color:#0c6e8a;}
+.ct-likovni_rad{background:#fce8f3;color:#9c2f6a;}
+.ct-pregledanje_sveske{background:#e8f5ea;color:#1a6e2c;}
+.ct-rad_racunar{background:#e8faf5;color:#0d7a5a;}
+.ct-fizicke{background:#fff3e8;color:#8a4c0c;}
+.ct-ostalo{background:var(--surface2);color:var(--muted);}
 
 /* MULTISELECT */
-.msel{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:7px;max-height:150px;overflow-y:auto;}
-.mopt{display:flex;align-items:center;gap:7px;padding:4px 5px;border-radius:5px;cursor:pointer;font-size:.76rem;transition:background .1s;}
-.mopt:hover{background:var(--surface3);}
-.mopt input{accent-color:var(--accent);}
+.msel{background:#fff;border:1px solid var(--border2);border-radius:7px;padding:7px;max-height:150px;overflow-y:auto;}
+.mopt{display:flex;align-items:center;gap:7px;padding:5px 6px;border-radius:5px;cursor:pointer;font-size:.8rem;transition:background .1s;}
+.mopt:hover{background:var(--bg);}
+.mopt input{accent-color:var(--blue);}
 
 /* MODAL */
-.mo{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:300;display:flex;align-items:center;justify-content:center;padding:18px;}
-.modal{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:26px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;animation:fu .18s ease;}
-.modal h3{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;margin-bottom:16px;}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(3px);z-index:600;display:flex;align-items:center;justify-content:center;padding:18px;}
+.modal{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;animation:fadeIn .18s ease;box-shadow:0 20px 60px rgba(0,0,0,.15);}
+.modal h3{font-weight:800;font-size:1.05rem;margin-bottom:16px;color:var(--text);}
 .mfoot{display:flex;gap:7px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap;}
 
 /* MISC */
-.div{height:1px;background:var(--border);margin:12px 0;}
-.slbl{font-size:.64rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;margin-top:12px;}
-.empty{text-align:center;color:var(--muted);font-size:.78rem;padding:24px 0;}
-.empty .big{font-size:1.7rem;margin-bottom:6px;}
-.ld{text-align:center;color:var(--muted);padding:26px;font-size:.78rem;}
+.divider{height:1px;background:var(--border);margin:12px 0;}
+.slbl{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;margin-top:12px;}
+.empty{text-align:center;color:var(--muted);font-size:.82rem;padding:28px 0;}
+.empty .big{font-size:1.8rem;margin-bottom:6px;}
+.ld{text-align:center;color:var(--muted);padding:28px;font-size:.82rem;}
+.school-year-info-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap;}
+.school-year-info-row:last-child{border-bottom:none;}
+.es-tag{display:inline-block;padding:2px 9px;border-radius:100px;font-size:.7rem;font-weight:700;}
+.es-tag-blue{background:var(--blue-light);color:var(--blue);}
+.es-tag-green{background:var(--green-light);color:var(--green);}
+.es-tag-red{background:var(--red-light);color:var(--red);}
+.es-tag-muted{background:var(--surface2);color:var(--muted);}
 
-footer{text-align:center;padding:32px 0 18px;color:var(--muted);font-size:.7rem;letter-spacing:.09em;position:relative;z-index:1;}
-footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
+/* UNLOCK BTN */
+.btn-unlock{background:transparent;color:var(--red);border:1px solid var(--red);border-radius:5px;padding:3px 8px;font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;cursor:pointer;transition:all .15s;}
+.btn-unlock:hover{background:var(--red);color:#fff;}
+
+/* Abs type badge */
+.abs-type-badge{font-size:.68rem;padding:1px 8px;border-radius:100px;background:var(--green-light);color:var(--green);margin-top:2px;display:inline-block;}
+
+/* Quick cards home */
+#hqc .stat-card{text-align:left;padding:14px;}
+#hqc .stat-card .stat-val{font-size:1.5rem;text-align:left;}
+
+/* Coming events */
+.upcoming-event{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.upcoming-event:last-child{border-bottom:none;}
+.ue-date{min-width:36px;text-align:center;background:var(--blue);color:#fff;border-radius:7px;padding:5px 4px;font-size:.75rem;font-weight:700;}
+.ue-info{flex:1;font-size:.82rem;}
+.ue-sub{color:var(--muted);font-size:.7rem;margin-top:2px;}
+
+/* Stat */
+.avg-b{font-weight:800;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;}
+.a5{color:var(--g5);}.a4{color:var(--g4);}.a3{color:var(--g3);}.a2{color:var(--g2);}.a0{color:var(--muted);}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
+.chip{display:flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:100px;padding:3px 9px 3px 11px;font-size:.8rem;}
+.c5{border-color:#28a74560;color:var(--g5);}.c4{border-color:#1a4c7660;color:var(--g4);}
+.c3{border-color:#fd7e1460;color:var(--g3);}.c2{border-color:#dc354560;color:var(--g2);}
+
+/* Scrollbar */
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
-@media(max-width:620px){
-  .ng{grid-template-columns:repeat(2,1fr);}
-  .wdays{grid-template-columns:repeat(4,1fr);}
-  .topbar{padding:0 12px;}
-  .nav-tab{padding:10px 11px;font-size:.72rem;}
-  .container{padding:18px 12px 70px;}
-  .hero{padding:18px 16px;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  :root{--sidebar-w:0px;}
+  .sidebar{transform:translateX(-220px);width:220px;transition:transform .25s;}
+  .sidebar.open{transform:translateX(0);}
+  .main-content{margin-left:0;}
+  .topbar-logo{min-width:auto;padding:0 12px;}
+  .menu-toggle{display:flex!important;}
+  .page-body{padding:14px 14px 60px;}
+  .gp-grid{grid-template-columns:1fr;}
 }
+.menu-toggle{display:none;align-items:center;justify-content:center;width:var(--topbar-h);height:var(--topbar-h);background:transparent;border:none;color:#fff;font-size:1.3rem;cursor:pointer;flex-shrink:0;border-right:1px solid rgba(255,255,255,.12);}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:149;}
+.sidebar-overlay.show{display:block;}
+
+footer{text-align:center;padding:24px 0 16px;color:var(--muted);font-size:.72rem;}
+footer span{color:var(--blue);font-weight:700;}
 </style>
 </head>
 <body>
@@ -292,7 +416,6 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
       <div class="fg"><label>Email</label><input type="email" id="le" placeholder="tvoj@email.com"/></div>
       <div class="fg"><label>Lozinka</label><input type="password" id="lp" placeholder="••••••••"/></div>
       <button class="btn-primary" onclick="login()">Prijavi se</button>
-
     </div>
     <div id="rf" style="display:none">
       <div class="fg"><label>Email</label><input type="email" id="re" placeholder="tvoj@email.com"/></div>
@@ -305,288 +428,560 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
 
 <!-- APP -->
 <div id="app">
+
+  <!-- TOPBAR -->
   <div class="topbar">
-    <div class="tl"><div class="t-icon">📚</div><span class="t-logo">ŠKOLSKI DNEVNIK</span></div>
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <select id="schoolYearSel" onchange="changeSchoolYear()" style="background:var(--surface2);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:Space Mono,monospace;font-size:.75rem;padding:5px 10px;outline:none;cursor:pointer;">
-        <option value="">— Školska godina —</option>
-      </select>
-      <span class="t-user" id="tu"></span>
-      <button class="btn-logout" onclick="logout()">Odjavi se</button>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <div class="topbar-logo">
+      <div class="topbar-logo-icon">📚</div>
+      <span class="topbar-logo-name">DNEVNIK</span>
+    </div>
+    <div class="topbar-breadcrumbs">
+      <div class="tb-crumb">
+        <div class="tb-crumb-title">Šk. god.</div>
+        <div class="tb-crumb-val">
+          <select id="schoolYearSel" onchange="changeSchoolYear()" style="background:transparent;border:none;color:#fff;font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;outline:none;cursor:pointer;appearance:none;padding:0;max-width:120px;">
+            <option value="">—</option>
+          </select>
+          <span class="caret">▾</span>
+        </div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-user">
+        <div class="tb-user-label">Korisnik</div>
+        <div class="tb-user-name" id="tu"></div>
+      </div>
+      <div class="tb-user-avatar">👤</div>
+      <button class="btn-logout-tb" onclick="logout()" title="Odjavi se">⏻</button>
     </div>
   </div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showSec('home',this)">🏠 Početna</button>
-    <button class="nav-tab" onclick="showSec('ocene',this)">📊 Ocene</button>
-    <button class="nav-tab" onclick="showSec('izostanci',this)">📅 Izostanci</button>
-    <button class="nav-tab" onclick="showSec('vladanje',this)">⭐ Vladanje</button>
-    <button class="nav-tab" onclick="showSec('raspored',this)">🗓 Raspored</button>
-    <button class="nav-tab" onclick="showSec('casovi',this)">📝 Časovi</button>
-    <button class="nav-tab" onclick="showSec('kalendar',this)">📆 Kalendar</button>
-    <button class="nav-tab" onclick="showSec('statistika',this);renderStat()">📊 Statistika</button>
+
+  <!-- SIDEBAR OVERLAY (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Pregled</div>
+      <div class="sidebar-item active" onclick="showSec('home',this)">
+        <div class="si-icon">🏠</div>Početna
+      </div>
+      <div class="sidebar-item" onclick="showSec('ocene',this)">
+        <div class="si-icon">📊</div>Ocene
+      </div>
+      <div class="sidebar-item" onclick="showSec('izostanci',this)">
+        <div class="si-icon">📅</div>Izostanci
+      </div>
+      <div class="sidebar-item" onclick="showSec('vladanje',this)">
+        <div class="si-icon">⭐</div>Vladanje
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Aktivnosti</div>
+      <div class="sidebar-item" onclick="showSec('raspored',this)">
+        <div class="si-icon">🗓</div>Raspored
+      </div>
+      <div class="sidebar-item" onclick="showSec('casovi',this)">
+        <div class="si-icon">📝</div>Časovi
+      </div>
+      <div class="sidebar-item" onclick="showSec('kalendar',this)">
+        <div class="si-icon">📆</div>Kalendar
+      </div>
+      <div class="sidebar-item" onclick="showSec('statistika',this);renderStat()">
+        <div class="si-icon">📈</div>Statistika
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Podešavanja</div>
+      <div class="sidebar-item" onclick="showSec('predmeti-global',this)">
+        <div class="si-icon">📚</div>Predmeti
+      </div>
+      <div class="sidebar-item" onclick="showSec('nastavnici-global',this)">
+        <div class="si-icon">👤</div>Nastavnici
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div style="color:rgba(255,255,255,.4);font-size:.68rem;margin-bottom:6px;">Školska godina</div>
+      <select id="schoolYearSel2" onchange="changeSchoolYear2()" class="sidebar-year-sel">
+        <option value="">—</option>
+      </select>
+    </div>
   </div>
-  <div class="container">
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
 
     <!-- HOME -->
     <div class="section active" id="sec-home">
-      <div class="hero">
-        <div class="hero-left">
-          <div class="hero-greet" id="hg">Dobrodošao! 👋</div>
-          <div class="hero-date" id="hd"></div>
-        </div>
-        <div class="hero-stats">
-          <div class="hstat"><div class="hv a0" id="hs1">—</div><div class="hl">Prosek 1. pol.</div></div>
-          <div class="hstat"><div class="hv a0" id="hs2">—</div><div class="hl">Prosek 2. pol.</div></div>
-          <div class="hstat"><div class="hv cr" id="hsa">0</div><div class="hl">Izostanaka</div></div>
-          <div class="hstat"><div class="hv" style="color:var(--accent4)" id="hse">0</div><div class="hl">Obaveza</div></div>
+      <div class="page-header">
+        <div>
+          <div class="page-title" id="hg">Dobrodošao! 👋</div>
+          <div class="page-subtitle" id="hd"></div>
         </div>
       </div>
-      <div class="card" style="margin-bottom:16px">
-        <div class="ch"><h2>🎓 Školska godina</h2></div>
-        <div class="cb" id="schoolYearInfo"><div class="ld">Učitavam...</div></div>
+      <div class="page-body">
+        <div class="hero-stats-grid">
+          <div class="stat-card blue">
+            <div class="stat-val blue a0" id="hs1">—</div>
+            <div class="stat-label">Prosek 1. pol.</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-val green a0" id="hs2">—</div>
+            <div class="stat-label">Prosek 2. pol.</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-val red" id="hsa">0</div>
+            <div class="stat-label">Izostanaka</div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-val orange" id="hse">0</div>
+            <div class="stat-label">Obaveza</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h2>🎓 Školska godina</h2>
+            <button class="btn-sm" onclick="openNewYearModal()">+ Nova godina</button>
+          </div>
+          <div class="card-body" id="schoolYearInfo"><div class="ld">Učitavam...</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px" id="hqc"></div>
+
+        <div class="card">
+          <div class="card-header"><h2>📆 Predstojeće obaveze</h2></div>
+          <div class="card-body" id="hup"><div class="ld">Učitavam...</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h2>📝 Današnji časovi</h2></div>
+          <div class="card-body" id="htoday"><div class="ld">Učitavam...</div></div>
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px" id="hqc"></div>
-      <div class="card"><div class="ch"><h2>📆 Predstojeće obaveze</h2></div><div class="cb" id="hup"><div class="ld">Učitavam...</div></div></div>
-      <div class="card"><div class="ch"><h2>📝 Današnji časovi</h2></div><div class="cb" id="htoday"><div class="ld">Učitavam...</div></div></div>
     </div>
 
     <!-- OCENE -->
     <div class="section" id="sec-ocene">
-      <div class="sec-title">📊 Ocene</div>
-      <div class="gp-grid">
-        <div class="gp-box"><div class="gp-lbl">Generalni prosek — 1. pol.</div><div class="gp-val a0" id="gp1">—</div><div style="font-size:.6rem;color:var(--muted);margin-top:4px">sa vladanjem</div></div>
-        <div class="gp-box"><div class="gp-lbl">Generalni prosek — 2. pol.</div><div class="gp-val a0" id="gp2">—</div><div style="font-size:.6rem;color:var(--muted);margin-top:4px">sa vladanjem</div></div>
+      <div class="page-header">
+        <div><div class="page-title">📊 Ocene</div></div>
       </div>
-      <!-- hidden elements needed for renderGP -->
-      <span id="gpv1" style="display:none"></span><span id="gpv2" style="display:none"></span>
-      <div class="card">
-        <div class="ch"><h2>➕ Dodaj predmet</h2></div>
-        <div class="cb">
-          <div class="form-row">
-            <div class="ff" style="flex:2"><label>Naziv predmeta</label><input type="text" id="nsn" placeholder="npr. Matematika" maxlength="60"/></div>
-            <div class="ff" style="max-width:200px"><label>Način ocenjivanja</label>
-              <select id="nsg">
-                <option value="brojcano">Brojčano</option>
-                <option value="neocenjuje">Ne ocenjuje se</option>
-              </select>
+      <div class="page-body">
+        <div class="gp-grid">
+          <div class="gp-box-es"><div class="gp-lbl">Generalni prosek — 1. pol.</div><div class="gp-val avg0" id="gp1">—</div><div style="font-size:.68rem;color:var(--muted);margin-top:4px">sa vladanjem</div></div>
+          <div class="gp-box-es"><div class="gp-lbl">Generalni prosek — 2. pol.</div><div class="gp-val avg0" id="gp2">—</div><div style="font-size:.68rem;color:var(--muted);margin-top:4px">sa vladanjem</div></div>
+        </div>
+        <span id="gpv1" style="display:none"></span><span id="gpv2" style="display:none"></span>
+        <div class="card">
+          <div class="card-header"><h2>➕ Dodaj predmet u školsku godinu</h2></div>
+          <div class="card-body">
+            <div class="form-row" style="margin-bottom:8px">
+              <div class="ff" style="flex:2"><label>Predmet</label>
+                <select id="nsn">
+                  <option value="">— Izaberi predmet —</option>
+                </select>
+              </div>
+              <div class="ff" style="max-width:160px"><label>Tip</label>
+                <select id="nstype">
+                  <option value="obavezan">Obavezan</option>
+                  <option value="izborni">Izborni</option>
+                  <option value="dopunski">Dopunski rad</option>
+                  <option value="dodatni">Dodatni rad</option>
+                  <option value="sekcija">Sekcija</option>
+                  <option value="slobodna">Slobodna aktivnost</option>
+                </select>
+              </div>
+              <div class="ff" style="max-width:160px"><label>Ocenjivanje</label>
+                <select id="nsg">
+                  <option value="brojcano">Brojčano</option>
+                  <option value="neocenjuje">Ne ocenjuje se</option>
+                </select>
+              </div>
             </div>
-            <button class="btn-add" onclick="addSubject()">+ Dodaj</button>
+            <div class="form-row">
+              <div class="ff" style="max-width:200px"><label>Nastavnik</label>
+                <select id="nst">
+                  <option value="">— Bez nastavnika —</option>
+                </select>
+              </div>
+              <div class="ff" style="max-width:220px" id="potpredmet-row">
+                <label>Potpredmet od</label>
+                <select id="ns-parent">
+                  <option value="">— Nije potpredmet —</option>
+                </select>
+              </div>
+              <button class="btn-add" onclick="addSubject()" style="align-self:flex-end">+ Dodaj</button>
+            </div>
+            <div id="no-global-warn" style="display:none;margin-top:10px;background:var(--orange-light);border:1px solid rgba(253,126,20,.3);border-radius:7px;padding:9px 13px;font-size:.8rem;color:var(--orange)">
+              ⚠️ Nema globalnih predmeta. Dodaj ih u <strong style="cursor:pointer;text-decoration:underline" onclick="showSec('predmeti-global',null)">Predmeti</strong> sekciji.
+            </div>
           </div>
         </div>
+        <div id="sl"><div class="ld">Učitavam...</div></div>
       </div>
-      <div id="sl"><div class="ld">Učitavam...</div></div>
     </div>
 
     <!-- IZOSTANCI -->
     <div class="section" id="sec-izostanci">
-      <div class="sec-title">📅 Izostanci</div>
-      <div class="abs-grid">
-        <div class="abs-box tot"><div class="abs-num ca" id="at">0</div><div class="abs-lbl">Ukupno</div></div>
-        <div class="abs-box jus"><div class="abs-num cg" id="aj">0</div><div class="abs-lbl">Opravdanih</div></div>
-        <div class="abs-box unj"><div class="abs-num cr" id="au">0</div><div class="abs-lbl">Neopravdanih</div></div>
-      </div>
-      <div class="card">
-        <div class="ch"><h2>➕ Dodaj izostanke</h2></div>
-        <div class="cb">
-          <div class="form-row">
-            <div class="ff"><label>Datum</label><input type="date" id="ad"/></div>
-            <div class="ff" style="max-width:85px"><label>Časova</label><input type="number" id="ah" value="1" min="1" max="10"/></div>
-            <div class="ff" style="max-width:145px"><label>Opravdan?</label><select id="atp" onchange="toggleAbsType()"><option value="true">Opravdan</option><option value="false">Neopravdan</option></select></div>
-          </div>
-          <div class="form-row" style="margin-top:7px" id="absTypeRow">
-            <div class="ff"><label>Vrsta opravdanog</label>
-              <select id="absKind">
-                <option value="">— Izaberi —</option>
-                <option>Administrativni postupci</option>
-                <option>Bolest - opravdao roditelj</option>
-                <option>Bolest - opravdao staratelj/hranitelj</option>
-                <option>Bolest - potvrda lekara</option>
-                <option>Dozvola</option>
-                <option>Ispit</option>
-                <option>Nastup</option>
-                <option>Odlazak na specijalistički tretman</option>
-                <option>Opravdan - ostalo</option>
-                <option>Pregled</option>
-                <option>Saobraćaj</option>
-                <option>Sportsko odsustvo</option>
-                <option>Takmičenje</option>
-              </select>
+      <div class="page-header"><div class="page-title">📅 Izostanci</div></div>
+      <div class="page-body">
+        <div class="abs-grid">
+          <div class="abs-box-es"><div class="abs-num" style="color:var(--blue)" id="at">0</div><div class="abs-lbl">Ukupno</div></div>
+          <div class="abs-box-es"><div class="abs-num" style="color:var(--green)" id="aj">0</div><div class="abs-lbl">Opravdanih</div></div>
+          <div class="abs-box-es"><div class="abs-num" style="color:var(--red)" id="au">0</div><div class="abs-lbl">Neopravdanih</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h2>➕ Dodaj izostanke</h2></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="ff"><label>Datum</label><input type="date" id="ad"/></div>
+              <div class="ff" style="max-width:85px"><label>Časova</label><input type="number" id="ah" value="1" min="1" max="10"/></div>
+              <div class="ff" style="max-width:145px"><label>Opravdan?</label><select id="atp" onchange="toggleAbsType()"><option value="true">Opravdan</option><option value="false">Neopravdan</option></select></div>
+            </div>
+            <div class="form-row" style="margin-top:8px" id="absTypeRow">
+              <div class="ff"><label>Vrsta opravdanog</label>
+                <select id="absKind">
+                  <option value="">— Izaberi —</option>
+                  <option>Administrativni postupci</option>
+                  <option>Bolest - opravdao roditelj</option>
+                  <option>Bolest - opravdao staratelj/hranitelj</option>
+                  <option>Bolest - potvrda lekara</option>
+                  <option>Dozvola</option><option>Ispit</option><option>Nastup</option>
+                  <option>Odlazak na specijalistički tretman</option>
+                  <option>Opravdan - ostalo</option><option>Pregled</option>
+                  <option>Saobraćaj</option><option>Sportsko odsustvo</option><option>Takmičenje</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row" style="margin-top:8px">
+              <div class="ff"><label>Beleška (opciono)</label><input type="text" id="absNote" placeholder="Napomena..."/></div>
+              <button class="btn-add" onclick="addAbsence()">+ Dodaj</button>
             </div>
           </div>
-          <div class="form-row" style="margin-top:7px">
-            <div class="ff"><label>Beleška (opciono)</label><input type="text" id="absNote" placeholder="Napomena..."/></div>
-            <button class="btn-add" onclick="addAbsence()">+ Dodaj</button>
-          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h2>Lista izostanaka</h2></div>
+          <div class="card-body" id="al"><div class="ld">Učitavam...</div></div>
         </div>
       </div>
-      <div class="card"><div class="ch"><h2>Lista izostanaka</h2></div><div class="cb" id="al"><div class="ld">Učitavam...</div></div></div>
     </div>
 
     <!-- VLADANJE -->
     <div class="section" id="sec-vladanje">
-      <div class="sec-title">⭐ Vladanje</div>
-      <div class="card">
-        <div class="ch"><h2>🏆 Zaključna ocena vladanja</h2></div>
-        <div class="cb">
-          <div class="bfrow">
-            <div class="fbox">
-              <div class="fl">1. Polugodište</div><div class="fv a0" id="bf1">—</div>
-              <select id="bfs1"><option value="">— Ocena —</option><option value="5">5 — Primerno</option><option value="4">4 — Dobro</option><option value="3">3 — Zadovoljava</option><option value="2">2 — Ne zadovoljava</option><option value="1">1</option></select>
-              <button onclick="saveBF(1)">Zaključi</button>
-            </div>
-            <div class="fbox">
-              <div class="fl">2. Polugodište</div><div class="fv a0" id="bf2">—</div>
-              <select id="bfs2"><option value="">— Ocena —</option><option value="5">5 — Primerno</option><option value="4">4 — Dobro</option><option value="3">3 — Zadovoljava</option><option value="2">2 — Ne zadovoljava</option><option value="1">1</option></select>
-              <button onclick="saveBF(2)">Zaključi</button>
+      <div class="page-header"><div class="page-title">⭐ Vladanje</div></div>
+      <div class="page-body">
+        <div class="card">
+          <div class="card-header"><h2>🏆 Zaključna ocena vladanja</h2></div>
+          <div class="card-body">
+            <div class="bfrow">
+              <div class="fbox">
+                <div class="fl">1. Polugodište</div><div class="fv avg0" id="bf1">—</div>
+                <select id="bfs1"><option value="">— Ocena —</option><option value="5">5 — Primerno</option><option value="4">4 — Dobro</option><option value="3">3 — Zadovoljava</option><option value="2">2 — Ne zadovoljava</option><option value="1">1</option></select>
+                <button onclick="saveBF(1)">Zaključi</button>
+              </div>
+              <div class="fbox">
+                <div class="fl">2. Polugodište</div><div class="fv avg0" id="bf2">—</div>
+                <select id="bfs2"><option value="">— Ocena —</option><option value="5">5 — Primerno</option><option value="4">4 — Dobro</option><option value="3">3 — Zadovoljava</option><option value="2">2 — Ne zadovoljava</option><option value="1">1</option></select>
+                <button onclick="saveBF(2)">Zaključi</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="card">
-        <div class="ch"><h2>📌 Pojedinačne ocene vladanja</h2></div>
-        <div class="cb">
-          <div class="form-row">
-            <div class="ff" style="max-width:95px"><label>Ocena</label><select id="bgv"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div>
-            <div class="ff"><label>Datum</label><input type="date" id="bgd"/></div>
-          </div>
-          <div class="form-row" style="margin-top:7px">
-            <div class="ff"><label>Beleška (opciono)</label><input type="text" id="bgn" placeholder="npr. Pohvala na času..."/></div>
-            <button class="btn-add" onclick="addBG()">+ Dodaj</button>
-          </div>
-          <ul class="bgl" id="bgl" style="margin-top:13px"><div class="ld">Učitavam...</div></ul>
-        </div>
-      </div>
-      <div class="card">
-        <div class="ch"><h2>⚠️ Vaspitne mere i pohvale</h2></div>
-        <div class="cb">
-          <div class="form-row">
-            <div class="ff"><label>Tip</label>
-              <select id="mt">
-                <optgroup label="— MERE —">
-                  <option value="mere|Pojačan vaspitni rad">Pojačan vaspitni rad</option>
-                  <option value="mere|Opomena odeljenjskog starešine">Opomena odeljenjskog starešine</option>
-                  <option value="mere|Ukor odeljenjskog starešine">Ukor odeljenjskog starešine</option>
-                  <option value="mere|Ukor odeljenjskog veća">Ukor odeljenjskog veća</option>
-                  <option value="mere|Ukor nastavničkog veća">Ukor nastavničkog veća</option>
-                  <option value="mere|Ukor direktora">Ukor direktora</option>
-                </optgroup>
-                <optgroup label="— POHVALE —">
-                  <option value="pohvale|Pohvala predmetnog nastavnika">Pohvala predmetnog nastavnika</option>
-                  <option value="pohvale|Pohvala odeljenjskog starešine">Pohvala odeljenjskog starešine</option>
-                  <option value="pohvale|Pohvala psihologa-pedagoga">Pohvala psihologa-pedagoga</option>
-                  <option value="pohvale|Pohvala odeljenjskog veća">Pohvala odeljenjskog veća</option>
-                  <option value="pohvale|Pohvala nastavničkog veća">Pohvala nastavničkog veća</option>
-                </optgroup>
-              </select>
+        <div class="card">
+          <div class="card-header"><h2>📌 Pojedinačne ocene vladanja</h2></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="ff" style="max-width:95px"><label>Ocena</label><select id="bgv"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div>
+              <div class="ff"><label>Datum</label><input type="date" id="bgd"/></div>
             </div>
-            <div class="ff"><label>Datum</label><input type="date" id="md"/></div>
+            <div class="form-row" style="margin-top:8px">
+              <div class="ff"><label>Beleška (opciono)</label><input type="text" id="bgn" placeholder="npr. Pohvala na času..."/></div>
+              <button class="btn-add" onclick="addBG()">+ Dodaj</button>
+            </div>
+            <ul class="bgl" id="bgl" style="margin-top:14px"><div class="ld">Učitavam...</div></ul>
           </div>
-          <div class="form-row" style="margin-top:7px">
-            <div class="ff"><label>Beleška (opciono)</label><input type="text" id="mn" placeholder="Dodatne informacije..."/></div>
-            <button class="btn-add" onclick="addMeasure()">+ Dodaj</button>
-          </div>
-          <div id="ml" style="margin-top:13px"><div class="ld">Učitavam...</div></div>
         </div>
-      </div>
-      <div class="card">
-        <div class="ch"><h2>📋 Upisi u vladanje</h2></div>
-        <div class="cb">
-          <div class="form-row">
-            <div class="ff"><label>Predmet</label><select id="nts"><option value="">— Izaberi —</option></select></div>
-            <div class="ff"><label>Datum</label><input type="date" id="ntd"/></div>
+        <div class="card">
+          <div class="card-header"><h2>⚠️ Vaspitne mere i pohvale</h2></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="ff"><label>Tip</label>
+                <select id="mt">
+                  <optgroup label="— MERE —">
+                    <option value="mere|Pojačan vaspitni rad">Pojačan vaspitni rad</option>
+                    <option value="mere|Opomena odeljenjskog starešine">Opomena odeljenjskog starešine</option>
+                    <option value="mere|Ukor odeljenjskog starešine">Ukor odeljenjskog starešine</option>
+                    <option value="mere|Ukor odeljenjskog veća">Ukor odeljenjskog veća</option>
+                    <option value="mere|Ukor nastavničkog veća">Ukor nastavničkog veća</option>
+                    <option value="mere|Ukor direktora">Ukor direktora</option>
+                  </optgroup>
+                  <optgroup label="— POHVALE —">
+                    <option value="pohvale|Pohvala predmetnog nastavnika">Pohvala predmetnog nastavnika</option>
+                    <option value="pohvale|Pohvala odeljenjskog starešine">Pohvala odeljenjskog starešine</option>
+                    <option value="pohvale|Pohvala psihologa-pedagoga">Pohvala psihologa-pedagoga</option>
+                    <option value="pohvale|Pohvala odeljenjskog veća">Pohvala odeljenjskog veća</option>
+                    <option value="pohvale|Pohvala nastavničkog veća">Pohvala nastavničkog veća</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div class="ff"><label>Datum</label><input type="date" id="md"/></div>
+            </div>
+            <div class="form-row" style="margin-top:8px">
+              <div class="ff"><label>Beleška (opciono)</label><input type="text" id="mn" placeholder="Dodatne informacije..."/></div>
+              <button class="btn-add" onclick="addMeasure()">+ Dodaj</button>
+            </div>
+            <div id="ml" style="margin-top:14px"><div class="ld">Učitavam...</div></div>
           </div>
-          <div class="form-row" style="margin-top:7px">
-            <div class="ff"><label>Razlog upisa</label><textarea id="ntt" placeholder="Upiši razlog..."></textarea></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h2>📋 Upisi u vladanje</h2></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="ff"><label>Predmet</label><select id="nts"><option value="">— Izaberi —</option></select></div>
+              <div class="ff"><label>Datum</label><input type="date" id="ntd"/></div>
+            </div>
+            <div class="form-row" style="margin-top:8px">
+              <div class="ff"><label>Razlog upisa</label><textarea id="ntt" placeholder="Upiši razlog..."></textarea></div>
+            </div>
+            <div style="margin-top:8px"><button class="btn-add" onclick="addNote()">+ Dodaj upis</button></div>
+            <ul class="nl" id="ntl" style="margin-top:14px"><div class="ld">Učitavam...</div></ul>
           </div>
-          <div style="margin-top:7px"><button class="btn-add" onclick="addNote()">+ Dodaj upis</button></div>
-          <ul class="nl" id="ntl" style="margin-top:13px"><div class="ld">Učitavam...</div></ul>
         </div>
       </div>
     </div>
 
     <!-- RASPORED -->
     <div class="section" id="sec-raspored">
-      <div class="sec-title">🗓 Raspored časova</div>
-      <div class="card">
-        <div class="ch"><h2>Nedeljni raspored — klikni ćeliju da izmeniš</h2></div>
-        <div class="cb" style="padding:10px"><div class="sg-wrap"><div id="sg"><div class="ld">Učitavam...</div></div></div></div>
+      <div class="page-header"><div class="page-title">🗓 Raspored časova</div></div>
+      <div class="page-body">
+        <div class="card">
+          <div class="card-header"><h2>Nedeljni raspored — klikni ćeliju da izmeniš</h2></div>
+          <div class="card-body" style="padding:10px"><div class="sg-wrap"><div id="sg"><div class="ld">Učitavam...</div></div></div></div>
+        </div>
       </div>
     </div>
 
     <!-- CASOVI -->
     <div class="section" id="sec-casovi">
-      <div class="sec-title">📝 Upisivanje časova</div>
-      <div class="wnav">
-        <button class="btn-sm" onclick="wMove('casovi',-1)">← Prethodna</button>
-        <span class="wlbl" id="cwl"></span>
-        <button class="btn-sm" onclick="wMove('casovi',1)">Sledeća →</button>
+      <div class="page-header"><div class="page-title">📝 Upisivanje časova</div></div>
+      <div class="page-body">
+        <div class="wnav">
+          <button class="btn-sm" onclick="wMove('casovi',-1)">← Prethodna</button>
+          <span class="wlbl" id="cwl"></span>
+          <button class="btn-sm" onclick="wMove('casovi',1)">Sledeća →</button>
+        </div>
+        <div class="wtbar">
+          <div style="display:flex;align-items:center;gap:8px"><span class="wtlbl">Tip nedelje:</span><span id="cwt"></span></div>
+          <div style="display:flex;gap:7px">
+            <button class="btn-sm" onclick="openWeekModal()">Podesi nedelju</button>
+            <button class="btn-sm" onclick="openBulkDaysModal()">📅 Više dana</button>
+          </div>
+        </div>
+        <div class="wdays" id="cwd"></div>
+        <div id="cdd"></div>
       </div>
-      <div class="wtbar">
-        <div style="display:flex;align-items:center;gap:8px"><span class="wtlbl">Tip nedelje:</span><span id="cwt"></span></div>
-        <button class="btn-sm" onclick="openWeekModal()">Podesi nedelju</button>
-        <button class="btn-sm" onclick="openBulkDaysModal()">📅 Više dana</button>
-      </div>
-      <div class="wdays" id="cwd"></div>
-      <div id="cdd"></div>
     </div>
 
     <!-- KALENDAR -->
     <div class="section" id="sec-kalendar">
-      <div class="sec-title">📆 Kalendar obaveza</div>
-      <div class="card">
-        <div class="ch"><h2>➕ Dodaj obavezu</h2></div>
-        <div class="cb">
-          <div class="form-row">
-            <div class="ff"><label>Predmet</label><select id="cls"><option value="">— Izaberi —</option></select></div>
-            <div class="ff"><label>Datum</label><input type="date" id="cld"/></div>
-            <div class="ff"><label>Tip</label>
-              <select id="clt">
-                <option value="usmeno">Usmeno odgovaranje</option>
-                <option value="kontrolni">Kontrolni zadatak</option>
-                <option value="pismeni">Pismeni zadatak</option>
-                <option value="petnaestominutna">Petnaestominutna vežba</option>
-                <option value="nema_karta">Nema karta</option>
-                <option value="prakticni">Praktičan rad</option>
-                <option value="prezentacija_pano">Prezentacija/pano</option>
-                <option value="prezentacija_teza">Prezentacija teze</option>
-                <option value="likovni_rad">Likovni rad</option>
-                <option value="pregledanje_sveske">Pregledanje sveske</option>
-                <option value="rad_racunar">Rad na računaru</option>
-                <option value="fizicke">Fizičke aktivnosti</option>
-                <option value="ostalo">Ostalo</option>
-              </select>
+      <div class="page-header"><div class="page-title">📆 Kalendar obaveza</div></div>
+      <div class="page-body">
+        <div class="card">
+          <div class="card-header"><h2>➕ Dodaj obavezu</h2></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="ff"><label>Predmet</label><select id="cls"><option value="">— Izaberi —</option></select></div>
+              <div class="ff"><label>Datum</label><input type="date" id="cld"/></div>
+              <div class="ff"><label>Tip</label>
+                <select id="clt">
+                  <option value="usmeno">Usmeno odgovaranje</option>
+                  <option value="kontrolni">Kontrolni zadatak</option>
+                  <option value="pismeni">Pismeni zadatak</option>
+                  <option value="petnaestominutna">Petnaestominutna vežba</option>
+                  <option value="nema_karta">Nema karta</option>
+                  <option value="prakticni">Praktičan rad</option>
+                  <option value="prezentacija_pano">Prezentacija/pano</option>
+                  <option value="prezentacija_teza">Prezentacija teze</option>
+                  <option value="likovni_rad">Likovni rad</option>
+                  <option value="pregledanje_sveske">Pregledanje sveske</option>
+                  <option value="rad_racunar">Rad na računaru</option>
+                  <option value="fizicke">Fizičke aktivnosti</option>
+                  <option value="ostalo">Ostalo</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row" style="margin-top:8px">
+              <div class="ff"><label>Beleška</label><input type="text" id="cln" placeholder="npr. Poglavlje 5-7..."/></div>
+              <button class="btn-add" onclick="addCalEvent()">+ Dodaj</button>
             </div>
           </div>
-          <div class="form-row" style="margin-top:7px">
-            <div class="ff"><label>Beleška</label><input type="text" id="cln" placeholder="npr. Poglavlje 5-7..."/></div>
-            <button class="btn-add" onclick="addCalEvent()">+ Dodaj</button>
-          </div>
         </div>
+        <div class="wnav" style="margin-top:4px">
+          <button class="btn-sm" onclick="wMove('cal',-1)">← Prethodna</button>
+          <span class="wlbl" id="klwl"></span>
+          <button class="btn-sm" onclick="wMove('cal',1)">Sledeća →</button>
+        </div>
+        <div id="klwv"><div class="ld">Učitavam...</div></div>
       </div>
-      <div class="wnav" style="margin-top:6px">
-        <button class="btn-sm" onclick="wMove('cal',-1)">← Prethodna</button>
-        <span class="wlbl" id="klwl"></span>
-        <button class="btn-sm" onclick="wMove('cal',1)">Sledeća →</button>
-      </div>
-      <div id="klwv"><div class="ld">Učitavam...</div></div>
     </div>
 
-  </div>
+    <!-- GLOBALNI PREDMETI -->
+    <div class="section" id="sec-predmeti-global">
+      <div class="page-header"><div class="page-title">📚 Predmeti</div></div>
+      <div class="page-body">
+        <div class="card">
+          <div class="card-header"><h2>➕ Dodaj predmet</h2></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="ff"><label>Naziv predmeta</label><input type="text" id="gp-name" placeholder="npr. Matematika" maxlength="80"/></div>
+              <button class="btn-add" onclick="addGlobalSubject()">+ Dodaj</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h2>Lista predmeta</h2><span style="font-size:.72rem;color:var(--muted)">Klikni na predmet da ga izmeniš</span></div>
+          <div class="card-body" id="global-subjects-list"><div class="ld">Učitavam...</div></div>
+        </div>
+      </div>
+    </div>
 
-  <!-- MODALS -->
+    <!-- GLOBALNI NASTAVNICI -->
+    <div class="section" id="sec-nastavnici-global">
+      <div class="page-header"><div class="page-title">👤 Nastavnici</div></div>
+      <div class="page-body">
+        <div class="card">
+          <div class="card-header"><h2>➕ Dodaj nastavnika</h2></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="ff"><label>Ime i prezime</label><input type="text" id="gt-name" placeholder="npr. Petar Petrović" maxlength="80"/></div>
+              <button class="btn-add" onclick="addGlobalTeacher()">+ Dodaj</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h2>Lista nastavnika</h2><span style="font-size:.72rem;color:var(--muted)">Klikni na nastavnika da izmeniš predmete</span></div>
+          <div class="card-body" id="global-teachers-list"><div class="ld">Učitavam...</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL za izmenu predmeta u sk.god. -->
+    <div class="mo" id="editSubjMo" style="display:none" onclick="if(event.target===this)closeMo('editSubjMo')">
+      <div class="modal">
+        <h3 id="editSubjMoT">Izmeni predmet</h3>
+        <div class="ff" style="margin-bottom:10px"><label>Predmet</label>
+          <input type="text" id="esName" disabled style="background:var(--bg);color:var(--muted)"/>
+        </div>
+        <div class="form-row" style="margin-bottom:10px">
+          <div class="ff"><label>Tip</label>
+            <select id="esType">
+              <option value="obavezan">Obavezan</option>
+              <option value="izborni">Izborni</option>
+              <option value="dopunski">Dopunski rad</option>
+              <option value="dodatni">Dodatni rad</option>
+              <option value="sekcija">Sekcija</option>
+              <option value="slobodna">Slobodna aktivnost</option>
+            </select>
+          </div>
+          <div class="ff"><label>Ocenjivanje</label>
+            <select id="esGrading">
+              <option value="brojcano">Brojčano</option>
+              <option value="neocenjuje">Ne ocenjuje se</option>
+            </select>
+          </div>
+        </div>
+        <div class="ff" style="margin-bottom:10px"><label>Nastavnik</label>
+          <select id="esTeacher">
+            <option value="">— Bez nastavnika —</option>
+          </select>
+        </div>
+        <div class="ff" style="margin-bottom:10px"><label>Potpredmet od</label>
+          <select id="esParent">
+            <option value="">— Nije potpredmet —</option>
+          </select>
+        </div>
+        <div class="mfoot">
+          <button class="btn-outline-danger" onclick="removeSubjectFromYear()">Ukloni iz godine</button>
+          <button class="btn-sm" onclick="closeMo('editSubjMo')">Otkaži</button>
+          <button class="btn-add" onclick="saveEditSubj()">Sačuvaj</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL za izmenu globalnog predmeta -->
+    <div class="mo" id="editGlobalSubjMo" style="display:none" onclick="if(event.target===this)closeMo('editGlobalSubjMo')">
+      <div class="modal">
+        <h3>Izmeni naziv predmeta</h3>
+        <div class="ff" style="margin-bottom:14px"><label>Naziv</label>
+          <input type="text" id="egsName" maxlength="80"/>
+        </div>
+        <div class="mfoot">
+          <button class="btn-sm" onclick="closeMo('editGlobalSubjMo')">Otkaži</button>
+          <button class="btn-add" onclick="saveEditGlobalSubj()">Sačuvaj</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL za nastavnika - predmeti -->
+    <div class="mo" id="teacherSubjMo" style="display:none" onclick="if(event.target===this)closeMo('teacherSubjMo')">
+      <div class="modal">
+        <h3 id="teacherSubjMoT">Predmeti nastavnika</h3>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">Predmeti za koje je nastavnik stručan:</div>
+        <div id="teacherSubjList" style="margin-bottom:14px"></div>
+        <div class="form-row">
+          <div class="ff"><label>Dodaj predmet</label>
+            <select id="teacherSubjSel">
+              <option value="">— Izaberi —</option>
+            </select>
+          </div>
+          <button class="btn-add" onclick="addTeacherSubj()" style="align-self:flex-end">+ Dodaj</button>
+        </div>
+        <div class="mfoot">
+          <button class="btn-sm" onclick="closeMo('teacherSubjMo')">Zatvori</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATISTIKA -->
+    <div class="section" id="sec-statistika">
+      <div class="page-header"><div class="page-title">📈 Statistika</div></div>
+      <div class="page-body" style="max-width:800px">
+        <div class="card">
+          <div class="card-header"><h2>📊 Statistika ocena</h2></div>
+          <div class="card-body">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+              <button class="btn-sm" id="stat-all-btn" onclick="statFilter='sve';renderStat()">Sve</button>
+              <button class="btn-sm" id="stat-m-btn" onclick="statFilter='mesec';renderStat()">Ovaj mesec</button>
+              <select id="stat-subj-sel" onchange="statFilter='predmet';statSubjId=this.value;renderStat()" style="background:#fff;border:1px solid var(--border2);border-radius:7px;color:var(--text);font-size:.8rem;padding:6px 10px">
+                <option value="">— Po predmetu —</option>
+              </select>
+            </div>
+            <div id="stat-content"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <div class="card-header"><h2>📊 Statistika izostanaka</h2></div>
+          <div class="card-body" id="stat-abs-content"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+
+  <footer>Made by <span>Dušan Ranđelović</span></footer>
+
+  <!-- MODALS (isti kao pre, samo restyled) -->
   <div class="mo" id="schedMo" style="display:none" onclick="if(event.target===this)closeMo('schedMo')">
     <div class="modal">
       <h3 id="schedMoT">Podesi čas</h3>
       <div class="ff"><label>Predmet</label><select id="schedSel"><option value="">— Bez predmeta —</option></select></div>
       <div class="mfoot">
-        <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" onclick="clearSchedCell()">Obriši</button>
+        <button class="btn-outline-danger" onclick="clearSchedCell()">Obriši</button>
         <button class="btn-sm" onclick="closeMo('schedMo')">Otkaži</button>
         <button class="btn-add" onclick="saveSchedCell()">Sačuvaj</button>
       </div>
     </div>
   </div>
 
-  <!-- EDIT BEHAVIOR GRADE MODAL -->
   <div class="mo" id="bgEditMo" style="display:none" onclick="if(event.target===this)closeMo('bgEditMo')">
     <div class="modal">
       <h3>Izmeni ocenu vladanja</h3>
@@ -598,76 +993,10 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
         <button onclick="selectBGVal(5)" class="btn-sm" id="bgvb5" style="width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem">5</button>
       </div>
       <div class="ff" style="margin-bottom:11px"><label>Datum</label><input type="date" id="bgEditDate"/></div>
-      <div class="ff"><label>Beleška (opciono)</label><input type="text" id="bgEditNote" placeholder="npr. Pohvala na času..."/></div>
+      <div class="ff" style="margin-bottom:11px"><label>Beleška</label><input type="text" id="bgEditNote"/></div>
       <div class="mfoot">
         <button class="btn-sm" onclick="closeMo('bgEditMo')">Otkaži</button>
         <button class="btn-add" onclick="saveEditBG()">Sačuvaj</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- EDIT MEASURE MODAL -->
-  <div class="mo" id="measureEditMo" style="display:none" onclick="if(event.target===this)closeMo('measureEditMo')">
-    <div class="modal">
-      <h3>Izmeni meru / pohvalu</h3>
-      <div class="ff" style="margin-bottom:11px"><label>Datum</label><input type="date" id="meEditDate"/></div>
-      <div class="ff"><label>Beleška (opciono)</label><input type="text" id="meEditNote" placeholder="Dodatne informacije..."/></div>
-      <div class="mfoot">
-        <button class="btn-sm" onclick="closeMo('measureEditMo')">Otkaži</button>
-        <button class="btn-add" onclick="saveEditMeasure()">Sačuvaj</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- EDIT NOTE MODAL -->
-  <div class="mo" id="noteEditMo" style="display:none" onclick="if(event.target===this)closeMo('noteEditMo')">
-    <div class="modal">
-      <h3>Izmeni upisivanje</h3>
-      <div class="form-row" style="margin-bottom:11px">
-        <div class="ff"><label>Predmet</label><select id="neEditSubject"></select></div>
-        <div class="ff"><label>Datum</label><input type="date" id="neEditDate"/></div>
-      </div>
-      <div class="ff"><label>Razlog upisa</label><textarea id="neEditNote" placeholder="Upiši razlog..."></textarea></div>
-      <div class="mfoot">
-        <button class="btn-sm" onclick="closeMo('noteEditMo')">Otkaži</button>
-        <button class="btn-add" onclick="saveEditNote()">Sačuvaj</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="mo" id="absEditMo" style="display:none" onclick="if(event.target===this)closeMo('absEditMo')">
-    <div class="modal">
-      <h3>Izmeni izostanak</h3>
-      <div class="ff" style="margin-bottom:11px"><label>Status</label>
-        <select id="aeStatus" onchange="toggleAEType()">
-          <option value="false">Neopravdan</option>
-          <option value="true">Opravdan</option>
-        </select>
-      </div>
-      <div id="aeKindRow" style="display:none;margin-bottom:11px">
-        <div class="ff"><label>Vrsta opravdanog</label>
-          <select id="aeKind">
-            <option value="">— Izaberi —</option>
-            <option>Administrativni postupci</option>
-            <option>Bolest - opravdao roditelj</option>
-            <option>Bolest - opravdao staratelj/hranitelj</option>
-            <option>Bolest - potvrda lekara</option>
-            <option>Dozvola</option>
-            <option>Ispit</option>
-            <option>Nastup</option>
-            <option>Odlazak na specijalistički tretman</option>
-            <option>Opravdan - ostalo</option>
-            <option>Pregled</option>
-            <option>Saobraćaj</option>
-            <option>Sportsko odsustvo</option>
-            <option>Takmičenje</option>
-          </select>
-        </div>
-      </div>
-      <div class="ff"><label>Beleška (opciono)</label><input type="text" id="aeNote" placeholder="Napomena..."/></div>
-      <div class="mfoot">
-        <button class="btn-sm" onclick="closeMo('absEditMo')">Otkaži</button>
-        <button class="btn-add" onclick="saveEditAbsence()">Sačuvaj</button>
       </div>
     </div>
   </div>
@@ -676,11 +1005,14 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
     <div class="modal">
       <h3 id="dayMoT">Podesi dan</h3>
       <div class="ff" style="margin-bottom:11px"><label>Tip dana</label>
-        <select id="dts"><option value="nastavni">Nastavni</option><option value="neradni">Neradni</option><option value="nenastavni">Nenastavni (radni)</option></select>
+        <select id="dayType">
+          <option value="nastavni">Nastavni</option>
+          <option value="neradni">Neradni</option>
+          <option value="nenastavni">Nenastavni (radni)</option>
+        </select>
       </div>
-      <div class="ff"><label>Beleška (opciono)</label><input type="text" id="dns" placeholder="Razlog..."/></div>
+      <div class="ff" style="margin-bottom:11px"><label>Beleška (opciono)</label><input type="text" id="dayNote" placeholder="npr. Državni praznik"/></div>
       <div class="mfoot">
-        <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" onclick="deleteDay()">Resetuj</button>
         <button class="btn-sm" onclick="closeMo('dayMo')">Otkaži</button>
         <button class="btn-add" onclick="saveDay()">Sačuvaj</button>
       </div>
@@ -691,9 +1023,13 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
     <div class="modal">
       <h3>Podesi nedelju</h3>
       <div class="ff" style="margin-bottom:11px"><label>Tip nedelje</label>
-        <select id="wts"><option value="nastavna">Nastavna</option><option value="neradna">Neradna</option><option value="nenastavna">Nenastavna (radna)</option></select>
+        <select id="weekType">
+          <option value="nastavna">Nastavna</option>
+          <option value="neradna">Neradna</option>
+          <option value="nenastavna">Nenastavna (radna)</option>
+        </select>
       </div>
-      <div class="ff"><label>Beleška (opciono)</label><input type="text" id="wns" placeholder="Razlog..."/></div>
+      <div class="ff" style="margin-bottom:11px"><label>Beleška (opciono)</label><input type="text" id="weekNote" placeholder="npr. Zimski raspust"/></div>
       <div class="mfoot">
         <button class="btn-sm" onclick="closeMo('weekMo')">Otkaži</button>
         <button class="btn-add" onclick="saveWeek()">Sačuvaj</button>
@@ -725,8 +1061,8 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
           <label class="mopt"><input type="checkbox" value="Utvrđivanje"> Utvrđivanje</label>
         </div>
       </div>
-      <div style="background:rgba(247,106,106,.06);border:1px solid rgba(247,106,106,.2);border-radius:9px;padding:12px;margin-bottom:4px">
-        <div style="font-family:Syne,sans-serif;font-weight:700;font-size:.8rem;margin-bottom:10px;color:var(--danger)">📋 Izostanak sa ovog časa</div>
+      <div style="background:var(--red-light);border:1px solid rgba(220,53,69,.2);border-radius:9px;padding:12px;margin-bottom:4px">
+        <div style="font-weight:700;font-size:.82rem;margin-bottom:10px;color:var(--red)">📋 Izostanak sa ovog časa</div>
         <div class="form-row">
           <div class="ff" style="max-width:150px"><label>Status</label>
             <select id="labsType" onchange="toggleLessonAbsType()">
@@ -744,29 +1080,23 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
               <option>Bolest - opravdao roditelj</option>
               <option>Bolest - opravdao staratelj/hranitelj</option>
               <option>Bolest - potvrda lekara</option>
-              <option>Dozvola</option>
-              <option>Ispit</option>
-              <option>Nastup</option>
+              <option>Dozvola</option><option>Ispit</option><option>Nastup</option>
               <option>Odlazak na specijalistički tretman</option>
-              <option>Opravdan - ostalo</option>
-              <option>Pregled</option>
-              <option>Saobraćaj</option>
-              <option>Sportsko odsustvo</option>
-              <option>Takmičenje</option>
+              <option>Opravdan - ostalo</option><option>Pregled</option>
+              <option>Saobraćaj</option><option>Sportsko odsustvo</option><option>Takmičenje</option>
             </select>
           </div>
         </div>
         <div class="ff" style="margin-top:8px"><label>Beleška izostanka</label><input type="text" id="labsNote" placeholder="Napomena..."/></div>
       </div>
       <div class="mfoot">
-        <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" id="ldb" onclick="deleteLesson()">Obriši</button>
+        <button class="btn-outline-danger" id="ldb" onclick="deleteLesson()">Obriši</button>
         <button class="btn-sm" onclick="closeMo('lessonMo')">Otkaži</button>
         <button class="btn-add" onclick="saveLesson()">Sačuvaj</button>
       </div>
     </div>
   </div>
 
-  <!-- NEW SCHOOL YEAR MODAL -->
   <div class="mo" id="newYearMo" style="display:none" onclick="if(event.target===this)closeMo('newYearMo')">
     <div class="modal">
       <h3 id="newYearMoT">Nova školska godina</h3>
@@ -782,7 +1112,6 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
     </div>
   </div>
 
-  <!-- BULK DAYS MODAL -->
   <div class="mo" id="bulkDaysMo" style="display:none" onclick="if(event.target===this)closeMo('bulkDaysMo')">
     <div class="modal">
       <h3>Podesi više dana/nedelja</h3>
@@ -800,13 +1129,13 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
       <div class="ff" style="margin-bottom:11px"><label>Beleška (opciono)</label><input type="text" id="bulkNote" placeholder="npr. Zimski raspust"/></div>
       <div class="ff" style="margin-bottom:4px"><label>Primeni samo na dane</label>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
-          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd0" checked> Pon</label>
-          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd1" checked> Uto</label>
-          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd2" checked> Sre</label>
-          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd3" checked> Čet</label>
-          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd4" checked> Pet</label>
-          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd5"> Sub</label>
-          <label style="display:flex;align-items:center;gap:5px;font-size:.8rem;cursor:pointer"><input type="checkbox" id="bd6"> Ned</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.82rem;cursor:pointer"><input type="checkbox" id="bd0" checked> Pon</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.82rem;cursor:pointer"><input type="checkbox" id="bd1" checked> Uto</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.82rem;cursor:pointer"><input type="checkbox" id="bd2" checked> Sre</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.82rem;cursor:pointer"><input type="checkbox" id="bd3" checked> Čet</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.82rem;cursor:pointer"><input type="checkbox" id="bd4" checked> Pet</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.82rem;cursor:pointer"><input type="checkbox" id="bd5"> Sub</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:.82rem;cursor:pointer"><input type="checkbox" id="bd6"> Ned</label>
         </div>
       </div>
       <div class="mfoot">
@@ -816,7 +1145,6 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
     </div>
   </div>
 
-  <!-- EDIT CAL EVENT MODAL -->
   <div class="mo" id="calEditMo" style="display:none" onclick="if(event.target===this)closeMo('calEditMo')">
     <div class="modal">
       <h3>Izmeni obavezu</h3>
@@ -841,45 +1169,44 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
           <option value="ostalo">Ostalo</option>
         </select>
       </div>
-      <div class="ff"><label>Beleška (opciono)</label><input type="text" id="ceEditNote" placeholder="Napomena..."/></div>
+      <div class="ff" style="margin-bottom:11px"><label>Beleška</label><input type="text" id="ceEditNote"/></div>
       <div class="mfoot">
+        <button class="btn-outline-danger" onclick="deleteCalEvent()">Obriši</button>
         <button class="btn-sm" onclick="closeMo('calEditMo')">Otkaži</button>
-        <button class="btn-add" onclick="saveEditCalEvent()">Sačuvaj</button>
+        <button class="btn-add" onclick="saveCalEdit()">Sačuvaj</button>
       </div>
     </div>
   </div>
 
-  <!-- EMOJI MODAL -->
   <div class="mo" id="emojiMo" style="display:none" onclick="if(event.target===this)closeMo('emojiMo')">
     <div class="modal">
       <h3 id="emojiMoT">Dodaj oznaku</h3>
-      <div style="display:flex;gap:12px;justify-content:center;margin-bottom:16px">
-        <div onclick="selectEmoji('green')" id="emg" style="font-size:2.5rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid transparent;transition:all .15s">🟢</div>
-        <div onclick="selectEmoji('yellow')" id="emy" style="font-size:2.5rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid transparent;transition:all .15s">🟡</div>
-        <div onclick="selectEmoji('red')" id="emr" style="font-size:2.5rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid transparent;transition:all .15s">🔴</div>
+      <div style="display:flex;gap:12px;justify-content:center;margin-bottom:14px">
+        <div id="emg" onclick="selectEmoji('green')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid transparent;transition:all .15s">🟢</div>
+        <div id="emy" onclick="selectEmoji('yellow')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid transparent;transition:all .15s">🟡</div>
+        <div id="emr" onclick="selectEmoji('red')" style="font-size:2rem;cursor:pointer;padding:8px;border-radius:10px;border:2px solid transparent;transition:all .15s">🔴</div>
       </div>
       <div class="form-row" style="margin-bottom:11px">
         <div class="ff"><label>Datum</label><input type="date" id="emojiDate"/></div>
       </div>
       <div class="ff" style="margin-bottom:11px"><label>Beleška (opciono)</label><input type="text" id="emojiNote" placeholder="npr. Domaći zadatak..."/></div>
       <div class="mfoot">
-        <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" id="emojiDeleteBtn" onclick="deleteEmoji()" style="display:none">Obriši</button>
+        <button class="btn-outline-danger" id="emojiDeleteBtn" onclick="deleteEmoji()" style="display:none">Obriši</button>
         <button class="btn-sm" onclick="closeMo('emojiMo')">Otkaži</button>
         <button class="btn-add" onclick="saveEmoji()">Sačuvaj</button>
       </div>
     </div>
   </div>
 
-  <!-- GRADE MODAL -->
   <div class="mo" id="gradeMo" style="display:none" onclick="if(event.target===this)closeMo('gradeMo')">
     <div class="modal">
       <h3 id="gradeMoT">Dodaj ocenu</h3>
       <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px;flex-wrap:wrap" id="gradeValBtns">
-        <button onclick="selectGradeVal(1)" class="btn-sm" id="gvb1" style="min-width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1rem;padding:0 8px"></button>
-        <button onclick="selectGradeVal(2)" class="btn-sm" id="gvb2" style="min-width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1rem;padding:0 8px"></button>
-        <button onclick="selectGradeVal(3)" class="btn-sm" id="gvb3" style="min-width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1rem;padding:0 8px"></button>
-        <button onclick="selectGradeVal(4)" class="btn-sm" id="gvb4" style="min-width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1rem;padding:0 8px"></button>
-        <button onclick="selectGradeVal(5)" class="btn-sm" id="gvb5" style="min-width:44px;height:44px;font-family:Syne,sans-serif;font-weight:800;font-size:1rem;padding:0 8px"></button>
+        <button onclick="selectGradeVal(1)" class="btn-sm" id="gvb1" style="min-width:48px;height:48px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem;padding:0 8px"></button>
+        <button onclick="selectGradeVal(2)" class="btn-sm" id="gvb2" style="min-width:48px;height:48px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem;padding:0 8px"></button>
+        <button onclick="selectGradeVal(3)" class="btn-sm" id="gvb3" style="min-width:48px;height:48px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem;padding:0 8px"></button>
+        <button onclick="selectGradeVal(4)" class="btn-sm" id="gvb4" style="min-width:48px;height:48px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem;padding:0 8px"></button>
+        <button onclick="selectGradeVal(5)" class="btn-sm" id="gvb5" style="min-width:48px;height:48px;font-family:Syne,sans-serif;font-weight:800;font-size:1.1rem;padding:0 8px"></button>
       </div>
       <div class="form-row" style="margin-bottom:10px">
         <div class="ff"><label>Polugodište</label>
@@ -910,38 +1237,39 @@ footer span{color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;}
       </div>
       <div class="ff"><label>Beleška (opciono)</label><input type="text" id="gradeNote" placeholder="Napomena..."/></div>
       <div class="mfoot">
-        <button class="btn-sm" style="color:var(--danger);border-color:var(--danger)" id="gradeDeleteBtn" onclick="deleteGrade()" style="display:none">Obriši</button>
+        <button class="btn-outline-danger" id="gradeDeleteBtn" onclick="deleteGrade()" style="display:none">Obriši</button>
         <button class="btn-sm" onclick="closeMo('gradeMo')">Otkaži</button>
         <button class="btn-add" onclick="saveGrade()">Sačuvaj</button>
       </div>
     </div>
   </div>
 
-      <!-- STATISTIKA -->
-      <div class="section" id="sec-statistika" style="max-width:800px;margin:0 auto">
-        <div class="card">
-          <div class="ch"><h2>📊 Statistika ocena</h2></div>
-          <div class="cb">
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
-              <button class="btn-sm" id="stat-all-btn" onclick="statFilter='sve';renderStat()">Sve</button>
-              <button class="btn-sm" id="stat-m-btn" onclick="statFilter='mesec';renderStat()">Ovaj mesec</button>
-              <select id="stat-subj-sel" onchange="statFilter='predmet';statSubjId=this.value;renderStat()" style="background:var(--surface2);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-size:.75rem;padding:5px 10px">
-                <option value="">— Po predmetu —</option>
-              </select>
-            </div>
-            <div id="stat-content"></div>
-          </div>
-        </div>
-        <div class="card" style="margin-top:14px">
-          <div class="ch"><h2>📊 Statistika izostanaka</h2></div>
-          <div class="cb" id="stat-abs-content"></div>
-        </div>
-        </div>
-
+  <div class="mo" id="measureEditMo" style="display:none" onclick="if(event.target===this)closeMo('measureEditMo')">
+    <div class="modal">
+      <h3>Izmeni meru/pohvalu</h3>
+      <div class="ff" style="margin-bottom:11px"><label>Datum</label><input type="date" id="meEditDate"/></div>
+      <div class="ff" style="margin-bottom:11px"><label>Beleška</label><input type="text" id="meEditNote"/></div>
+      <div class="mfoot">
+        <button class="btn-sm" onclick="closeMo('measureEditMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveEditMeasure()">Sačuvaj</button>
+      </div>
+    </div>
   </div>
 
-  <footer>Made by <span>Dušan Ranđelović</span></footer>
-</div>
+  <div class="mo" id="noteEditMo" style="display:none" onclick="if(event.target===this)closeMo('noteEditMo')">
+    <div class="modal">
+      <h3>Izmeni upis u vladanje</h3>
+      <div class="ff" style="margin-bottom:11px"><label>Predmet</label><select id="neEditSubject"></select></div>
+      <div class="ff" style="margin-bottom:11px"><label>Datum</label><input type="date" id="neEditDate"/></div>
+      <div class="ff" style="margin-bottom:11px"><label>Razlog</label><textarea id="neEditNote" style="min-height:80px"></textarea></div>
+      <div class="mfoot">
+        <button class="btn-sm" onclick="closeMo('noteEditMo')">Otkaži</button>
+        <button class="btn-add" onclick="saveEditNote()">Sačuvaj</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.26.0/dist/umd/supabase.min.js"></script>
 <script>
@@ -1364,15 +1692,11 @@ function renderSCard(s){
     <div class="fbox"><div class="fl">Zaključna — 1. pol.</div>
       <div class="fv ${f1?avgClass(f1.grade):'a0'}">${f1?f1.grade:'—'}</div>
       <select id="fs1-${s.id}">${[5,4,3,2,1].map(v=>`<option value="${v}"${f1&&f1.grade===v?' selected':''}>${v}</option>`).join('')}</select>
-      <button onclick="saveFinal('${s.id}',1)">Zaključi</button>
-      ${f1?`<button onclick="unlockFinal('${s.id}',1)" style="background:none;border:1px solid var(--danger);color:var(--danger);border-radius:5px;padding:4px 9px;font-family:Syne,sans-serif;font-weight:700;font-size:.68rem;cursor:pointer;margin-top:4px;width:100%">🔓 Otključaj</button>`:''}
-    </div>
+      <button onclick="saveFinal('${s.id}',1)">Zaključi</button></div>
     <div class="fbox"><div class="fl">Zaključna — 2. pol.</div>
       <div class="fv ${f2?avgClass(f2.grade):'a0'}">${f2?f2.grade:'—'}</div>
       <select id="fs2-${s.id}">${[5,4,3,2,1].map(v=>`<option value="${v}"${f2&&f2.grade===v?' selected':''}>${v}</option>`).join('')}</select>
-      <button onclick="saveFinal('${s.id}',2)">Zaključi</button>
-      ${f2?`<button onclick="unlockFinal('${s.id}',2)" style="background:none;border:1px solid var(--danger);color:var(--danger);border-radius:5px;padding:4px 9px;font-family:Syne,sans-serif;font-weight:700;font-size:.68rem;cursor:pointer;margin-top:4px;width:100%">🔓 Otključaj</button>`:''}
-    </div>
+      <button onclick="saveFinal('${s.id}',2)">Zaključi</button></div>
   </div>`;
   return`<div class="subj-card">
     <div class="shead">
@@ -1507,11 +1831,6 @@ async function addSubject(){
 }
 async function removeSubject(id){if(!confirm('Obrisati predmet i sve ocene?'))return;await sb.from('subjects').delete().eq('id',id);await loadSubjects();renderHome();}
 async function removeGrade(id){await sb.from('grades').delete().eq('id',id);await loadSubjects();renderHome();}
-async function unlockFinal(sid,sem){
-  if(!confirm('Otključati zaključnu ocenu za '+sem+'. polugodište? Ocena će biti obrisana.'))return;
-  await sb.from('subject_finals').delete().eq('subject_id',sid).eq('semester',sem);
-  await loadSubjects();renderHome();
-}
 async function saveFinal(sid,sem){
   const v=document.getElementById(`fs${sem}-${sid}`).value;if(!v)return;
   await sb.from('subject_finals').upsert({subject_id:sid,user_id:U.id,semester:sem,grade:parseInt(v)},{onConflict:'subject_id,semester'});
@@ -2447,23 +2766,6 @@ function renderStat(){
       }).join('')}
     </div>
 
-    ${statFilter==='predmet'&&statSubjId?(()=>{
-      const sn=subjects.find(s=>s.id===statSubjId)?.name||'';
-      const sl=lessons.filter(l=>l.subject_id===statSubjId).sort((a,b)=>b.date.localeCompare(a.date)||a.period-b.period);
-      return`<div class="slbl" style="margin-bottom:8px">Časovi — ${esc(sn)}</div>
-      <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)">
-        ${!sl.length?'<div class="empty">Nema upisanih časova za ovaj predmet</div>':
-        sl.map(l=>`<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
-          <div style="font-family:Syne,sans-serif;font-weight:800;font-size:.95rem;color:var(--accent);min-width:22px">${l.period}</div>
-          <div style="flex:1">
-            <div style="font-size:.72rem;color:var(--muted)">${fmt(l.date)}</div>
-            <div style="font-size:.82rem;font-weight:700;margin-top:1px">${esc(l.title||'—')}</div>
-            ${l.types&&l.types.length?`<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:3px">${l.types.map(t=>`<span style="background:rgba(124,106,247,.1);color:var(--accent);border-radius:100px;padding:1px 7px;font-size:.63rem">${esc(t)}</span>`).join('')}</div>`:''}
-          </div>
-        </div>`).join('')}
-      </div>`;
-    })():''}
-
     ${statFilter!=='predmet'?`<div class="slbl" style="margin-bottom:8px">Prosek po predmetu</div>
     <div>${Object.entries(bySubj).sort((a,b)=>{
       const aa=a[1].reduce((x,y)=>x+y,0)/a[1].length;
@@ -2597,3 +2899,575 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('nsn').addEventListener('keydown',e=>{if(e.key==='Enter')addSubject();});
 });
 </script></body></html>
+
+// ===== SIDEBAR TOGGLE =====
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+
+// ===== SCHOOL YEAR SEL 2 (sidebar) =====
+function renderSchoolYearSelector(){
+  const sel=document.getElementById('schoolYearSel');
+  const sel2=document.getElementById('schoolYearSel2');
+  const opts=schoolYears.map(y=>`<option value="${y.id}"${y.id===currentYearId?' selected':''}>${y.name}</option>`).join('');
+  sel.innerHTML=opts;
+  if(sel2)sel2.innerHTML=opts;
+}
+function changeSchoolYear2(){
+  const sel2=document.getElementById('schoolYearSel2');
+  if(!sel2)return;
+  currentYearId=sel2.value||null;
+  document.getElementById('schoolYearSel').value=currentYearId||'';
+  if(currentYearId){sessionStorage.setItem('schoolYearId',currentYearId);loadAll();}
+}
+
+// ===== UPDATED RENDER FUNCTIONS =====
+// ===== GLOBALNI PREDMETI I NASTAVNICI =====
+let globalSubjects=[], globalTeachers=[], teacherSubjects={};
+let editSubjId=null, editGlobalSubjId=null, editTeacherId=null;
+
+async function loadGlobalSubjects(){
+  const{data}=await sb.from('global_subjects').select('*').eq('user_id',U.id).order('name');
+  globalSubjects=data||[];
+  renderGlobalSubjects();
+  populateSubjectDropdown();
+}
+
+async function loadGlobalTeachers(){
+  // Load teachers with their subjects
+  const{data:td}=await sb.from('teachers').select('*').eq('user_id',U.id).order('name');
+  globalTeachers=td||[];
+  // Load teacher-subject links
+  if(globalTeachers.length){
+    const ids=globalTeachers.map(t=>t.id);
+    const{data:ts}=await sb.from('subject_teachers').select('*').in('teacher_id',ids);
+    teacherSubjects={};
+    (ts||[]).forEach(r=>{
+      if(!teacherSubjects[r.teacher_id])teacherSubjects[r.teacher_id]=[];
+      teacherSubjects[r.teacher_id].push(r.subject_name);
+    });
+  }
+  renderGlobalTeachers();
+  populateTeacherDropdown();
+}
+
+function renderGlobalSubjects(){
+  const el=document.getElementById('global-subjects-list');
+  if(!el)return;
+  if(!globalSubjects.length){el.innerHTML='<div class="empty"><div class="big">📚</div>Nema predmeta. Dodaj prvi!</div>';return;}
+  el.innerHTML=`<div class="tw"><table>
+    <thead><tr><th>#</th><th>Naziv predmeta</th><th style="text-align:right"></th></tr></thead>
+    <tbody>${globalSubjects.map((s,i)=>`<tr>
+      <td style="color:var(--muted);width:36px">${i+1}</td>
+      <td><span style="font-weight:600;cursor:pointer;color:var(--blue)" onclick="openEditGlobalSubj('${s.id}','${esc(s.name)}')">${esc(s.name)}</span></td>
+      <td style="width:80px;text-align:right">
+        <button class="btn-sm" style="font-size:.7rem;padding:4px 8px;margin-right:4px" onclick="openEditGlobalSubj('${s.id}','${esc(s.name)}')">✏️</button>
+        <button class="btn-del" onclick="removeGlobalSubject('${s.id}')">🗑</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function renderGlobalTeachers(){
+  const el=document.getElementById('global-teachers-list');
+  if(!el)return;
+  if(!globalTeachers.length){el.innerHTML='<div class="empty"><div class="big">👤</div>Nema nastavnika. Dodaj prvog!</div>';return;}
+  el.innerHTML=`<div class="tw"><table>
+    <thead><tr><th>#</th><th>Ime i prezime</th><th>Predmeti</th><th></th></tr></thead>
+    <tbody>${globalTeachers.map((t,i)=>{
+      const subjs=teacherSubjects[t.id]||[];
+      return`<tr>
+        <td style="color:var(--muted);width:36px">${i+1}</td>
+        <td style="font-weight:600">${esc(t.name)}</td>
+        <td style="font-size:.75rem;color:var(--muted)">
+          ${subjs.length?subjs.map(s=>`<span class="es-tag es-tag-blue" style="margin:1px">${esc(s)}</span>`).join(''):'<span style="color:var(--muted2)">Nema predmeta</span>'}
+        </td>
+        <td style="width:80px;text-align:right">
+          <button class="btn-sm" style="font-size:.7rem;padding:4px 8px;margin-right:4px" onclick="openTeacherSubjModal('${t.id}','${esc(t.name)}')">📚</button>
+          <button class="btn-del" onclick="removeGlobalTeacher('${t.id}')">🗑</button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
+function populateSubjectDropdown(){
+  const sel=document.getElementById('nsn');
+  if(!sel)return;
+  // Dozvoli isti predmet više puta (različit tip)
+  sel.innerHTML='<option value="">— Izaberi predmet —</option>'+
+    globalSubjects.map(s=>`<option value="${esc(s.name)}">${esc(s.name)}</option>`).join('');
+  // Parent dropdown
+  const par=document.getElementById('ns-parent');
+  if(par){
+    par.innerHTML='<option value="">— Nije potpredmet —</option>'+
+      subjects.filter(s=>!s.parent_subject_id).map(s=>`<option value="${s.id}">${esc(s.name)} (${s.subject_type||'obavezan'})</option>`).join('');
+  }
+  const warn=document.getElementById('no-global-warn');
+  if(warn)warn.style.display=globalSubjects.length?'none':'block';
+}
+
+function populateTeacherDropdown(){
+  const sel=document.getElementById('nst');
+  if(!sel)return;
+  sel.innerHTML='<option value="">— Bez nastavnika —</option>'+
+    globalTeachers.map(t=>`<option value="${esc(t.name)}">${esc(t.name)}</option>`).join('');
+}
+
+async function addGlobalSubject(){
+  const inp=document.getElementById('gp-name');
+  const n=inp.value.trim();
+  if(!n)return inp.focus();
+  if(globalSubjects.find(s=>s.name.toLowerCase()===n.toLowerCase())){alert('Predmet već postoji!');return;}
+  await sb.from('global_subjects').insert({user_id:U.id,name:n});
+  inp.value='';
+  await loadGlobalSubjects();
+}
+
+async function addGlobalTeacher(){
+  const inp=document.getElementById('gt-name');
+  const n=inp.value.trim();
+  if(!n)return inp.focus();
+  if(globalTeachers.find(t=>t.name.toLowerCase()===n.toLowerCase())){alert('Nastavnik već postoji!');return;}
+  await sb.from('teachers').insert({user_id:U.id,name:n});
+  inp.value='';
+  await loadGlobalTeachers();
+}
+
+async function removeGlobalSubject(id){
+  if(!confirm('Obrisati predmet iz liste?'))return;
+  await sb.from('global_subjects').delete().eq('id',id);
+  await loadGlobalSubjects();
+}
+
+async function removeGlobalTeacher(id){
+  if(!confirm('Obrisati nastavnika iz liste?'))return;
+  await sb.from('teachers').delete().eq('id',id);
+  await loadGlobalTeachers();
+}
+
+// Izmena globalnog predmeta
+function openEditGlobalSubj(id,name){
+  editGlobalSubjId=id;
+  document.getElementById('egsName').value=name;
+  document.getElementById('editGlobalSubjMo').style.display='flex';
+}
+async function saveEditGlobalSubj(){
+  const n=document.getElementById('egsName').value.trim();
+  if(!n)return;
+  await sb.from('global_subjects').update({name:n}).eq('id',editGlobalSubjId);
+  closeMo('editGlobalSubjMo');
+  await loadGlobalSubjects();
+}
+
+// Izmena predmeta u školskoj godini
+function openEditSubj(sid){
+  const s=subjects.find(x=>x.id===sid);
+  if(!s)return;
+  editSubjId=sid;
+  document.getElementById('esName').value=s.name;
+  document.getElementById('esType').value=s.subject_type||'obavezan';
+  document.getElementById('esGrading').value=s.grading_type||'brojcano';
+  // Teacher dropdown
+  const et=document.getElementById('esTeacher');
+  et.innerHTML='<option value="">— Bez nastavnika —</option>'+
+    globalTeachers.map(t=>`<option value="${esc(t.name)}"${s.teacher_name===t.name?' selected':''}>${esc(t.name)}</option>`).join('');
+  // Parent dropdown - samo predmeti koji nisu sami potpredmeti
+  const ep=document.getElementById('esParent');
+  ep.innerHTML='<option value="">— Nije potpredmet —</option>'+
+    subjects.filter(x=>x.id!==sid&&!x.parent_subject_id).map(x=>`<option value="${x.id}"${s.parent_subject_id===x.id?' selected':''}>${esc(x.name)} (${x.subject_type||''})</option>`).join('');
+  document.getElementById('editSubjMo').style.display='flex';
+}
+async function saveEditSubj(){
+  const type=document.getElementById('esType').value;
+  const grading=document.getElementById('esGrading').value;
+  const teacher=document.getElementById('esTeacher').value||null;
+  const parent=document.getElementById('esParent').value||null;
+  await sb.from('subjects').update({subject_type:type,grading_type:grading,teacher_name:teacher,parent_subject_id:parent}).eq('id',editSubjId);
+  closeMo('editSubjMo');
+  await loadSubjects();
+  populateSubjectDropdown();
+}
+async function removeSubjectFromYear(){
+  if(!confirm('Ukloniti predmet iz ove školske godine?'))return;
+  await sb.from('subjects').delete().eq('id',editSubjId);
+  closeMo('editSubjMo');
+  await loadSubjects();
+  populateSubjectDropdown();
+}
+
+// Nastavnik - predmeti modal
+function openTeacherSubjModal(tid,tname){
+  editTeacherId=tid;
+  document.getElementById('teacherSubjMoT').textContent='Predmeti — '+tname;
+  const subjs=teacherSubjects[tid]||[];
+  document.getElementById('teacherSubjList').innerHTML=subjs.length
+    ?subjs.map(s=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+        <span style="flex:1;font-size:.85rem;font-weight:600">${esc(s)}</span>
+        <button class="btn-del" onclick="removeTeacherSubj('${tid}','${esc(s)}')">🗑</button>
+      </div>`).join('')
+    :'<div style="color:var(--muted);font-size:.8rem;padding:8px 0">Nema predmeta</div>';
+  const sel=document.getElementById('teacherSubjSel');
+  const already=subjs;
+  sel.innerHTML='<option value="">— Izaberi —</option>'+
+    globalSubjects.filter(gs=>!already.includes(gs.name)).map(gs=>`<option value="${esc(gs.name)}">${esc(gs.name)}</option>`).join('');
+  document.getElementById('teacherSubjMo').style.display='flex';
+}
+async function addTeacherSubj(){
+  const sel=document.getElementById('teacherSubjSel');
+  const n=sel.value;
+  if(!n)return;
+  await sb.from('subject_teachers').insert({teacher_id:editTeacherId,subject_name:n,user_id:U.id});
+  await loadGlobalTeachers();
+  openTeacherSubjModal(editTeacherId,globalTeachers.find(t=>t.id===editTeacherId)?.name||'');
+}
+async function removeTeacherSubj(tid,sname){
+  await sb.from('subject_teachers').delete().eq('teacher_id',tid).eq('subject_name',sname);
+  await loadGlobalTeachers();
+  openTeacherSubjModal(tid,globalTeachers.find(t=>t.id===tid)?.name||'');
+}
+
+// ===== OVERRIDE addSubject =====
+async function addSubject(){
+  const nameEl=document.getElementById('nsn');
+  const n=nameEl?.value?.trim();
+  if(!n){nameEl?.focus();return;}
+  const gt=document.getElementById('nsg')?.value||'brojcano';
+  const type=document.getElementById('nstype')?.value||'obavezan';
+  const teacher=document.getElementById('nst')?.value||null;
+  const parent=document.getElementById('ns-parent')?.value||null;
+  await sb.from('subjects').insert({
+    name:n,user_id:U.id,school_year_id:currentYearId,
+    grading_type:gt,subject_type:type,teacher_name:teacher,
+    parent_subject_id:parent||null
+  });
+  nameEl.value='';
+  document.getElementById('ns-parent').value='';
+  await loadSubjects();
+  populateSubjectDropdown();
+  renderHome();
+}
+
+// Enter key for global forms
+document.addEventListener('DOMContentLoaded',()=>{
+  const gpName=document.getElementById('gp-name');
+  if(gpName)gpName.addEventListener('keydown',e=>{if(e.key==='Enter')addGlobalSubject();});
+  const gtName=document.getElementById('gt-name');
+  if(gtName)gtName.addEventListener('keydown',e=>{if(e.key==='Enter')addGlobalTeacher();});
+});
+
+// Override showSec to close sidebar on mobile
+// Also load globals on init
+const _origInitApp2=window.initApp;
+const _baseInitApp=initApp;
+window.initApp=async function(user){
+  await _baseInitApp(user);
+  await loadGlobalSubjects();
+  await loadGlobalTeachers();
+};
+const _origShowSec=showSec;
+function showSec(n,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+n).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(n==='casovi')renderCasoviWeek();
+  if(n==='kalendar')renderCalWeek();
+  if(n==='raspored')renderSchedule();
+  closeSidebar();
+}
+
+// Override renderSubjects za potpredmete
+function renderSubjects(){
+  const el=document.getElementById('sl');
+  if(!subjects.length){el.innerHTML='<div class="empty"><div class="big">📚</div>Nema predmeta. Dodaj prvi predmet!</div>';return;}
+  // Glavni predmeti (bez parenta)
+  const main=subjects.filter(s=>!s.parent_subject_id);
+  // Potpredmeti
+  const subs=subjects.filter(s=>s.parent_subject_id);
+  let html='';
+  main.forEach(s=>{
+    html+=renderSCard(s);
+    // Potpredmeti ovog predmeta
+    const children=subs.filter(c=>c.parent_subject_id===s.id);
+    if(children.length){
+      html+=`<div style="padding-left:20px;border-left:3px solid var(--border2);margin-left:12px;margin-top:-8px;margin-bottom:12px">
+        ${children.map(c=>renderSCard(c,true)).join('')}
+      </div>`;
+    }
+  });
+  // Potpredmeti čiji parent nije u listi (orphans)
+  subs.filter(c=>!main.find(m=>m.id===c.parent_subject_id)).forEach(s=>{html+=renderSCard(s);});
+  el.innerHTML=html;
+}
+
+// Override renderSCard for esDnevnik style
+function renderSCard(s,isChild=false){
+  const gt=s.grading_type||'brojcano';
+  const gtLabels={'brojcano':'Brojčano','neocenjuje':'Ne ocenjuje se'};
+  const grades1=(s.grades||[]).filter(g=>g.semester===1||!g.semester).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const grades2=(s.grades||[]).filter(g=>g.semester===2).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const avg1=grades1.length?grades1.reduce((a,b)=>a+b.value,0)/grades1.length:0;
+  const avg2=grades2.length?grades2.reduce((a,b)=>a+b.value,0)/grades2.length:0;
+  const avgAll=calcAvg(s.grades);
+  const typeLabels={obavezan:'Obavezan',izborni:'Izborni',dopunski:'Dopunski rad',dodatni:'Dodatni rad',sekcija:'Sekcija',slobodna:'Slobodna aktivnost'};
+  const typeColors={obavezan:'var(--blue)',izborni:'var(--purple)',dopunski:'var(--orange)',dodatni:'var(--teal)',sekcija:'var(--green)',slobodna:'var(--muted)'};
+  const subjType=s.subject_type||'obavezan';
+  const teacherName=s.teacher_name||null;
+  const stripeColor=avgAll>=4.5?'#28a745':avgAll>=3.5?'#1a4c76':avgAll>=2.5?'#fd7e14':avgAll>=1.5?'#dc3545':'#aab5c2';
+  const nc=[5,4,3,2].map(t=>{
+    const r=howMany(s.grades,t),al=avgAll>=THR[t];
+    const lbl=al?`<div class="nc-info ok">✓ Postignuto</div>`:r.imp?`<div class="nc-info imp">✗ Nemoguće</div>`:`<div class="nc-info">još <strong>${r.c}</strong> ${r.c===1?'petice':r.c<5?'petice':'petica'}</div>`;
+    return`<div class="nc-card-es g${t}"><div class="nc-tg">${t}</div>${lbl}</div>`;
+  }).join('');
+  const finals=s.subject_finals||[],f1=finals.find(f=>f.semester===1),f2=finals.find(f=>f.semester===2);
+  const renderGrades=(glist)=>glist.length?glist.map(g=>`
+    <div class="grade-pill gc${g.value}" onclick="openEditGrade('${g.id}','${s.id}')">
+      <div class="gv ${acGrade(g.value)}">${g.value}</div>
+      ${g.type?`<div class="gt">${esc(g.type)}</div>`:''}
+      ${g.date?`<div class="gd">${fmtShort(g.date)}</div>`:''}
+    </div>`).join(''):`<span style="color:var(--muted);font-size:.78rem">Nema ocena</span>`;
+  const finHtml=(gt==='neocenjuje')?'':`
+    <div class="finals-row">
+      <div class="fbox"><div class="fl">Zaključna — 1. pol.</div>
+        <div class="fv ${acGrade(f1?.grade)}">${f1?f1.grade:'—'}</div>
+        ${f1?`<button class="btn-unlock" onclick="unlockFinal('${s.id}',1)" title="Otključaj">🔓</button>`:''}
+        <select id="fs1-${s.id}">${[5,4,3,2,1].map(v=>`<option value="${v}"${f1&&f1.grade===v?' selected':''}>${v}</option>`).join('')}</select>
+        <button onclick="saveFinal('${s.id}',1)">Zaključi</button>
+      </div>
+      <div class="fbox"><div class="fl">Zaključna — 2. pol.</div>
+        <div class="fv ${acGrade(f2?.grade)}">${f2?f2.grade:'—'}</div>
+        ${f2?`<button class="btn-unlock" onclick="unlockFinal('${s.id}',2)" title="Otključaj">🔓</button>`:''}
+        <select id="fs2-${s.id}">${[5,4,3,2,1].map(v=>`<option value="${v}"${f2&&f2.grade===v?' selected':''}>${v}</option>`).join('')}</select>
+        <button onclick="saveFinal('${s.id}',2)">Zaključi</button>
+      </div>
+    </div>`;
+
+  return`<div class="subj-card" style="${isChild?'margin-top:8px':''}">
+    <div class="subj-card-header">
+      <div class="subj-left-stripe" style="background:${stripeColor}"></div>
+      <div style="flex:1">
+        <div class="subj-name">
+          ${isChild?'<span style="color:var(--muted);font-size:.8rem;margin-right:4px">↳</span>':''}
+          ${esc(s.name)}
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px">
+          <span class="subj-type-badge subj-type-${gt}">${gtLabels[gt]||gt}</span>
+          <span style="font-size:.7rem;padding:2px 8px;border-radius:100px;font-weight:700;background:rgba(0,0,0,.06);color:${typeColors[subjType]||'var(--muted)'}">${typeLabels[subjType]||subjType}</span>
+          ${teacherName?`<span style="font-size:.7rem;padding:2px 8px;border-radius:100px;background:var(--blue-light);color:var(--blue);font-weight:700">👤 ${esc(teacherName)}</span>`:''}
+        </div>
+      </div>
+      ${gt==='brojcano'?`<div class="subj-avg-big ${acGrade(avgAll)}">${avgAll?avgAll.toFixed(2):'—'}</div>`:''}
+      <div class="subj-action-icons">
+        ${gt!=='neocenjuje'?`<button class="btn-add" onclick="openAddGrade('${s.id}','${gt}')">+ Ocena</button>`:`<span style="font-size:.74rem;color:var(--muted)">Samo časovi</span>`}
+        <button class="btn-sm" style="padding:6px 9px" onclick="openEditSubj('${s.id}')" title="Izmeni">✏️</button>
+        <button class="btn-sm" style="color:var(--red);border-color:var(--red);padding:6px 9px" onclick="removeSubject('${s.id}')">🗑</button>
+      </div>
+    </div>
+    <div class="subj-body">
+      <div style="margin-bottom:14px">
+        <div class="sem-label-es">1. Polugodište <span class="sem-avg-es ${acGrade(avg1)}">${avg1?avg1.toFixed(2):'—'}</span></div>
+        <div class="grades-wrap">${renderGrades(grades1)}</div>
+      </div>
+      <div style="margin-bottom:14px">
+        <div class="sem-label-es">2. Polugodište <span class="sem-avg-es ${acGrade(avg2)}">${avg2?avg2.toFixed(2):'—'}</span></div>
+        <div class="grades-wrap">${renderGrades(grades2)}</div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div class="sem-label-es" style="justify-content:space-between">
+          <span>🟢🟡🔴 Oznake (domaći)</span>
+          <button class="btn-sm" style="font-size:.68rem;padding:3px 9px" onclick="openAddEmoji('${s.id}')">+ Oznaka</button>
+        </div>
+        <div class="grades-wrap" style="gap:5px;margin-top:8px">
+          ${(s.subject_emojis||[]).sort((a,b)=>(a.date||'').localeCompare(b.date||'')).map(e=>`
+            <div class="emoji-mark" onclick="openEditEmoji('${e.id}','${s.id}')">
+              <span style="font-size:1.2rem">${e.emoji==='green'?'🟢':e.emoji==='yellow'?'🟡':'🔴'}</span>
+              <div>
+                ${e.note?`<div style="font-size:.7rem">${esc(e.note)}</div>`:''}
+                ${e.date?`<div style="font-size:.63rem;color:var(--muted)">${fmtShort(e.date)}</div>`:''}
+              </div>
+            </div>`).join('')}
+          ${!(s.subject_emojis||[]).length?'<span style="color:var(--muted);font-size:.78rem">Nema oznaka</span>':''}
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="slbl">Potrebno za zaključenu...</div>
+      <div class="needed-grid">${nc}</div>
+      <div class="divider"></div>
+      <div class="slbl">Zaključne ocene</div>
+      ${finHtml}
+    </div>
+  </div>`;
+}
+
+// Override renderGP to use new class names
+function renderGP(){
+  try{
+    const stored=localStorage.getItem('sb-uygjcopyohzslvrzvrmv-auth-token');
+    const token=stored?JSON.parse(stored)?.access_token:null;
+    const SURL='https://uygjcopyohzslvrzvrmv.supabase.co';
+    const SKEY='sb_publishable_obcXHm5fjOYYpjVZt44u2w_aBT01gEC';
+    const h={'apikey':SKEY,'Authorization':'Bearer '+(token||SKEY)};
+    fetch(SURL+'/rest/v1/behavior?select=grade,semester&user_id=eq.'+U.id+'&school_year_id=eq.'+currentYearId+'&is_final=eq.true',{headers:h})
+    .then(r=>r.json()).then(bdata=>{
+      [1,2].forEach(s=>{
+        const finals=subjects.filter(sub=>!sub.grading_type||sub.grading_type==='brojcano')
+          .map(sub=>(sub.subject_finals||[]).find(f=>f.semester===s)?.grade).filter(g=>g&&g>=1&&g<=5);
+        const beh=Array.isArray(bdata)?bdata.find(r=>r.semester===s)?.grade||null:null;
+        const all=[...finals,...(beh?[beh]:[])];
+        const avg=all.length?all.reduce((a,b)=>a+b,0)/all.length:0;
+        const acGrade=v=>{if(!v)return'avg0';if(v>=4.5)return'avg5';if(v>=3.5)return'avg4';if(v>=2.5)return'avg3';if(v>=1.5)return'avg2';return'avg0';};
+        const el=document.getElementById('gp'+s);
+        if(el){if(!avg){el.textContent='—';el.className='gp-val avg0';}else{el.textContent=avg.toFixed(2);el.className='gp-val '+acGrade(avg);}}
+        const hel=document.getElementById('hs'+s);
+        if(hel){if(!avg){hel.textContent='—';hel.className='stat-val '+(s===1?'blue':'green');}else{hel.textContent=avg.toFixed(2);hel.className='stat-val '+(s===1?'blue':'green');}}
+      });
+    }).catch(e=>console.error('renderGP:',e));
+  }catch(e){console.error('renderGP error:',e);}
+}
+
+// Override renderSchedule for new style
+function renderSchedule(){
+  const cols=8;
+  let html=`<div class="sg" style="grid-template-columns:36px repeat(7,1fr)">`;
+  html+=`<div class="sg-head"></div>`;
+  DAYS.forEach(d=>html+=`<div class="sg-head">${d}</div>`);
+  for(let p=0;p<=7;p++){
+    html+=`<div class="sg-per">${p}</div>`;
+    for(let dow=0;dow<7;dow++){
+      const cell=schedule.find(c=>c.day_of_week===dow&&c.period===p);
+      html+=`<div class="sg-cell ${cell?'filled':''}" onclick="openSchedModal(${dow},${p})">`;
+      if(cell)html+=`<span class="cn">${esc(cell.subjects?.name||'?')}</span>`;
+      html+=`</div>`;
+    }
+  }
+  html+=`</div>`;
+  document.getElementById('sg').innerHTML=html;
+  const sel=document.getElementById('schedSel');
+  sel.innerHTML='<option value="">— Bez predmeta —</option>'+subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+}
+
+// Override renderDayDetail for new style
+function renderDayDetail(ds){
+  const el=document.getElementById('cdd');
+  const d=new Date(ds+'T00:00:00');
+  const dayName=DAYS_FULL[jsDayToIdx(d.getDay())];
+  const sd=schoolDays.find(x=>x.date===ds);
+  const dtype=sd?.type||'nastavni';
+  const dtypeBadges={nastavni:'b-nastavni',neradni:'b-neradni',nenastavni:'b-nenastavni'};
+  const dayLessons=lessons.filter(l=>l.date===ds).sort((a,b)=>a.period-b.period);
+  const dayEvents=calEvents.filter(e=>e.date===ds);
+
+  let html=`<div class="ddetail">
+    <div class="dhead">
+      <div>
+        <div class="dtitle">${dayName}, ${fmt(ds)}</div>
+        <span class="badge ${dtypeBadges[dtype]}" style="margin-top:4px;display:inline-block">${dtype.charAt(0).toUpperCase()+dtype.slice(1)}</span>
+        ${sd?.note?`<span style="color:var(--muted);font-size:.7rem;margin-left:6px">${esc(sd.note)}</span>`:''}
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <button class="btn-sm" onclick="openDayModal('${ds}')">Podesi dan</button>
+        <button class="btn-add" onclick="openLessonModal('${ds}')">+ Upiši čas</button>
+      </div>
+    </div>`;
+
+  if(dayEvents.length){
+    html+=`<div style="margin-bottom:12px"><div class="slbl">Obaveze za ovaj dan</div>`;
+    dayEvents.forEach(e=>{
+      const done=e.completed===true;
+      html+=`<div style="display:flex;align-items:center;gap:7px;background:${done?'var(--green-light)':'#fff8f0'};border:1px solid ${done?'rgba(40,167,69,.3)':'rgba(253,126,20,.3)'};border-radius:8px;padding:8px 12px;margin-bottom:5px;font-size:.78rem;${done?'opacity:.75':''}">
+        <span class="ct ct-${e.type}">${CAL_LABELS[e.type]||e.type}</span>
+        <span style="${done?'text-decoration:line-through':''}">${e.subjects?esc(e.subjects.name):'—'}</span>
+        ${e.note?`<span style="color:var(--muted)">· ${esc(e.note)}</span>`:''}
+        ${done?'<span style="color:var(--green);margin-left:auto;font-size:.75rem">✅ Završeno</span>':''}
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  if(!dayLessons.length){
+    html+=`<div class="empty" style="padding:16px 0">Nema upisanih časova</div>`;
+  } else {
+    dayLessons.forEach(l=>{
+      const isAbs=absences.find(a=>a.lesson_id===l.id);
+      const absBadge=isAbs?`<span class="badge ${isAbs.justified?'b-opr':'b-neopr'}" style="font-size:.64rem">${isAbs.justified?'Opravdan':'Neopravdan'}${isAbs.absence_type?' · '+esc(isAbs.absence_type):''}</span>`:'';
+      html+=`<div class="lesson-item ${isAbs?'abs':''}">
+        <div class="lper ${isAbs?'abs':''}">${l.period}</div>
+        <div class="linfo">
+          <div class="ltitle">${esc(l.subjects?.name||'—')}</div>
+          ${l.title&&l.title!=='—'?`<div class="lmeta">${esc(l.title)}</div>`:''}
+          ${l.types&&l.types.length?`<div class="ltypes">${l.types.map(t=>`<span class="ltype">${esc(t)}</span>`).join('')}</div>`:''}
+          ${absBadge?`<div style="margin-top:4px">${absBadge}${isAbs?.note?`<span style="font-size:.66rem;color:var(--muted);margin-left:5px">${esc(isAbs.note)}</span>`:''}</div>`:''}
+        </div>
+        <div style="display:flex;gap:5px">
+          <button class="btn-sm" onclick="openEditLesson('${l.id}','${ds}')">✏️</button>
+          <button class="btn-del" onclick="deleteLessonById('${l.id}','${ds}')">×</button>
+        </div>
+      </div>`;
+    });
+  }
+  html+=`</div>`;
+  el.innerHTML=html;
+}
+
+// Override renderHome for new style
+function renderHome(){
+  const today=toISO(new Date());
+  const dt=new Date();
+  const days=['nedeljа','ponedeljak','utorak','sreda','četvrtak','petak','subota'];
+  document.getElementById('hd').textContent=days[dt.getDay()]+', '+fmt(today);
+  document.getElementById('hsa').textContent=absences.reduce((a,b)=>a+b.hours,0);
+
+  // Upcoming events
+  const upcoming=calEvents.filter(e=>e.date&&e.date>=today&&!e.completed).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
+  const hup=document.getElementById('hup');
+  if(hup){
+    if(!upcoming.length){hup.innerHTML='<div class="empty">Nema predstojećih obaveza 🎉</div>';}
+    else{hup.innerHTML=upcoming.map(e=>{
+      const d=new Date(e.date+'T00:00:00');
+      return`<div class="upcoming-event">
+        <div class="ue-date">${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}</div>
+        <div class="ue-info">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span class="ct ct-${e.type}">${CAL_LABELS[e.type]||e.type}</span>
+            <span style="font-size:.82rem;font-weight:700">${e.subjects?esc(e.subjects.name):'—'}</span>
+          </div>
+          ${e.note?`<div class="ue-sub">${esc(e.note)}</div>`:''}
+        </div>
+        <button class="btn-sm" style="font-size:.68rem;padding:4px 8px" onclick="markCalEventDone('${e.id}')">✓</button>
+      </div>`;
+    }).join('');}
+    document.getElementById('hse').textContent=upcoming.length;
+  }
+
+  // Today's lessons
+  const todayLessons=lessons.filter(l=>l.date===today).sort((a,b)=>a.period-b.period);
+  const htoday=document.getElementById('htoday');
+  if(htoday){
+    if(!todayLessons.length){htoday.innerHTML='<div class="empty">Nema upisanih časova za danas</div>';}
+    else{htoday.innerHTML=todayLessons.map(l=>`
+      <div class="lesson-item">
+        <div class="lper">${l.period}</div>
+        <div class="linfo">
+          <div class="ltitle">${esc(l.subjects?.name||'—')}</div>
+          ${l.title&&l.title!=='—'?`<div class="lmeta">${esc(l.title)}</div>`:''}
+        </div>
+      </div>`).join('');}
+  }
+
+  // School year info
+  renderSchoolYearInfo();
+  renderGP();
+}
+
+// Update initApp to use email only (not show full email)
+const _origInitApp=initApp;
+
+</script>
+</body>
+</html>
